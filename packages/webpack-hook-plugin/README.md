@@ -8,11 +8,10 @@
 const HookPlugin = require('@pixolith/webpack-hook-plugin');
 ```
 
-## Add this to the `plugins` section of your webpack config
+### Add this to the `plugins` section of your webpack config
 
 ```javascript
 new HookPlugin({
-    // use the hooks here directly https://webpack.js.org/api/compiler-hooks
     failed() {
         // run this when compilation fails
     },
@@ -22,3 +21,7 @@ new HookPlugin({
     //... more hooks
 });
 ```
+
+### What hooks are available
+
+Check this list [Hooks](https://webpack.js.org/api/compiler-hooks)
