@@ -30,4 +30,4 @@ new HookPlugin({
 
 ### What hooks are available
 
-Check this list [Hooks](https://webpack.js.org/api/compiler-hooks)
+Check this list here: [Webpack 4 Hooks](https://webpack.js.org/api/compiler-hooks)
