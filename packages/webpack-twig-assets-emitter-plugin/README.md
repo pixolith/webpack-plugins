@@ -1,4 +1,4 @@
-# Webpack Hook Plugin
+# Webpack Twig Assets Emitter Plugin
 
 ## How to use
 
