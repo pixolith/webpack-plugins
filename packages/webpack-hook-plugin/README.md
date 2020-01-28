@@ -2,6 +2,12 @@
 
 ## How to use
 
+### Install
+
+```bash
+npm install @pixolith/webpack-hook-plugin --save-dev
+```
+
 ### Add the plugin
 
 ```javascript
