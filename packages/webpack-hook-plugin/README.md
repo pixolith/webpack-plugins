@@ -23,7 +23,7 @@ new HookPlugin({
     },
     beforeRun() {
         // run this before compilation starts
-    }),
+    },
     //... more hooks
 });
 ```
