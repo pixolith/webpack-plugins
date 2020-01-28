@@ -14,7 +14,7 @@ npm install @pixolith/webpack-hook-plugin --save-dev
 const HookPlugin = require('@pixolith/webpack-hook-plugin');
 ```
 
-### Add this to the `plugins` section of your webpack config
+### Add this to the `plugins` section of your webpack.config.js
 
 ```javascript
 new HookPlugin({
