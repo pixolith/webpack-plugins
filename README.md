@@ -1,4 +1,4 @@
-# px Toolbox
+# px Webpack plugins
 
 See `/packages` for individual packages
 

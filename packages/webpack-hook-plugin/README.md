@@ -2,7 +2,13 @@
 
 ## How to use
 
-## Add this to the plugin section
+### Add the plugin
+
+```javascript
+const HookPlugin = require('@pixolith/webpack-hook-plugin');
+```
+
+## Add this to the `plugins` section of your webpack config
 
 ```javascript
 new HookPlugin({
@@ -14,4 +20,5 @@ new HookPlugin({
         // run this before compilation starts
     }),
     //... more hooks
+});
 ```
