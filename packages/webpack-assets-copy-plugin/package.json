@@ -1,0 +1,31 @@
+{
+    "name": "@pixolith/webpack-assets-copy-plugin",
+    "public": true,
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/webpack-assets-copy-plugin.js",
+    "scripts": {},
+    "files": [
+        "dist/"
+    ],
+    "engines": {
+        "node": ">=8.10.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/pixolith/webpack-plugins.git"
+    },
+    "author": "",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/pixolith/webpack-plugins/issues"
+    },
+    "homepage": "https://github.com/pixolith/webpack-plugins/tree/master/packages/webpack-twig-assets-emitter-plugin/#readme",
+    "dependencies": {
+        "change-case": "^4.1.1",
+        "consola": "^2.11.3",
+        "mkdirp": "^1.0.3",
+        "p-series": "^2.1.0"
+    },
+    "gitHead": "d56f4f9e4fe35a6ee630c6c30b6b2653fc87b231"
+}
