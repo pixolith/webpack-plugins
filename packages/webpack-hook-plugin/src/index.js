@@ -1,5 +1,6 @@
+const consola = require('consola');
 const HookPlugin = function HookPlugin(options) {
-    this.pluginName = "HookPlugin";
+    this.pluginName = 'HookPlugin';
     this.options = options;
 };
 
@@ -7,14 +8,14 @@ HookPlugin.prototype.apply = function(compiler) {
     const args = arguments,
         options = this.options;
 
-    Object.keys(options).forEach(hookKey => {
+    Object.keys(options).forEach((hookKey) => {
         if (!compiler.hooks[hookKey]) {
-            console.error(`Hook: ${hookKey} doesn't exist`);
+            consola.error(`Hook: ${hookKey} doesn't exist`);
             return;
         }
 
-        if (typeof options[hookKey] !== "function") {
-            console.error(`Hook: ${hookKey} is not a function`);
+        if (typeof options[hookKey] !== 'function') {
+            consola.error(`Hook: ${hookKey} is not a function`);
             return;
         }
 

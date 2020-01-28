@@ -20,5 +20,8 @@
     "bugs": {
         "url": "https://github.com/pixolith/webpack-plugins/issues"
     },
-    "homepage": "https://github.com/pixolith/webpack-plugins/tree/master/packages/webpack-hook-plugin/#readme"
+    "homepage": "https://github.com/pixolith/webpack-plugins/tree/master/packages/webpack-hook-plugin/#readme",
+    "dependencies": {
+        "consola": "^2.11.3"
+    }
 }
