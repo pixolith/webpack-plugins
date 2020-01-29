@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
 const { promisify } = require('util');
+const rimraf = require('rimraf');
 const consola = require('consola');
 const pSeries = require('p-series');
 const changeCase = require('change-case');
@@ -164,11 +165,15 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                 template = file;
                             }
 
+                            let outputPath = path.join(
+                                pluginPath,
+                                options.template[templateKey].filename,
+                            );
+
+                            rimraf.sync(outputPath);
+
                             await writeFileAsync(
-                                path.join(
-                                    pluginPath,
-                                    options.template[templateKey].filename,
-                                ),
+                                outputPath,
                                 template.replace(
                                     `{# ${templateKey.toUpperCase()} #}`,
                                     output.trim(),
