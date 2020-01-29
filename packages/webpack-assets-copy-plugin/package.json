@@ -1,7 +1,7 @@
 {
     "name": "@pixolith/webpack-assets-copy-plugin",
     "public": true,
-    "version": "1.0.0",
+    "version": "1.0.2",
     "description": "",
     "main": "src/webpack-assets-copy-plugin.js",
     "scripts": {},
