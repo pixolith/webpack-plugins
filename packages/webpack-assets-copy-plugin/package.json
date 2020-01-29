@@ -3,10 +3,10 @@
     "public": true,
     "version": "1.0.0",
     "description": "",
-    "main": "dist/webpack-assets-copy-plugin.js",
+    "main": "src/webpack-assets-copy-plugin.js",
     "scripts": {},
     "files": [
-        "dist/"
+        "src/"
     ],
     "engines": {
         "node": ">=8.10.0"

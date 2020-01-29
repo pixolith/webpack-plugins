@@ -1,4 +1,4 @@
-# Webpack Assets Copy Plugin
+# Webpack Assets Copy Plugin (Shopware 6 Administration)
 
 ## How to use
 
