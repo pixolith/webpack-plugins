@@ -2,6 +2,7 @@ const fs = require('fs'),
     pathLib = require('path'),
     rimraf = require('rimraf'),
     chokidar = require('chokidar'),
+    consola = require('consola'),
     pluginPath = process.env.PLUGIN_PATH,
     vendorPath = process.env.VENDOR_PATH,
     publicPath = process.env.PUBLIC_PATH,
@@ -20,18 +21,18 @@ const watcher = {
         watcherInstance
             .on('add', (path) => watcher.run(path))
             .on('unlink', (path) => watcher.run(path))
-            .on('error', (error) => console.log(`Watcher error: ${error}`));
+            .on('error', (error) => consola.error(`Watcher error: ${error}`));
 
         return watcher;
     },
 
     run(path) {
         if (!path) {
-            console.log('Rebuilding Index Files');
+            consola.info('Rebuilding Index Files');
         }
 
         if (path) {
-            console.log(`Adding ${path} to watchlist`);
+            consola.info(`Adding ${path} to watchlist`);
         }
 
         watcher.compile(
@@ -133,7 +134,7 @@ const watcher = {
             }
 
             if (!prefix && !affix) {
-                console.error('filetype not supported', filePath);
+                consola.error('filetype not supported', filePath);
             }
 
             files
