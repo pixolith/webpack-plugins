@@ -3,10 +3,10 @@
     "public": true,
     "version": "1.0.2",
     "description": "",
-    "main": "dist/webpack-twig-assets-emitter-plugin.js",
+    "main": "src/index.js",
     "scripts": {},
     "files": [
-        "dist/"
+        "src/"
     ],
     "engines": {
         "node": ">=8.10.0"
