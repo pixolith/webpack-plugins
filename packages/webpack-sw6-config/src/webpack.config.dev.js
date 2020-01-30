@@ -47,7 +47,6 @@ module.exports = {
                 test: /\.js$/,
                 loader: 'eslint-loader',
                 exclude: (file) => /node_modules/.test(file),
-                enforce: 'pre',
                 options: {
                     formatter: require('eslint-friendly-formatter'),
                 },

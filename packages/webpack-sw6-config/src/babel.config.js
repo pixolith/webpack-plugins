@@ -1,7 +1,7 @@
 module.exports = {
     presets: [
         [
-            '@babel/env',
+            '@babel/preset-env',
             {
                 shippedProposals: true,
                 corejs: 3,
@@ -10,9 +10,8 @@ module.exports = {
                 targets: {
                     browsers: require(process.cwd() + '/package.json')
                         .browserslist[
-                        process.env.SHOPWARE_MODE + process.env.MODE
-                            ? ':modern'
-                            : ''
+                        process.env.SHOPWARE_MODE +
+                            (process.env.MODE ? ':modern' : '')
                     ],
                 },
             },
@@ -20,6 +19,7 @@ module.exports = {
     ],
     plugins: [
         '@babel/syntax-dynamic-import',
+        '@babel/plugin-transform-runtime',
         '@babel/proposal-object-rest-spread',
         '@babel/plugin-proposal-class-properties',
     ],

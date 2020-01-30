@@ -70,15 +70,30 @@ module.exports = {
         rules: [
             {
                 test: /\.js$/,
-                exclude: (file) =>
-                    /node_modules/.test(file) && isModern
-                        ? !JSON.parse(process.env.JS_TRANSPILE).find((lib) =>
-                              lib.test(file),
-                          )
-                        : true,
-                loader: 'babel-loader',
-                options: {
-                    configFile: Path.resolve(__dirname, 'babel.config.js'),
+                exclude: (file) => {
+                    if (/node_modules/.test(file)) {
+                        return true;
+                    }
+
+                    if (
+                        !isModern &&
+                        JSON.parse(process.env.JS_TRANSPILE) &&
+                        JSON.parse(process.env.JS_TRANSPILE).length
+                    ) {
+                        return (
+                            JSON.parse(process.env.JS_TRANSPILE).filter((lib) =>
+                                lib.test(file),
+                            ).length > 0
+                        );
+                    }
+
+                    return false;
+                },
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        configFile: Path.resolve(__dirname, 'babel.config.js'),
+                    },
                 },
             },
         ],

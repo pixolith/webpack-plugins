@@ -4,7 +4,7 @@ module.exports = ({ file, options, env }) => {
             // to edit target browsers: use "browserslist" field in package.json
             autoprefixer: {
                 grid: true,
-                env: options.mode,
+                env: options.mode + (options.isModern ? ':modern' : ''),
             },
             cssnano: {
                 preset: [
