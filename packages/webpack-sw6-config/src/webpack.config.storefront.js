@@ -6,7 +6,7 @@ const Path = require('path'),
     TwigAssetEmitterPlugin = require('@pixolith/webpack-twig-assets-emitter-plugin'),
     entry = require('webpack-glob-entry'),
     outputConfig = {
-        path: path.join(__dirname, 'www/public'),
+        path: Path.join(process.cwd(), 'www/public'),
         publicPath: '/',
         chunkFilename: 'js/[name].vendor.js',
         filename: (chunkData) => {
@@ -47,12 +47,12 @@ module.exports = {
         ],
         alias: {
             src: Path.join(
-                __dirname,
+                process.cwd(),
                 '/www/vendor/shopware/storefront/Resources/app/storefront/src',
             ),
-            '@swStorefront': Path.join(__dirname),
+            '@swStorefront': Path.join(process.cwd()),
             '@swBootstrap': Path.join(
-                __dirname,
+                process.cwd(),
                 '/www/vendor/shopware/storefront/Resources/app/storefront/vendor/bootstrap/scss',
             ),
         },

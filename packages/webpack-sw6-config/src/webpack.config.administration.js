@@ -6,7 +6,7 @@ const path = require('path'),
     AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
     outputConfig = {
         futureEmitAssets: true,
-        path: path.resolve(__dirname, 'www/public/bundles'),
+        path: path.resolve(process.cwd(), 'www/public/bundles'),
         publicPath: './',
         chunkFilename: 'js/admin-[name].vendor.js',
         filename: (chunkData) => {
@@ -57,7 +57,7 @@ module.exports = {
         ],
         alias: {
             src: path.join(
-                __dirname,
+                process.cwd(),
                 '/www/vendor/shopware/storefront/Resources/app/storefront/src',
             ),
         },

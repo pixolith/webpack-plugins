@@ -1,18 +1,17 @@
 const webpack = require('webpack'),
-    path = require('path'),
+    Path = require('path'),
     consola = require('consola'),
     fs = require('fs'),
     OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin'),
     StyleLintPlugin = require('stylelint-webpack-plugin'),
     isProd = process.env.NODE_ENV === 'production',
     WriteFilePlugin = require('write-file-webpack-plugin'),
-    transpileLibrariesList = require('./webpack.config.transpile'),
     privatePath = process.env.PLUGIN_PATH,
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     watcher = require('@pixolith/webpack-watcher'),
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
     outputConfig = {
-        path: path.resolve(__dirname, 'www/public/bundles'),
+        path: Path.resolve(process.cwd(), 'www/public/bundles'),
         publicPath: './',
         chunkFilename: 'js/admin-[name].vendor.js',
         filename: (chunkData) => {
@@ -40,14 +39,14 @@ module.exports = {
     resolve: {
         modules: [
             'node_modules',
-            path.resolve(privatePath, 'js'),
-            path.resolve(
+            Path.resolve(privatePath, 'js'),
+            Path.resolve(
                 './www/vendor/shopware/storefront/Resources/app/storefront/vendor',
             ),
         ],
         alias: {
-            src: path.join(
-                __dirname,
+            src: Path.join(
+                process.cwd(),
                 '/www/vendor/shopware/storefront/Resources/app/storefront/src',
             ),
         },
@@ -60,10 +59,12 @@ module.exports = {
                 test: /\.js$/,
                 exclude: (file) =>
                     /node_modules/.test(file) &&
-                    !transpileLibrariesList.find((lib) => lib.test(file)),
+                    !JSON.parse(process.env.JS_TRANSPILE).find((lib) =>
+                        lib.test(file),
+                    ),
                 loader: 'babel-loader',
                 options: {
-                    configFile: path.resolve(__dirname, 'babel.config.js'),
+                    configFile: Path.resolve(__dirname, 'babel.config.js'),
                 },
             },
             {
@@ -93,6 +94,7 @@ module.exports = {
                         options: {
                             sourceMap: !isProd,
                             config: {
+                                path: Path.join(__dirname),
                                 ctx: {
                                     mode: process.env.SHOPWARE_MODE,
                                 },
@@ -108,7 +110,7 @@ module.exports = {
                     {
                         loader: 'sass-resources-loader',
                         options: {
-                            resources: process.env.RESOURCES_PATHS,
+                            resources: JSON.parse(process.env.RESOURCES_PATHS),
                         },
                     },
                 ],
@@ -157,16 +159,22 @@ module.exports = {
         stats: 'errors-only',
         https: {
             key: fs.readFileSync(
-                __dirname +
-                    '/ansible/shopware6/roles/apache/files/px-staging.de.key',
+                Path.join(
+                    process.cwd() +
+                        '/ansible/shopware6/roles/apache/files/px-staging.de.key',
+                ),
             ),
             cert: fs.readFileSync(
-                __dirname +
-                    '/ansible/shopware6/roles/apache/files/px-staging.de.crt',
+                Path.join(
+                    process.cwd() +
+                        '/ansible/shopware6/roles/apache/files/px-staging.de.crt',
+                ),
             ),
             ca: fs.readFileSync(
-                __dirname +
-                    '/ansible/shopware6/roles/apache/files/intermediate.crt',
+                Path.join(
+                    process.cwd() +
+                        '/ansible/shopware6/roles/apache/files/intermediate.crt',
+                ),
             ),
         },
         after() {
@@ -193,8 +201,9 @@ module.exports = {
         }),
 
         new StyleLintPlugin({
-            files: [path.join(privatePath, '/**/*.scss')],
+            files: [Path.join(privatePath, '/**/*.scss')],
             failOnError: false,
+            configFile: Path.join(__dirname + './stylelint.config.js'),
         }),
 
         new webpack.DefinePlugin({
