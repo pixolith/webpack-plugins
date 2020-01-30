@@ -1,4 +1,4 @@
-const path = require('path'),
+const Path = require('path'),
     privatePath = process.env.PLUGIN_PATH,
     changeCase = require('change-case'),
     entry = require('webpack-glob-entry'),
@@ -9,7 +9,7 @@ const path = require('path'),
     isModern = process.env.MODE === 'modern',
     outputConfig = {
         futureEmitAssets: true,
-        path: path.resolve(process.cwd(), publicPath),
+        path: Path.resolve(process.cwd(), publicPath),
         publicPath: './',
         chunkFilename: isModern
             ? 'js/admin-[name].vendor.modern.js'
@@ -44,7 +44,7 @@ const createEntry = () => {
     let entriesPlugins = entry(
         (filePath) =>
             changeCase.paramCase(filePath.match(/plugins\/(Pxsw[\w]*)\//)[1]),
-        path.resolve(privatePath, 'index.js'),
+        Path.resolve(privatePath, 'index.js'),
     );
 
     return { ...entriesPlugins };
@@ -59,14 +59,14 @@ module.exports = {
     resolve: {
         modules: [
             'node_modules',
-            path.resolve(privatePath, 'js'),
-            path.resolve(
+            Path.resolve(privatePath, 'js'),
+            Path.resolve(
                 process.cwd(),
                 'www/vendor/shopware/storefront/Resources/app/storefront/vendor',
             ),
         ],
         alias: {
-            src: path.join(
+            src: Path.join(
                 process.cwd(),
                 'www/vendor/shopware/storefront/Resources/app/storefront/src',
             ),

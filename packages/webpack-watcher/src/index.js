@@ -6,8 +6,12 @@ const Fs = require('fs'),
     pluginPath = process.env.PLUGIN_PATH,
     vendorPath = process.env.VENDOR_PATH,
     publicPath = process.env.PUBLIC_PATH,
-    sharedPath = Path.resolve(pluginPath, process.env.SHARED_SCSS_PATH),
-    sharedVendorPath = Path.resolve(vendorPath, process.env.SHARED_SCSS_PATH),
+    sharedPath = pluginPath
+        ? Path.resolve(pluginPath, process.env.SHARED_SCSS_PATH)
+        : null,
+    sharedVendorPath = vendorPath
+        ? Path.resolve(vendorPath, process.env.SHARED_SCSS_PATH)
+        : null,
     Glob = require('glob'),
     SCSS_FOLDER = 'scss',
     JS_FOLDER = 'js';
@@ -57,8 +61,6 @@ const watcher = {
 
     clean() {
         rimraf.sync(`${publicPath}/**/*.hot-update.*`);
-        rimraf.sync(`${publicPath}/**/*.js`);
-        rimraf.sync(`${publicPath}/**/*.css`);
     },
 
     compare(a, b) {

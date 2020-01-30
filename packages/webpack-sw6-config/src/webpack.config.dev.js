@@ -107,7 +107,6 @@ module.exports = {
             },
         ],
     },
-    output: outputConfig,
     optimization: {
         splitChunks: false,
     },
