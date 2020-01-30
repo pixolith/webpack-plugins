@@ -1,6 +1,6 @@
 const Consola = require('consola');
 const Dotenv = require('dotenv');
-const sw6Config = require('@pixolith/webpack-sw6-config');
+const sw6Config = require('./index');
 const isProd = process.env.NODE_ENV === 'production';
 const merge = require('webpack-merge');
 
