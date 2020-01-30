@@ -1,6 +1,6 @@
 const webpack = require('webpack'),
     Path = require('path'),
-    consola = require('consola'),
+    Consola = require('consola'),
     fs = require('fs'),
     OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin'),
     StyleLintPlugin = require('stylelint-webpack-plugin'),
@@ -26,7 +26,7 @@ const webpack = require('webpack'),
     };
 
 let runBefore = () => {
-    consola.info('Cleaning and Building index files');
+    Consola.info('Cleaning and Building index files');
     watcher.clean();
     watcher.run();
 };
@@ -179,7 +179,9 @@ module.exports = {
         },
         after() {
             if (!isProd) {
-                console.log('Starting watcher');
+                Consola.success(
+                    `Starting webpack in [${process.env.NODE_ENV}] with [${process.env.SHOPWARE_MODE}]`,
+                );
                 watcher.watch();
             }
         },
@@ -190,7 +192,7 @@ module.exports = {
                 watcher.run();
             },
             beforeRun() {
-                console.log('Cleaning output folder');
+                Consola.info('Cleaning output folder');
                 watcher.clean();
                 watcher.run();
             },
