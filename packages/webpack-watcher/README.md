@@ -1,4 +1,4 @@
-# Webpack Hook Plugin
+# Webpack Watcher
 
 ## How to use
 
