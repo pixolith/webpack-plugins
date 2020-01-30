@@ -43,6 +43,7 @@ module.exports = {
         // loader order is from right to left or from bottom to top depending on the notation but basicly always reverse
         rules: [
             {
+                enforce: 'pre',
                 test: /\.js$/,
                 loader: 'eslint-loader',
                 exclude: (file) => /node_modules/.test(file),
