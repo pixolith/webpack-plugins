@@ -1,53 +1,57 @@
-const fs = require('fs'),
-    pathLib = require('path'),
+const Fs = require('fs'),
+    Path = require('path'),
     rimraf = require('rimraf'),
-    chokidar = require('chokidar'),
-    consola = require('consola'),
+    Chokidar = require('chokidar'),
+    Consola = require('consola'),
     pluginPath = process.env.PLUGIN_PATH,
     vendorPath = process.env.VENDOR_PATH,
     publicPath = process.env.PUBLIC_PATH,
-    glob = require('glob'),
+    sharedPath = Path.resolve(pluginPath, process.env.SHARED_SCSS_PATH),
+    sharedVendorPath = Path.resolve(vendorPath, process.env.SHARED_SCSS_PATH),
+    Glob = require('glob'),
     SCSS_FOLDER = 'scss',
     JS_FOLDER = 'js';
 
 const watcher = {
     watch() {
-        const fileList = glob.sync(pluginPath + '/index.js');
+        const fileList = Glob.sync(pluginPath + '/index.js');
 
-        const watcherInstance = chokidar.watch(fileList, {
+        const watcherInstance = Chokidar.watch(fileList, {
             persistent: true,
         });
 
         watcherInstance
             .on('add', (path) => watcher.run(path))
             .on('unlink', (path) => watcher.run(path))
-            .on('error', (error) => consola.error(`Watcher error: ${error}`));
+            .on('error', (error) => Consola.error(`Watcher error: ${error}`));
 
         return watcher;
     },
 
     run(path) {
         if (!path) {
-            consola.info('Rebuilding Index Files');
+            Consola.info('Rebuilding Index Files');
         }
 
         if (path) {
-            consola.info(`Adding ${path} to watchlist`);
+            Consola.info(`Adding ${path} to watchlist`);
         }
 
         watcher.compile(
-            glob
-                .sync(`${pluginPath}/${SCSS_FOLDER}`)
-                .concat(
-                    vendorPath ? glob.sync(`${vendorPath}/${SCSS_FOLDER}`) : [],
-                ),
+            [].concat(
+                sharedPath ? Glob.sync(`${sharedPath}/${SCSS_FOLDER}`) : [],
+                pluginPath ? Glob.sync(`${pluginPath}/${SCSS_FOLDER}`) : [],
+                sharedVendorPath
+                    ? Glob.sync(`${sharedVendorPath}/${SCSS_FOLDER}`)
+                    : [],
+                vendorPath ? Glob.sync(`${vendorPath}/${SCSS_FOLDER}`) : [],
+            ),
         );
         watcher.compile(
-            glob
-                .sync(`${pluginPath}/${JS_FOLDER}`)
-                .concat(
-                    vendorPath ? glob.sync(`${vendorPath}/${JS_FOLDER}`) : [],
-                ),
+            [].concat(
+                pluginPath ? Glob.sync(`${pluginPath}/${JS_FOLDER}`) : [],
+                vendorPath ? Glob.sync(`${vendorPath}/${JS_FOLDER}`) : [],
+            ),
         );
     },
 
@@ -62,13 +66,12 @@ const watcher = {
     },
 
     walkTheLine(path) {
-        let files = fs
-            .readdirSync(path)
+        let files = Fs.readdirSync(path)
             .filter((file) => file.charAt(0) !== '.')
             .filter((file) => file)
             .map(function(file) {
                 var subpath = path + '/' + file;
-                if (fs.lstatSync(subpath).isDirectory()) {
+                if (Fs.lstatSync(subpath).isDirectory()) {
                     return watcher.walkTheLine(subpath);
                 } else {
                     return path + '/' + file;
@@ -109,13 +112,27 @@ const watcher = {
                 return;
             }
 
-            let isJS = pathLib.extname(files[files.length - 1]) === '.js';
-            let isSCSS = pathLib.extname(files[files.length - 1]) === '.scss';
+            let isJS = Path.extname(files[files.length - 1]) === '.js';
+            let isSCSS = Path.extname(files[files.length - 1]) === '.scss';
 
             if (isJS) {
-                name = `../index${pathLib.extname(files[files.length - 1])}`;
+                if (!filePath.includes('/shared/')) {
+                    if (
+                        Fs.existsSync(
+                            Path.resolve(
+                                filePath,
+                                `../../../shared/${SCSS_FOLDER}`,
+                            ),
+                        )
+                    ) {
+                        files = ['./../../shared/scss/index.scss'].concat(
+                            files,
+                        );
+                    }
+                }
+                name = `../index${Path.extname(files[files.length - 1])}`;
 
-                let cssFiles = glob.sync(
+                let cssFiles = Glob.sync(
                     `${filePath.replace(JS_FOLDER, SCSS_FOLDER)}/**/*.scss`,
                 );
 
@@ -128,13 +145,13 @@ const watcher = {
             }
 
             if (isSCSS) {
-                name = `index${pathLib.extname(files[files.length - 1])}`;
+                name = `index${Path.extname(files[files.length - 1])}`;
                 prefix = '@import "';
                 affix = '";\n';
             }
 
             if (!prefix && !affix) {
-                consola.error('filetype not supported', filePath);
+                Consola.error('filetype not supported', filePath);
             }
 
             files
@@ -153,7 +170,7 @@ const watcher = {
                     '}\n';
             }
 
-            fs.writeFileSync(`${filePath}/${name}`, buffer);
+            Fs.writeFileSync(`${filePath}/${name}`, buffer);
         });
     },
 };
