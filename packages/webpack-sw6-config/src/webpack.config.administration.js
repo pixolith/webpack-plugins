@@ -2,13 +2,18 @@ const path = require('path'),
     privatePath = process.env.PLUGIN_PATH,
     changeCase = require('change-case'),
     entry = require('webpack-glob-entry'),
+    publicPath = process.env.PUBLIC_PATH,
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
+    isProd = process.env.NODE_ENV === 'development',
+    isModern = process.env.MODE === 'modern',
     outputConfig = {
         futureEmitAssets: true,
-        path: path.resolve(process.cwd(), 'www/public/bundles'),
+        path: path.resolve(process.cwd(), publicPath),
         publicPath: './',
-        chunkFilename: 'js/admin-[name].vendor.js',
+        chunkFilename: isModern
+            ? 'js/admin-[name].vendor.modern.js'
+            : 'js/admin-[name].vendor.js',
         filename: (chunkData) => {
             let pluginName = chunkData.chunk.name
                 .toLowerCase()
@@ -16,7 +21,7 @@ const path = require('path'),
             return `${pluginName.replace(
                 /-/g,
                 '',
-            )}/administration/js/${pluginName}.js`;
+            )}/administration/js/${pluginName}${isModern ? '.modern' : ''}.js`;
         },
     },
     extractCssChunksConfig = {
@@ -25,10 +30,14 @@ const path = require('path'),
             return `${pluginName.replace(
                 /-/g,
                 '',
-            )}/administration/css/${pluginName}.css`;
+            )}/administration/css/${pluginName}${
+                isModern ? '.modern' : ''
+            }.css`;
         },
-        chunkFilename: 'css/admin-[name].vendor.css',
-        hot: process.env.NODE_ENV === 'development',
+        chunkFilename: isModern
+            ? 'css/admin-[name].vendor.modern.css'
+            : 'css/admin-[name].vendor.css',
+        hot: !isProd,
     };
 
 const createEntry = () => {
@@ -52,22 +61,36 @@ module.exports = {
             'node_modules',
             path.resolve(privatePath, 'js'),
             path.resolve(
-                './www/vendor/shopware/storefront/Resources/app/storefront/vendor',
+                process.cwd(),
+                'www/vendor/shopware/storefront/Resources/app/storefront/vendor',
             ),
         ],
         alias: {
             src: path.join(
                 process.cwd(),
-                '/www/vendor/shopware/storefront/Resources/app/storefront/src',
+                'www/vendor/shopware/storefront/Resources/app/storefront/src',
             ),
         },
+    },
+    module: {
+        // loader order is from right to left or from bottom to top depending on the notation but basicly always reverse
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: (file) => /node_modules/.test(file),
+                loader: 'babel-loader',
+                options: {
+                    configFile: Path.resolve(__dirname, 'babel.config.js'),
+                },
+            },
+        ],
     },
     output: outputConfig,
     plugins: [
         new AssetsCopyPlugin({
             includes: ['js', 'css'],
             ignoreFiles: [/\*.hot-update.js/],
-            from: 'www/public/bundles',
+            from: publicPath,
             to: 'www/custom/plugins/{plugin}/src/Resources/public',
         }),
 

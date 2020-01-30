@@ -1,5 +1,6 @@
 const webpack = require('webpack'),
     TerserPlugin = require('terser-webpack-plugin'),
+    isModern = process.env.MODE === 'modern',
     config = {
         devtool: 'none',
         performance: {
@@ -18,10 +19,10 @@ const webpack = require('webpack'),
                 new TerserPlugin({
                     terserOptions: {
                         compress: {
-                            drop_console: false,
+                            drop_console: true,
                         },
                         mangle: true,
-                        ecma: 5, // specify one of: 5, 6, 7 or 8
+                        ecma: isModern ? 6 : 5, // specify one of: 5, 6, 7 or 8
                         keep_classnames: false,
                         keep_fnames: false,
                         ie8: false,

@@ -5,18 +5,26 @@ const Path = require('path'),
     ChangeCase = require('change-case'),
     TwigAssetEmitterPlugin = require('@pixolith/webpack-twig-assets-emitter-plugin'),
     entry = require('webpack-glob-entry'),
+    isProd = process.env.NODE_ENV === 'development',
+    isModern = process.env.MODE === 'modern',
     outputConfig = {
         path: Path.join(process.cwd(), 'www/public'),
         publicPath: '/',
-        chunkFilename: 'js/[name].vendor.js',
+        chunkFilename: isModern
+            ? 'js/[name].vendor.modern.js'
+            : 'js/[name].vendor.js',
         filename: (chunkData) => {
-            return `js/${chunkData.chunk.name.toLowerCase()}.js`;
+            return `js/${chunkData.chunk.name.toLowerCase()}${
+                isModern ? '.modern' : ''
+            }.js`;
         },
     },
     extractCssChunksConfig = {
-        filename: 'css/[name].css',
-        chunkFilename: 'css/[name].vendor.css',
-        hot: process.env.NODE_ENV === 'development',
+        filename: isModern ? 'css/[name].modern.css' : 'css/[name].css',
+        chunkFilename: isModern
+            ? 'css/[name].vendor.modern.css'
+            : 'css/[name].vendor.css',
+        hot: !isProd,
     };
 
 const createEntry = () => {
@@ -56,6 +64,24 @@ module.exports = {
                 '/www/vendor/shopware/storefront/Resources/app/storefront/vendor/bootstrap/scss',
             ),
         },
+    },
+    module: {
+        // loader order is from right to left or from bottom to top depending on the notation but basicly always reverse
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: (file) =>
+                    /node_modules/.test(file) && isModern
+                        ? !JSON.parse(process.env.JS_TRANSPILE).find((lib) =>
+                              lib.test(file),
+                          )
+                        : true,
+                loader: 'babel-loader',
+                options: {
+                    configFile: Path.resolve(__dirname, 'babel.config.js'),
+                },
+            },
+        ],
     },
     output: outputConfig,
     plugins: [

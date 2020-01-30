@@ -9,21 +9,8 @@ const webpack = require('webpack'),
     privatePath = process.env.PLUGIN_PATH,
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     watcher = require('@pixolith/webpack-watcher'),
-    HookPlugin = require('@pixolith/webpack-hook-plugin'),
-    outputConfig = {
-        path: Path.resolve(process.cwd(), 'www/public/bundles'),
-        publicPath: './',
-        chunkFilename: 'js/admin-[name].vendor.js',
-        filename: (chunkData) => {
-            let pluginName = chunkData.chunk.name
-                .toLowerCase()
-                .replace('vendor-', '');
-            return `${pluginName.replace(
-                /-/g,
-                '',
-            )}/administration/js/${pluginName}.js`;
-        },
-    };
+    isModern = process.env.MODE === 'modern',
+    HookPlugin = require('@pixolith/webpack-hook-plugin');
 
 let runBefore = () => {
     Consola.info('Cleaning and Building index files');
@@ -57,18 +44,6 @@ module.exports = {
         rules: [
             {
                 test: /\.js$/,
-                exclude: (file) =>
-                    /node_modules/.test(file) &&
-                    !JSON.parse(process.env.JS_TRANSPILE).find((lib) =>
-                        lib.test(file),
-                    ),
-                loader: 'babel-loader',
-                options: {
-                    configFile: Path.resolve(__dirname, 'babel.config.js'),
-                },
-            },
-            {
-                test: /\.js$/,
                 loader: 'eslint-loader',
                 exclude: (file) => /node_modules/.test(file),
                 enforce: 'pre',
@@ -79,9 +54,7 @@ module.exports = {
             {
                 test: /(\.scss|\.css)$/,
                 use: [
-                    process.env.NODE_ENV === 'production'
-                        ? ExtractCssChunks.loader
-                        : 'style-loader',
+                    isProd ? ExtractCssChunks.loader : 'style-loader',
                     {
                         loader: 'css-loader',
                         options: {
@@ -97,6 +70,7 @@ module.exports = {
                                 path: Path.join(__dirname),
                                 ctx: {
                                     mode: process.env.SHOPWARE_MODE,
+                                    isModern: isModern,
                                 },
                             },
                         },
