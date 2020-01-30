@@ -1,5 +1,5 @@
 const fs = require('fs');
-const path = require('path');
+const Path = require('path');
 const mkdirp = require('mkdirp');
 const { promisify } = require('util');
 const rimraf = require('rimraf');
@@ -59,6 +59,13 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                 }
             });
 
+            rimraf.sync(
+                'www/custom/plugins/*/src/Resources/views/storefront/_px*.twig',
+            );
+            rimraf.sync(
+                'www/vendor/pxsw/*/src/Resources/views/storefront/_px*.twig',
+            );
+
             const tasks = Object.keys(options.template).map(
                 (templateKey) => async () => {
                     let template = await readFileAsync(
@@ -103,10 +110,18 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                     .join('\n')}`;
                             }
 
+                            if (templateKey === 'scriptsmodern') {
+                                output = `${files[key].js
+                                    .map((file) => {
+                                        return `<script type="module" src="/${file}"></script><script defer nomodule src="/${file}"></script>`;
+                                    })
+                                    .join('\n')}`;
+                            }
+
                             if (templateKey === 'scripts') {
                                 output = `${files[key].js
                                     .map((file) => {
-                                        return `<script src="/${file}" defer></script>`;
+                                        return `<script defer src="/${file}"></script>`;
                                     })
                                     .join('\n')}`;
                             }
@@ -122,16 +137,16 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                 )}`;
                             }
 
-                            pluginPath = path.join(
+                            pluginPath = Path.join(
                                 pluginPath,
-                                path.join(
+                                Path.join(
                                     `src/Resources/views/storefront/${options.template[templateKey].path}`,
                                 ),
                             );
 
                             if (key.includes('pxsw-project')) {
                                 template = template.replace(
-                                    `{% sw_extends '${path.join(
+                                    `{% sw_extends '${Path.join(
                                         options.template[templateKey].namespace,
                                         options.template[templateKey].path,
                                         options.template[templateKey].filename,
@@ -147,7 +162,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             await mkdirp(pluginPath);
 
                             let exists = await existsAsync(
-                                path.join(
+                                Path.join(
                                     pluginPath,
                                     options.template[templateKey].filename,
                                 ),
@@ -155,7 +170,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
 
                             if (exists) {
                                 let file = await readFileAsync(
-                                    path.join(
+                                    Path.join(
                                         pluginPath,
                                         options.template[templateKey].filename,
                                     ),
@@ -165,12 +180,10 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                 template = file;
                             }
 
-                            let outputPath = path.join(
+                            let outputPath = Path.join(
                                 pluginPath,
                                 options.template[templateKey].filename,
                             );
-
-                            rimraf.sync(outputPath);
 
                             await writeFileAsync(
                                 outputPath,

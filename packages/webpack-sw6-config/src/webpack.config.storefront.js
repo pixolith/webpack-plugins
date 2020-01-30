@@ -104,7 +104,7 @@ module.exports = {
             includes: ['js', 'css'],
             ignoreFiles: [/\*.hot-update.js/],
             template: {
-                scripts: {
+                [isModern ? 'scriptsmodern' : 'scripts']: {
                     namespace: '@Storefront/storefront',
                     path: '',
                     filename: '_px_base.html.twig',
