@@ -8,7 +8,7 @@ module.exports = {
                 debug: false,
                 useBuiltIns: 'usage',
                 targets: {
-                    browsers: require(process.cwd() + 'package.json')
+                    browsers: require(process.cwd() + '/package.json')
                         .browserslist[process.env.SHOPWARE_MODE],
                 },
             },

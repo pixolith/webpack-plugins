@@ -203,7 +203,7 @@ module.exports = {
         new StyleLintPlugin({
             files: [Path.join(privatePath, '/**/*.scss')],
             failOnError: false,
-            configFile: Path.join(__dirname + './stylelint.config.js'),
+            configFile: Path.join(__dirname, 'stylelint.config.js'),
         }),
 
         new webpack.DefinePlugin({
