@@ -1,7 +1,7 @@
 {
     "name": "@pixolith/webpack-sw6-config",
     "public": true,
-    "version": "1.0.14",
+    "version": "1.0.15",
     "description": "",
     "main": "src/index.js",
     "scripts": {},
@@ -76,6 +76,6 @@
         "write-file-webpack-plugin": "^4.5.1"
     },
     "devDependencies": {
-        "@pixolith/webpack-filename-linter-plugin": "^1.0.13"
+        "@pixolith/webpack-filename-linter-plugin": "^1.0.15"
     }
 }
