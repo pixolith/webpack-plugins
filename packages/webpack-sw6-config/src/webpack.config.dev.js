@@ -181,10 +181,11 @@ module.exports = {
         }),
 
         new FilenameLinterPlugin({
-            ignoreFiles: [/w/],
+            ignoreFiles: [/node_modules/, /vendor\/shopware/, /.*\.plugin\.js/],
             rules: {
-                css: 'kebab',
-                js: 'kebab',
+                // check cases here https://github.com/blakeembrey/change-case
+                scss: 'paramCase',
+                js: 'paramCase',
             },
         }),
 

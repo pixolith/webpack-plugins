@@ -45,8 +45,6 @@ const createEntry = () => {
     return { ...entriesPlugins, ...entriesVendor };
 };
 
-console.log(isModern, isProd);
-
 module.exports = {
     entry: createEntry(),
     resolve: {
