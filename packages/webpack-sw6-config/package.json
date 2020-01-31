@@ -74,5 +74,8 @@
         "webpack-merge": "^4.2.2",
         "webpackbar": "^4.0.0",
         "write-file-webpack-plugin": "^4.5.1"
+    },
+    "devDependencies": {
+        "@pixolith/webpack-filename-linter-plugin": "^1.0.13"
     }
 }

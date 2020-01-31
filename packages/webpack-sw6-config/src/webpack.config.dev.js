@@ -8,6 +8,7 @@ const webpack = require('webpack'),
     WriteFilePlugin = require('write-file-webpack-plugin'),
     privatePath = process.env.PLUGIN_PATH,
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
+    FilenameLinterPlugin = require('@pixolith/webpack-filename-linter-plugin'),
     watcher = require('@pixolith/webpack-watcher'),
     isModern = process.env.MODE === 'modern',
     HookPlugin = require('@pixolith/webpack-hook-plugin');
@@ -176,6 +177,14 @@ module.exports = {
                 Consola.info('Cleaning output folder');
                 watcher.clean();
                 watcher.run();
+            },
+        }),
+
+        new FilenameLinterPlugin({
+            ignoreFiles: [/w/],
+            rules: {
+                css: 'kebab',
+                js: 'kebab',
             },
         }),
 
