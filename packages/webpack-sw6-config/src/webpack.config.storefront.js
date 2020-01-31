@@ -5,25 +5,27 @@ const Path = require('path'),
     ChangeCase = require('change-case'),
     TwigAssetEmitterPlugin = require('@pixolith/webpack-twig-assets-emitter-plugin'),
     entry = require('webpack-glob-entry'),
-    isProd = process.env.NODE_ENV === 'development',
+    isProd = process.env.NODE_ENV === 'production',
     isModern = process.env.MODE === 'modern',
     outputConfig = {
         path: Path.join(process.cwd(), 'www/public'),
         publicPath: '/',
-        chunkFilename: isModern
-            ? 'js/[name].vendor.modern.js'
-            : 'js/[name].vendor.js',
+        chunkFilename: `js/[name]${
+            isModern ? '.modern' : '' + isProd ? '.[contenthash]' : ''
+        }.js`,
         filename: (chunkData) => {
-            return `js/${chunkData.chunk.name.toLowerCase()}${
-                isModern ? '.modern' : ''
-            }.js`;
+            return `js/${chunkData.chunk.name.toLowerCase()}${(isModern
+                ? '.modern'
+                : '') + (isProd ? `.${chunkData.chunk.hash}` : '')}.js`;
         },
     },
     extractCssChunksConfig = {
-        filename: isModern ? 'css/[name].modern.css' : 'css/[name].css',
-        chunkFilename: isModern
-            ? 'css/[name].vendor.modern.css'
-            : 'css/[name].vendor.css',
+        filename: `css/[name]${isModern ? '.modern' : ''}${
+            isProd ? '.[contenthash]' : ''
+        }.css`,
+        chunkFilename: `css/[name].vendor${isModern ? '.modern' : ''}${
+            isProd ? '.[contenthash]' : ''
+        }.css`,
         hot: !isProd,
     };
 
@@ -42,6 +44,8 @@ const createEntry = () => {
 
     return { ...entriesPlugins, ...entriesVendor };
 };
+
+console.log(isModern, isProd);
 
 module.exports = {
     entry: createEntry(),

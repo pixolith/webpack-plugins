@@ -13,5 +13,5 @@ npm install @pixolith/webpack-sw6-config--save-dev
 Require the plugin in your projects `webpack.config.js` in the version you desire;
 
 ```javascript
-const Watcher = require('webpack-sw6-config');
+const sw6Config = require('webpack-sw6-config');
 ```

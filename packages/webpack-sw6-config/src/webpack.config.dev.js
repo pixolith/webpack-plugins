@@ -94,21 +94,29 @@ module.exports = {
                 use: 'html-loader',
             },
             {
-                test: /\.png$/,
-                use: 'url-loader?limit=100000',
-            },
-            {
-                test: /\.jpg$/,
-                use: 'file-loader',
+                test: /\.png|\.jpg$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 100000,
+                            outputPath: 'images',
+                        },
+                    },
+                ],
             },
             {
                 test: /(\.woff|\.woff2)$/,
-                use: 'file-loader',
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: 'fonts',
+                        },
+                    },
+                ],
             },
         ],
-    },
-    optimization: {
-        splitChunks: false,
     },
     devServer: {
         disableHostCheck: true,

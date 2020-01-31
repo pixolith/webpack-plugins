@@ -1,19 +1,16 @@
-const Path = require('path'),
+const path = require('path'),
     privatePath = process.env.PLUGIN_PATH,
     changeCase = require('change-case'),
     entry = require('webpack-glob-entry'),
     publicPath = process.env.PUBLIC_PATH,
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
-    isProd = process.env.NODE_ENV === 'development',
+    isProd = process.env.NODE_ENV === 'production',
     isModern = process.env.MODE === 'modern',
     outputConfig = {
         futureEmitAssets: true,
-        path: Path.resolve(process.cwd(), publicPath),
+        path: path.resolve(process.cwd(), publicPath),
         publicPath: './',
-        chunkFilename: isModern
-            ? 'js/admin-[name].vendor.modern.js'
-            : 'js/admin-[name].vendor.js',
         filename: (chunkData) => {
             let pluginName = chunkData.chunk.name
                 .toLowerCase()
@@ -21,7 +18,7 @@ const Path = require('path'),
             return `${pluginName.replace(
                 /-/g,
                 '',
-            )}/administration/js/${pluginName}${isModern ? '.modern' : ''}.js`;
+            )}/administration/js/${pluginName}.js`;
         },
     },
     extractCssChunksConfig = {
@@ -30,13 +27,8 @@ const Path = require('path'),
             return `${pluginName.replace(
                 /-/g,
                 '',
-            )}/administration/css/${pluginName}${
-                isModern ? '.modern' : ''
-            }.css`;
+            )}/administration/css/${pluginName}.css`;
         },
-        chunkFilename: isModern
-            ? 'css/admin-[name].vendor.modern.css'
-            : 'css/admin-[name].vendor.css',
         hot: !isProd,
     };
 
@@ -44,7 +36,7 @@ const createEntry = () => {
     let entriesPlugins = entry(
         (filePath) =>
             changeCase.paramCase(filePath.match(/plugins\/(Pxsw[\w]*)\//)[1]),
-        Path.resolve(privatePath, 'index.js'),
+        path.resolve(privatePath, 'index.js'),
     );
 
     return { ...entriesPlugins };
@@ -59,14 +51,14 @@ module.exports = {
     resolve: {
         modules: [
             'node_modules',
-            Path.resolve(privatePath, 'js'),
-            Path.resolve(
+            path.resolve(privatePath, 'js'),
+            path.resolve(
                 process.cwd(),
                 'www/vendor/shopware/storefront/Resources/app/storefront/vendor',
             ),
         ],
         alias: {
-            src: Path.join(
+            src: path.join(
                 process.cwd(),
                 'www/vendor/shopware/storefront/Resources/app/storefront/src',
             ),
@@ -96,4 +88,8 @@ module.exports = {
 
         new ExtractCssChunks(extractCssChunksConfig),
     ],
+
+    optimization: {
+        splitChunks: false,
+    },
 };

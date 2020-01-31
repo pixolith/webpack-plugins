@@ -15,6 +15,19 @@ const webpack = require('webpack'),
             removeAvailableModules: true,
             removeEmptyChunks: true,
             sideEffects: false,
+            splitChunks: {
+                cacheGroups: {
+                  defaultVendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    priority: -10
+                  },
+                  default: {
+                    minChunks: 2,
+                    priority: -20,
+                    reuseExistingChunk: true
+                  }
+                },
+            },
             minimizer: [
                 new TerserPlugin({
                     terserOptions: {
