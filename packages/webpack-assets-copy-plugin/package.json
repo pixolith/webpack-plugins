@@ -22,7 +22,6 @@
     },
     "homepage": "https://github.com/pixolith/webpack-plugins/tree/master/packages/webpack-twig-assets-emitter-plugin/#readme",
     "dependencies": {
-        "change-case": "^4.1.1",
         "consola": "^2.11.3",
         "mkdirp": "^1.0.3",
         "p-series": "^2.1.0"

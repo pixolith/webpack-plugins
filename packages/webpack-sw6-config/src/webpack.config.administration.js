@@ -82,8 +82,23 @@ module.exports = {
         new AssetsCopyPlugin({
             includes: ['js', 'css'],
             ignoreFiles: [/\*.hot-update.js/],
-            from: publicPath,
-            to: 'www/custom/plugins/{plugin}/src/Resources/public',
+            files: [
+                {
+                    from: publicPath,
+                    to: 'www/custom/plugins/$plugin/src/Resources/public',
+                    replace: (fromPath, toPath) => {
+                        let pluginName = changeCase.pascalCase(
+                            Path.basename(fromPath).replace(
+                                Path.extname(fromPath),
+                                '',
+                            ),
+                        );
+
+                        toPath = toPath.replace('$plugin', pluginName);
+                        return toPath;
+                    },
+                },
+            ],
         }),
 
         new ExtractCssChunks(extractCssChunksConfig),
