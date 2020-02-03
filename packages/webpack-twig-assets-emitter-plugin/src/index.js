@@ -133,7 +133,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                                     '',
                                                 )}";
 
-                                                head.appendChild(link)`;
+                                                head.appendChild(link);`;
                                             })
                                             .join('\n')}
                                     </script>
