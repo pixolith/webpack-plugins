@@ -1,8 +1,7 @@
 const merge = require('webpack-merge'),
     webpack = require('webpack'),
-    baseConfig = require('./webpack.config.base'),
     TerserPlugin = require('terser-webpack-plugin'),
-    config = merge(baseConfig, {
+    config = {
         devtool: '#cheap-module-source-map',
         performance: {
             hints: 'warning',
@@ -41,6 +40,6 @@ const merge = require('webpack-merge'),
                 },
             }),
         ],
-    });
+    };
 
 module.exports = config;

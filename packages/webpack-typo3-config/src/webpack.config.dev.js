@@ -7,9 +7,19 @@ const webpack = require('webpack'),
     WriteFilePlugin = require('write-file-webpack-plugin'),
     basePath = process.env.PLUGIN_PATH,
     privatePath = path.join(basePath, 'Private'),
+    Consola = require('consola'),
     publicPath = path.join(basePath, 'Public'),
+    isModern = process.env.MODE === 'modern',
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
     watcher = require('@pixolith/webpack-watcher');
+
+let runBefore = () => {
+    Consola.info('Cleaning and Building index files');
+    watcher.clean();
+    watcher.run();
+};
+
+runBefore();
 
 module.exports = {
     target: 'web',
@@ -31,6 +41,10 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: (file) => {
+                    if (/node_modules/.test(file)) {
+                        return true;
+                    }
+
                     if (
                         !isModern &&
                         JSON.parse(process.env.JS_TRANSPILE) &&
@@ -42,6 +56,8 @@ module.exports = {
                             ).length > 0
                         );
                     }
+
+                    return false;
                 },
                 loader: 'babel-loader',
                 options: {
@@ -155,10 +171,29 @@ module.exports = {
     devServer: {
         disableHostCheck: true,
         host: '0.0.0.0',
-        proxy: {
-            '/': 'http://vagrant.pixolith.de',
+        sockHost: 'node.px-staging.de',
+        watchContentBase: false,
+        sockPort: 8080,
+        overlay: {
+            warnings: true,
+            errors: true,
+        },
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods':
+                'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+            'Access-Control-Allow-Headers':
+                'X-Requested-With, content-type, Authorization',
         },
         stats: 'errors-only',
+        after() {
+            if (!isProd) {
+                Consola.success(
+                    `Starting webpack in [${process.env.NODE_ENV}] mode`,
+                );
+                watcher.watch();
+            }
+        },
     },
     plugins: [
         new HookPlugin({
@@ -170,14 +205,6 @@ module.exports = {
                 watcher.clean();
                 watcher.run();
             },
-        }),
-
-        new WebpackShellPlugin({
-            safe: true,
-            onBuildEnd: [
-                'node ./generate-static-files ./www/typo3conf/ext/px_basis_config/Resources/Private/Src/Sass',
-                'node ./generate-static-files ./www/typo3conf/ext/px_basis_config/Resources/Private/Src/Js',
-            ],
         }),
 
         new webpack.ProvidePlugin({

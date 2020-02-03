@@ -6,12 +6,14 @@ const Fs = require('fs'),
     pluginPath = process.env.PLUGIN_PATH,
     vendorPath = process.env.VENDOR_PATH,
     publicPath = process.env.PUBLIC_PATH,
-    sharedPath = pluginPath
-        ? Path.resolve(pluginPath, process.env.SHARED_SCSS_PATH)
-        : null,
-    sharedVendorPath = vendorPath
-        ? Path.resolve(vendorPath, process.env.SHARED_SCSS_PATH)
-        : null,
+    sharedPath =
+        pluginPath && process.env.SHARED_SCSS_PATH
+            ? Path.resolve(pluginPath, process.env.SHARED_SCSS_PATH)
+            : null,
+    sharedVendorPath =
+        vendorPath && process.env.SHARED_SCSS_PATH
+            ? Path.resolve(vendorPath, process.env.SHARED_SCSS_PATH)
+            : null,
     Glob = require('glob'),
     SCSS_FOLDER = process.env.SCSS_FOLDER || 'scss',
     JS_FOLDER = process.env.JS_FOLDER || 'js';
