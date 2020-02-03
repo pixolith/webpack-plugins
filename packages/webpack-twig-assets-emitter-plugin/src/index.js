@@ -23,7 +23,10 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
         async (compilation, next) => {
             let match = /\/([a-z0-9-]*)\.*/,
                 files = {},
-                ignoreFiles = options.ignoreFiles || [],
+                ignoreFiles =
+                    options.ignoreFiles && Array.isArray(options.ignoreFiles)
+                        ? options.ignoreFiles.concat([/\*.hot-update.js/])
+                        : [/\*.hot-update.js/],
                 includes = options.includes || [];
 
             let _compilationAssets = JSON.parse(
@@ -60,10 +63,10 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
             });
 
             rimraf.sync(
-                'www/custom/plugins/*/src/Resources/views/storefront/_px*.twig',
+                'www/custom/plugins/*/src/Resources/views/storefront/**/_px*.twig',
             );
             rimraf.sync(
-                'www/vendor/pxsw/*/src/Resources/views/storefront/_px*.twig',
+                'www/vendor/pxsw/*/src/Resources/views/storefront/**/_px*.twig',
             );
 
             const tasks = Object.keys(options.template).map(
@@ -110,10 +113,38 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                     .join('\n')}`;
                             }
 
+                            if (templateKey === 'stylesmodern') {
+                                output = `
+                                    ${files[key].css
+                                        .map((file) => {
+                                            return `<link rel="stylesheet" href="/${file}">`;
+                                        })
+                                        .join('\n')}
+                                    var isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
+                                    if (isIE11) {
+                                        ${files[key].css
+                                            .map((file) => {
+                                                return `var link = document.createElement("link");
+
+                                                link.rel = "stylesheet";
+                                                link.href = ${file.replace(
+                                                    '.modern',
+                                                    '',
+                                                )};
+
+                                                head.appendChild(link)`;
+                                            })
+                                            .join('\n')}
+                                `;
+                            }
+
                             if (templateKey === 'scriptsmodern') {
                                 output = `${files[key].js
                                     .map((file) => {
-                                        return `<script type="module" src="/${file}"></script><script defer nomodule src="/${file}"></script>`;
+                                        return `<script type="module" src="/${file}"></script><script defer nomodule src="/${file.replace(
+                                            '.modern',
+                                            '',
+                                        )}"></script>`;
                                     })
                                     .join('\n')}`;
                             }

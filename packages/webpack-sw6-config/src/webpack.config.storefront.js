@@ -104,14 +104,14 @@ module.exports = {
     plugins: [
         new TwigAssetEmitterPlugin({
             includes: ['js', 'css'],
-            ignoreFiles: [/\*.hot-update.js/],
+            ignoreFiles: [],
             template: {
                 [isModern ? 'scriptsmodern' : 'scripts']: {
                     namespace: '@Storefront/storefront',
                     path: '',
                     filename: '_px_base.html.twig',
                 },
-                styles: {
+                [isModern ? 'stylesmodern' : 'styles']: {
                     namespace: '@Storefront/storefront',
                     path: 'layout',
                     filename: '_px_meta.html.twig',

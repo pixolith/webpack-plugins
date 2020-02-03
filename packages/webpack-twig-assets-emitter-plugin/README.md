@@ -19,7 +19,7 @@ const TwigAssetEmitterPlugin = require('@pixolith/webpack-twig-assets-emitter-pl
 ```javascript
 new TwigAssetEmitterPlugin({
     includes: ['js', 'css'],
-    ignoreFiles: [/\*.hot-update.js/],
+    ignoreFiles: [],
     template: {
         scripts: {
             namespace: '@Storefront/storefront',
