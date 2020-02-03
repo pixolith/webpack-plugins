@@ -120,6 +120,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                             return `<link rel="stylesheet" href="/${file}">`;
                                         })
                                         .join('\n')}
+                                    <script>
                                     var isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
                                     if (isIE11) {
                                         ${files[key].css
@@ -127,14 +128,15 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                                 return `var link = document.createElement("link");
 
                                                 link.rel = "stylesheet";
-                                                link.href = ${file.replace(
+                                                link.href = "/${file.replace(
                                                     '.modern',
                                                     '',
-                                                )};
+                                                )}";
 
                                                 head.appendChild(link)`;
                                             })
                                             .join('\n')}
+                                    </script>
                                 `;
                             }
 
