@@ -17,6 +17,12 @@ let runBefore = () => {
     Consola.info('Cleaning and Building index files');
     watcher.clean();
     watcher.run();
+    console.table({
+        isProd: isProd,
+        isModern: isModern,
+        pluginPath: process.env.PLUGIN_PATH,
+        publicPath: process.env.PUBLIC_PATH,
+    });
 };
 
 runBefore();

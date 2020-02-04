@@ -20,7 +20,7 @@ const Fs = require('fs'),
 
 const watcher = {
     watch() {
-        const fileList = Glob.sync(pluginPath + '/index.js');
+        const fileList = Glob.sync(pluginPath);
 
         const watcherInstance = Chokidar.watch(fileList, {
             persistent: true,
@@ -42,6 +42,8 @@ const watcher = {
         if (path) {
             Consola.info(`Adding ${path} to watchlist`);
         }
+
+        console.log(pluginPath);
 
         watcher.compile(
             [].concat(
@@ -163,7 +165,7 @@ const watcher = {
                 .forEach((file) => {
                     buffer +=
                         prefix +
-                        file.replace(filePath, isJS ? './js' : '.') +
+                        file.replace(filePath, isJS ? `./${JS_FOLDER}` : '.') +
                         affix;
                 });
 

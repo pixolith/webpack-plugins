@@ -1,9 +1,11 @@
-const merge = require('webpack-merge'),
-    webpack = require('webpack'),
+const webpack = require('webpack'),
     TerserPlugin = require('terser-webpack-plugin'),
+    isModern = process.env.MODE === 'modern',
     config = {
-        devtool: '#cheap-module-source-map',
+        devtool: 'none',
         performance: {
+            maxEntrypointSize: 300000,
+            maxAssetSize: 250000,
             hints: 'warning',
         },
         mode: 'production',
@@ -13,6 +15,19 @@ const merge = require('webpack-merge'),
             removeAvailableModules: true,
             removeEmptyChunks: true,
             sideEffects: false,
+            splitChunks: {
+                cacheGroups: {
+                    defaultVendors: {
+                        test: /[\\/]node_modules[\\/]/,
+                        priority: -10,
+                    },
+                    default: {
+                        minChunks: 2,
+                        priority: -20,
+                        reuseExistingChunk: true,
+                    },
+                },
+            },
             minimizer: [
                 new TerserPlugin({
                     terserOptions: {
@@ -20,7 +35,7 @@ const merge = require('webpack-merge'),
                             drop_console: true,
                         },
                         mangle: true,
-                        ecma: 5, // specify one of: 5, 6, 7 or 8
+                        ecma: isModern ? 6 : 5, // specify one of: 5, 6, 7 or 8
                         keep_classnames: false,
                         keep_fnames: false,
                         ie8: false,
@@ -40,6 +55,7 @@ const merge = require('webpack-merge'),
                 },
             }),
         ],
+        stats: 'normal',
     };
 
 module.exports = config;

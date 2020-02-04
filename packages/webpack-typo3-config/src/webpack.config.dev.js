@@ -6,9 +6,8 @@ const webpack = require('webpack'),
     isProd = process.env.NODE_ENV === 'production',
     WriteFilePlugin = require('write-file-webpack-plugin'),
     basePath = process.env.PLUGIN_PATH,
-    privatePath = path.join(basePath, 'Private'),
     Consola = require('consola'),
-    publicPath = path.join(basePath, 'Public'),
+    publicPath = process.env.PUBLIC_PATH,
     isModern = process.env.MODE === 'modern',
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
     watcher = require('@pixolith/webpack-watcher');
@@ -17,6 +16,12 @@ let runBefore = () => {
     Consola.info('Cleaning and Building index files');
     watcher.clean();
     watcher.run();
+    console.table({
+        isProd: isProd,
+        isModern: isModern,
+        pluginPath: process.env.PLUGIN_PATH,
+        publicPath: process.env.PUBLIC_PATH,
+    });
 };
 
 runBefore();
@@ -25,14 +30,10 @@ module.exports = {
     target: 'web',
     mode: 'development',
     entry: {
-        scripts: path.resolve(privatePath, 'Src/Js/index.js'),
-    },
-    performance: {
-        maxEntrypointSize: 300000,
-        hints: false,
+        scripts: path.resolve(basePath, 'index.js'),
     },
     resolve: {
-        modules: ['node_modules', path.resolve(privatePath, 'Src/Js')],
+        modules: ['node_modules', path.resolve(basePath, 'Js')],
     },
     devtool: 'inline-cheap-module-source-map',
     module: {
@@ -88,6 +89,13 @@ module.exports = {
                         loader: 'postcss-loader',
                         options: {
                             sourceMap: !isProd,
+                            config: {
+                                path: path.join(__dirname),
+                                ctx: {
+                                    mode: process.env.SHOPWARE_MODE,
+                                    isModern: isModern,
+                                },
+                            },
                         },
                     },
                     {
@@ -113,6 +121,13 @@ module.exports = {
                         loader: 'postcss-loader',
                         options: {
                             sourceMap: !isProd,
+                            config: {
+                                path: path.join(__dirname),
+                                ctx: {
+                                    mode: process.env.SHOPWARE_MODE,
+                                    isModern: isModern,
+                                },
+                            },
                         },
                     },
                     {
@@ -136,6 +151,42 @@ module.exports = {
                 use: 'file-loader',
             },
             {
+                test: /\.svg$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            output: 'Icons',
+                        },
+                    },
+                    {
+                        loader: 'svgo-loader',
+                        options: {
+                            plugins: [
+                                { removeViewBox: false },
+                                { cleanupAttrs: true },
+                                { removeDoctype: true },
+                                { removeXMLProcInst: true },
+                                { cleanupEnableBackground: true },
+                                { convertStyleToAttrs: true },
+                                { convertPathData: true },
+                                { cleanupIDs: false },
+                                { minifyStyles: true },
+                                { removeUselessDefs: true },
+                                { convertShapeToPath: true },
+                                { removeUnusedNS: true },
+                                { removeDimensions: true },
+                                { convertTransform: true },
+                                { collapseGroups: true },
+                                { removeComments: true },
+                                { removeEditorsNSData: true },
+                                { removeUnknownsAndDefaults: true },
+                            ],
+                        },
+                    },
+                ],
+            },
+            {
                 test: require.resolve('jquery'),
                 use: [
                     {
@@ -151,7 +202,7 @@ module.exports = {
         ],
     },
     output: {
-        path: path.join(__dirname, publicPath, '/'),
+        path: path.join(process.cwd(), publicPath, '/'),
         publicPath: path.join(publicPath, '/'),
         filename: 'Js/[name].min.js',
     },
@@ -185,7 +236,7 @@ module.exports = {
             'Access-Control-Allow-Headers':
                 'X-Requested-With, content-type, Authorization',
         },
-        stats: 'errors-only',
+        //stats: 'errors-only',
         after() {
             if (!isProd) {
                 Consola.success(
@@ -218,10 +269,8 @@ module.exports = {
         }),
 
         new StyleLintPlugin({
-            files: [
-                './www/typo3conf/ext/px_basis_config/Resources/Private/Src/Sass/Globals/**',
-                './www/typo3conf/ext/px_basis_config/Resources/Private/Src/Sass/Modules/**',
-            ],
+            files:
+                './www/typo3conf/ext/px_basis_config/Resources/Private/Src/Scss/**',
             failOnError: false,
         }),
 
@@ -237,8 +286,6 @@ module.exports = {
             filename: 'Css/styles.min.css',
             hot: false,
         }),
-
-        //new BundleAnalyzerPlugin(),
 
         new OptimizeCssAssetsPlugin({
             cssProcessor: require('cssnano'),
