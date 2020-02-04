@@ -72,6 +72,7 @@ module.exports = {
                 enforce: 'pre',
                 options: {
                     formatter: require('eslint-friendly-formatter'),
+                    configFile: path.resolve(__dirname, '.eslintrc.js'),
                 },
             },
             {
@@ -92,7 +93,7 @@ module.exports = {
                             config: {
                                 path: path.join(__dirname),
                                 ctx: {
-                                    mode: process.env.SHOPWARE_MODE,
+                                    mode: 'frontend',
                                     isModern: isModern,
                                 },
                             },
@@ -107,7 +108,7 @@ module.exports = {
                 ],
             },
             {
-                test: /(\.less|\.css)$/,
+                test: /(\.less)$/,
                 use: [
                     ExtractCssChunks.loader,
                     {
@@ -124,7 +125,7 @@ module.exports = {
                             config: {
                                 path: path.join(__dirname),
                                 ctx: {
-                                    mode: process.env.SHOPWARE_MODE,
+                                    mode: 'frontend',
                                     isModern: isModern,
                                 },
                             },
@@ -156,7 +157,7 @@ module.exports = {
                     {
                         loader: 'file-loader',
                         options: {
-                            output: 'Icons',
+                            outputPath: 'Icons',
                         },
                     },
                     {
@@ -270,8 +271,9 @@ module.exports = {
 
         new StyleLintPlugin({
             files:
-                './www/typo3conf/ext/px_basis_config/Resources/Private/Src/Scss/**',
+                'www/typo3conf/ext/udg_package/Resources/Private/Src/Scss/Globals/**/*.scss',
             failOnError: false,
+            configFile: path.join(__dirname, 'stylelint.config.js'),
         }),
 
         new webpack.DefinePlugin({

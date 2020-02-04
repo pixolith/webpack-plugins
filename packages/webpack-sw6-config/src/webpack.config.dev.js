@@ -56,6 +56,7 @@ module.exports = {
                 exclude: (file) => /node_modules/.test(file),
                 options: {
                     formatter: require('eslint-friendly-formatter'),
+                    configFile: path.resolve(__dirname, '.eslintrc.js'),
                 },
             },
             {

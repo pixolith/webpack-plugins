@@ -143,7 +143,7 @@ const watcher = {
                 );
 
                 files = cssFiles.length
-                    ? ['./scss/index.scss'].concat(files)
+                    ? [`./${SCSS_FOLDER}/index.scss`].concat(files)
                     : files;
 
                 prefix = "import '";
