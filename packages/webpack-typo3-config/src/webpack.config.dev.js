@@ -30,7 +30,7 @@ module.exports = {
     target: 'web',
     mode: 'development',
     entry: {
-        scripts: path.resolve(basePath, 'index.js'),
+        app: path.resolve(basePath, 'index.js'),
     },
     resolve: {
         modules: ['node_modules', path.resolve(basePath, 'Js')],
@@ -103,6 +103,15 @@ module.exports = {
                         loader: 'sass-loader',
                         options: {
                             sourceMap: !isProd,
+                        },
+                    },
+                    {
+                        loader: 'sass-resources-loader',
+                        options: {
+                            // Provide path to the file with resources
+                            resources: [
+                                'www/typo3conf/ext/*/Resources/Private/Src/Scss/Globals/**/*.scss',
+                            ],
                         },
                     },
                 ],
@@ -205,20 +214,10 @@ module.exports = {
     output: {
         path: path.join(process.cwd(), publicPath, '/'),
         publicPath: path.join(publicPath, '/'),
-        filename: 'Js/[name].min.js',
+        filename: 'Js/[name].js',
     },
     optimization: {
         namedModules: true,
-        splitChunks: {
-            cacheGroups: {
-                vendor: {
-                    // exclude all css because of a bug with css chunking order
-                    test: /[\\/]node_modules[\\/](?!resetcss)/,
-                    name: 'vendor',
-                    chunks: 'all',
-                },
-            },
-        },
     },
     devServer: {
         disableHostCheck: true,
@@ -271,7 +270,7 @@ module.exports = {
 
         new StyleLintPlugin({
             files:
-                'www/typo3conf/ext/udg_package/Resources/Private/Src/Scss/Globals/**/*.scss',
+                'www/typo3conf/ext/*/Resources/Private/Src/Scss/Globals/**/*.scss',
             failOnError: false,
             configFile: path.join(__dirname, 'stylelint.config.js'),
         }),
@@ -285,7 +284,8 @@ module.exports = {
         new ExtractCssChunks({
             // Options similar to the same options in webpackOptions.output
             // both options are optional
-            filename: 'Css/styles.min.css',
+            filename: 'Css/[name].css',
+            chunkFilename: 'Css/[id].css',
             hot: false,
         }),
 
