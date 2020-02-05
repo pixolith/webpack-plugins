@@ -218,6 +218,16 @@ module.exports = {
     },
     optimization: {
         namedModules: true,
+        splitChunks: {
+            cacheGroups: {
+                vendor: {
+                    // exclude all css because of a bug with css chunking order
+                    test: /[\\/]node_modules[\\/](?!resetcss)/,
+                    name: 'vendor',
+                    chunks: 'all',
+                },
+            },
+        },
     },
     devServer: {
         disableHostCheck: true,

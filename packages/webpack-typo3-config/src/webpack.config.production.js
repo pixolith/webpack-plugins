@@ -15,6 +15,16 @@ const webpack = require('webpack'),
             removeAvailableModules: true,
             removeEmptyChunks: true,
             sideEffects: false,
+            splitChunks: {
+                cacheGroups: {
+                    vendor: {
+                        // exclude all css because of a bug with css chunking order
+                        test: /[\\/]node_modules[\\/](?!resetcss)/,
+                        name: 'vendor',
+                        chunks: 'all',
+                    },
+                },
+            },
             minimizer: [
                 new TerserPlugin({
                     extractComments: false,
