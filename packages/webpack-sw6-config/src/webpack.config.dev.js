@@ -193,6 +193,8 @@ module.exports = {
                 // check cases here https://github.com/blakeembrey/change-case
                 scss: 'paramCase',
                 js: 'paramCase',
+                woff: 'paramCase',
+                woff2: 'paramCase',
             },
         }),
 

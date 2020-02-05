@@ -34,7 +34,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
             );
             let _compilationAssetsKeys = Object.keys(_compilationAssets);
 
-            _compilationAssetsKeys.forEach((assetKey) => {
+            _compilationAssetsKeys.forEach((assetKey, index) => {
                 ignoreFiles.forEach((ignoreFile) => {
                     if (ignoreFile.test(assetKey)) {
                         delete _compilationAssets[assetKey];
@@ -43,6 +43,14 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
             });
 
             _compilationAssetsKeys.forEach((key) => {
+                let validFiles = includes.filter((include) => {
+                    return `.${include}` === Path.extname(key);
+                });
+
+                if (!validFiles.length) {
+                    return;
+                }
+
                 let plugin = key.match(match);
 
                 if (plugin && plugin[1]) {
@@ -61,6 +69,8 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                     });
                 }
             });
+
+            console.log(files);
 
             rimraf.sync(
                 'www/custom/plugins/*/src/Resources/views/storefront/**/_px*.twig',

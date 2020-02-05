@@ -29,13 +29,15 @@ FilenameLinterPlugin.prototype.apply = function(compiler) {
                         .replace(prefix, '');
 
                 if (!rule) {
-                    consola.info(`'${fileType}' has no defined rule`);
+                    consola.info(
+                        `[${this.pluginName}]: '${fileType}' has no defined rule`,
+                    );
                     return false;
                 }
 
                 if (!changeCase[rule]) {
                     consola.info(
-                        `'${rule}' is not part of changeCases set - skipping`,
+                        `[${this.pluginName}]: '${rule}' is not part of changeCases set - skipping`,
                     );
                     return false;
                 }
