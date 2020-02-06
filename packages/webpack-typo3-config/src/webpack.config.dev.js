@@ -245,7 +245,7 @@ module.exports = {
             'Access-Control-Allow-Headers':
                 'X-Requested-With, content-type, Authorization',
         },
-        stats: 'errors-only',
+        stats: 'errors-warnings',
         after() {
             if (!isProd) {
                 Consola.success(
