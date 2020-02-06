@@ -5,10 +5,10 @@
         "eslint": "^6.8.0",
         "lerna": "^3.20.2"
     },
-    "prettier": "./packages/webpack-prettier-config/src/index.json",
+    "prettier": "./packages/prettier-config/src/index.json",
     "eslintConfig": {
         "extends": [
-            "./packages/webpack-eslint-config/src/index.js"
+            "./packages/eslint-config/src/index.js"
         ]
     }
 }
