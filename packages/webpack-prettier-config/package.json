@@ -1,14 +1,15 @@
 {
-  "name": "webpack-prettier-config",
-  "version": "1.0.31",
-  "description": "",
-  "main": "src/index.json",
-  "files": [
-    "src"
-  ],
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC"
+    "name": "@pixolith/webpack-prettier-config",
+    "version": "1.0.31",
+    "description": "",
+    "main": "src/index.json",
+    "files": [
+        "src"
+    ],
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "gitHead": "f1a0b7acc339e8487339560363ff8c2b6933a02b"
 }
