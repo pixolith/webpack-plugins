@@ -123,25 +123,25 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             if (templateKey === 'stylesmodern') {
                                 output = `
                                     ${files[key].css
-                                    .map((file) => {
-                                        return `<link rel="stylesheet" href="/${file}">`;
-                                    })
-                                    .join('\n')}
+                                        .map((file) => {
+                                            return `<link rel="stylesheet" href="/${file}">`;
+                                        })
+                                        .join('\n')}
                                     <script>
                                     if (window.isIE11) {
                                         ${files[key].css
-                                    .map((file) => {
-                                        return `var link = document.createElement("link");
+                                            .map((file) => {
+                                                return `var link = document.createElement("link");
 
                                                 link.rel = "stylesheet";
                                                 link.href = "/${file.replace(
-                                            '.modern',
-                                            '',
-                                        )}";
+                                                    '.modern',
+                                                    '',
+                                                )}";
 
                                                 head.appendChild(link);`;
-                                    })
-                                    .join('\n')}
+                                            })
+                                            .join('\n')}
                                     </script>
                                 `;
                             }
