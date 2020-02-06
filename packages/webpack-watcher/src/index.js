@@ -120,6 +120,16 @@ const watcher = {
             let isSCSS = Path.extname(files[files.length - 1]) === '.scss';
 
             if (isJS) {
+                name = `../index${Path.extname(files[files.length - 1])}`;
+
+                let cssFiles = Glob.sync(
+                    `${filePath.replace(JS_FOLDER, SCSS_FOLDER)}/**/*.scss`,
+                );
+
+                files = cssFiles.length
+                    ? [`./${SCSS_FOLDER}/index.scss`].concat(files)
+                    : files;
+
                 if (!filePath.includes('/shared/')) {
                     if (
                         Fs.existsSync(
@@ -134,15 +144,6 @@ const watcher = {
                         );
                     }
                 }
-                name = `../index${Path.extname(files[files.length - 1])}`;
-
-                let cssFiles = Glob.sync(
-                    `${filePath.replace(JS_FOLDER, SCSS_FOLDER)}/**/*.scss`,
-                );
-
-                files = cssFiles.length
-                    ? [`./${SCSS_FOLDER}/index.scss`].concat(files)
-                    : files;
 
                 prefix = "import '";
                 affix = "';\n";
