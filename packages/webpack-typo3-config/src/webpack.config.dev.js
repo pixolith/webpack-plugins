@@ -21,6 +21,8 @@ let runBefore = () => {
         isModern: isModern,
         pluginPath: process.env.PLUGIN_PATH,
         publicPath: process.env.PUBLIC_PATH,
+        jsTranspile: process.env.JS_TRANSPILE,
+        globalResourcesPaths: process.env.RESOURCES_PATHS,
     });
 };
 
@@ -108,10 +110,7 @@ module.exports = {
                     {
                         loader: 'sass-resources-loader',
                         options: {
-                            // Provide path to the file with resources
-                            resources: [
-                                'www/typo3conf/ext/*/Resources/Private/Src/Scss/Globals/**/*.scss',
-                            ],
+                            resources: JSON.parse(process.env.RESOURCES_PATHS),
                         },
                     },
                 ],

@@ -21,7 +21,12 @@ let runBefore = () => {
         isProd: isProd,
         isModern: isModern,
         pluginPath: process.env.PLUGIN_PATH,
+        vendorPath: process.env.VENDOR_PATH,
         publicPath: process.env.PUBLIC_PATH,
+        sharedAssetPath: process.env.SHARED_SCSS_PATH,
+        shopwareMode: process.env.SHOPWARE_MODE,
+        jsTranspile: process.env.JS_TRANSPILE,
+        globalResourcesPaths: process.env.RESOURCES_PATHS,
     });
 };
 
