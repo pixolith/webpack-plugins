@@ -1,5 +1,5 @@
 {
-    "name": "@pixolith/webpack-eslint-config",
+    "name": "@pixolith/eslint-config",
     "version": "1.0.31",
     "description": "",
     "main": "src/index.js",

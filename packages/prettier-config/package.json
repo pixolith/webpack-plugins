@@ -1,5 +1,5 @@
 {
-    "name": "@pixolith/webpack-prettier-config",
+    "name": "@pixolith/prettier-config",
     "version": "1.0.32",
     "description": "",
     "main": "src/index.json",

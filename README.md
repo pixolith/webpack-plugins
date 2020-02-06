@@ -13,8 +13,8 @@ See `/packages` for individual packages
 
 -   [webpack-sw6-config](https://github.com/pixolith/webpack-plugins/tree/master/packages/webpack-sw6-config)
 -   [webpack-typo3-config](https://github.com/pixolith/webpack-plugins/tree/master/packages/webpack-typo3-config)
--   [webpack-eslint-config](https://github.com/pixolith/webpack-plugins/tree/master/packages/webpack-eslint-config)
--   [webpack-prettier-config](https://github.com/pixolith/webpack-plugins/tree/master/packages/webpack-prettier-config)
+-   [eslint-config](https://github.com/pixolith/webpack-plugins/tree/master/packages/eslint-config)
+-   [prettier-config](https://github.com/pixolith/webpack-plugins/tree/master/packages/prettier-config)
 
 <p>
     <img align="left" src="https://cloud.githubusercontent.com/assets/952783/15271604/6da94f96-1a06-11e6-8b04-dc3171f79a90.png" width="150" height="150" />
