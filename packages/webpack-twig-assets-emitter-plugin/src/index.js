@@ -70,8 +70,6 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                 }
             });
 
-            console.log(files);
-
             rimraf.sync(
                 'www/custom/plugins/*/src/Resources/views/storefront/**/_px*.twig',
             );
@@ -81,14 +79,6 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
 
             const tasks = Object.keys(options.template).map(
                 (templateKey) => async () => {
-                    let template = await readFileAsync(
-                        options.template[templateKey].filename,
-                        'utf8',
-                    ).catch((err) => {
-                        consola.error(err);
-                        process.exit(1);
-                    });
-
                     if (!options.template[templateKey].path) {
                         options.template[templateKey].path = '';
                     }
@@ -100,6 +90,13 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                     await Promise.all(
                         Object.keys(files).map(async (key) => {
                             let output = '';
+                            let template = await readFileAsync(
+                                options.template[templateKey].filename,
+                                'utf8',
+                            ).catch((err) => {
+                                consola.error(err);
+                                process.exit(1);
+                            });
 
                             if (templateKey === 'hints') {
                                 output = `${files[key].js
@@ -126,26 +123,25 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             if (templateKey === 'stylesmodern') {
                                 output = `
                                     ${files[key].css
-                                        .map((file) => {
-                                            return `<link rel="stylesheet" href="/${file}">`;
-                                        })
-                                        .join('\n')}
+                                    .map((file) => {
+                                        return `<link rel="stylesheet" href="/${file}">`;
+                                    })
+                                    .join('\n')}
                                     <script>
-                                    var isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
-                                    if (isIE11) {
+                                    if (window.isIE11) {
                                         ${files[key].css
-                                            .map((file) => {
-                                                return `var link = document.createElement("link");
+                                    .map((file) => {
+                                        return `var link = document.createElement("link");
 
                                                 link.rel = "stylesheet";
                                                 link.href = "/${file.replace(
-                                                    '.modern',
-                                                    '',
-                                                )}";
+                                            '.modern',
+                                            '',
+                                        )}";
 
                                                 head.appendChild(link);`;
-                                            })
-                                            .join('\n')}
+                                    })
+                                    .join('\n')}
                                     </script>
                                 `;
                             }
