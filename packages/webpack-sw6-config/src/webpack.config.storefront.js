@@ -3,6 +3,7 @@ const Path = require('path'),
     privatePath = process.env.PLUGIN_PATH,
     vendorPath = process.env.VENDOR_PATH,
     ChangeCase = require('change-case'),
+    Consola = require('consola'),
     TwigAssetEmitterPlugin = require('@pixolith/webpack-twig-assets-emitter-plugin'),
     entry = require('webpack-glob-entry'),
     isProd = process.env.NODE_ENV === 'production',
@@ -41,6 +42,11 @@ const createEntry = () => {
             ChangeCase.paramCase(filePath.match(/(vendor\/pxsw\/[\w-]*)\//)[1]),
         Path.resolve(vendorPath, 'index.js'),
     );
+
+    if (process.env.DEBUG) {
+        Consola.info('[DEBUG]: Webpack entry points:');
+        Consola.info({ ...entriesPlugins, ...entriesVendor });
+    }
 
     return { ...entriesPlugins, ...entriesVendor };
 };

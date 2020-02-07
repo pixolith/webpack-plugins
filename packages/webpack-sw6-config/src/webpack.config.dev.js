@@ -27,6 +27,7 @@ let runBefore = () => {
         shopwareMode: process.env.SHOPWARE_MODE,
         jsTranspile: process.env.JS_TRANSPILE,
         globalResourcesPaths: process.env.RESOURCES_PATHS,
+        debug: process.env.DEBUG,
     });
 };
 
@@ -134,9 +135,6 @@ module.exports = {
     devServer: {
         disableHostCheck: true,
         sockHost: 'node.px-staging.de',
-        watchOptions: {
-            aggregateTimeout: 500,
-        },
         watchContentBase: false,
         sockPort: 8080,
         overlay: {
