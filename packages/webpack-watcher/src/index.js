@@ -39,9 +39,11 @@ const watcher = {
             Consola.info('Rebuilding Index Files');
         }
 
-        /* if (path) {
-            Consola.info(`Adding ${path} to watchlist`);
-        } */
+        if (process.env.DEBUG) {
+            if (path) {
+                Consola.info(`Adding ${path} to watchlist`);
+            }
+        }
 
         watcher.compile(
             [].concat(
