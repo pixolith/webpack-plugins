@@ -10,6 +10,7 @@ const webpack = require('webpack'),
     publicPath = process.env.PUBLIC_PATH,
     isModern = process.env.MODE === 'modern',
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
+    pkg = require('./package.json'),
     watcher = require('@pixolith/webpack-watcher');
 
 let runBefore = () => {
@@ -23,6 +24,7 @@ let runBefore = () => {
         publicPath: process.env.PUBLIC_PATH,
         jsTranspile: process.env.JS_TRANSPILE,
         globalResourcesPaths: process.env.RESOURCES_PATHS,
+        version: pkg.version,
     });
 };
 

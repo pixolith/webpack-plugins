@@ -11,6 +11,7 @@ const webpack = require('webpack'),
     FilenameLinterPlugin = require('@pixolith/webpack-filename-linter-plugin'),
     watcher = require('@pixolith/webpack-watcher'),
     isModern = process.env.MODE === 'modern',
+    pkg = require('./package.json'),
     HookPlugin = require('@pixolith/webpack-hook-plugin');
 
 let runBefore = () => {
@@ -28,6 +29,7 @@ let runBefore = () => {
         jsTranspile: process.env.JS_TRANSPILE,
         globalResourcesPaths: process.env.RESOURCES_PATHS,
         debug: process.env.DEBUG,
+        version: pkg.version,
     });
 };
 
