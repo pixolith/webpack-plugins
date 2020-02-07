@@ -32,7 +32,7 @@ module.exports = {
     target: 'web',
     mode: 'development',
     entry: {
-        app: path.resolve(basePath, 'index.js'),
+        [process.env.MODE || 'app']: path.resolve(basePath, 'index.js'),
     },
     resolve: {
         modules: ['node_modules', path.resolve(basePath, 'Js')],
@@ -222,7 +222,7 @@ module.exports = {
                 vendor: {
                     // exclude all css because of a bug with css chunking order
                     test: /[\\/]node_modules[\\/](?!resetcss)/,
-                    name: 'vendor',
+                    name: 'vendor_' + process.env.MODE,
                     chunks: 'all',
                 },
             },
@@ -245,7 +245,7 @@ module.exports = {
             'Access-Control-Allow-Headers':
                 'X-Requested-With, content-type, Authorization',
         },
-        stats: 'errors-warnings',
+        stats: 'minimal',
         after() {
             if (!isProd) {
                 Consola.success(
