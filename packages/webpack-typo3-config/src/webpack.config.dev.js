@@ -10,7 +10,7 @@ const webpack = require('webpack'),
     publicPath = process.env.PUBLIC_PATH,
     isModern = process.env.MODE === 'modern',
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
-    pkg = require('./package.json'),
+    pkg = require('./../package.json'),
     watcher = require('@pixolith/webpack-watcher');
 
 let runBefore = () => {
