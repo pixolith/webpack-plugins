@@ -43,6 +43,38 @@ const watcher = {
             if (path) {
                 Consola.info(`Adding ${path} to watchlist`);
             }
+
+            Consola.info('Shared plugin scss paths');
+            Consola.info(
+                sharedPath ? Glob.sync(`${sharedPath}/${SCSS_FOLDER}`) : [],
+            );
+
+            Consola.info('Plugin scss paths');
+            Consola.info(
+                pluginPath ? Glob.sync(`${pluginPath}/${SCSS_FOLDER}`) : [],
+            );
+
+            Consola.info('Shared vendor scss paths');
+            Consola.info(
+                sharedVendorPath
+                    ? Glob.sync(`${sharedVendorPath}/${SCSS_FOLDER}`)
+                    : [],
+            );
+
+            Consola.info('Vendor scss paths');
+            Consola.info(
+                vendorPath ? Glob.sync(`${vendorPath}/${SCSS_FOLDER}`) : [],
+            );
+
+            Consola.info('Plugin js paths');
+            Consola.info(
+                pluginPath ? Glob.sync(`${pluginPath}/${JS_FOLDER}`) : [],
+            );
+
+            Consola.info('Vendor js paths');
+            Consola.info(
+                vendorPath ? Glob.sync(`${vendorPath}/${JS_FOLDER}`) : [],
+            );
         }
 
         watcher.compile(
