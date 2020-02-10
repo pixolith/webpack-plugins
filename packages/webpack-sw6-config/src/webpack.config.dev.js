@@ -186,7 +186,7 @@ module.exports = {
             ? new StyleLintPlugin({
                   files: Glob.sync(Path.join(privatePath, '/**/*.scss')),
                   failOnError: false,
-                  configFile: Glob.join(__dirname, 'stylelint.config.js'),
+                  configFile: Path.join(__dirname, 'stylelint.config.js'),
               })
             : [],
     ),
