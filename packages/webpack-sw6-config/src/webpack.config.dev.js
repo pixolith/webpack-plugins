@@ -10,6 +10,7 @@ const webpack = require('webpack'),
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     FilenameLinterPlugin = require('@pixolith/webpack-filename-linter-plugin'),
     watcher = require('@pixolith/webpack-watcher'),
+    Glob = require('glob'),
     isModern = process.env.MODE === 'modern',
     HookPlugin = require('@pixolith/webpack-hook-plugin');
 
@@ -85,28 +86,9 @@ module.exports = {
             },
             {
                 test: /\.(html|twig)$/,
-                use: 'html-loader',
-            },
-            {
-                test: /\.png|\.jpg$/,
                 use: [
                     {
-                        loader: 'url-loader',
-                        options: {
-                            limit: 100000,
-                            outputPath: 'images',
-                        },
-                    },
-                ],
-            },
-            {
-                test: /(\.woff|\.woff2)$/,
-                use: [
-                    {
-                        loader: 'file-loader',
-                        options: {
-                            outputPath: 'fonts',
-                        },
+                        loader: 'html-loader',
                     },
                 ],
             },
@@ -180,12 +162,6 @@ module.exports = {
             exitOnErrors: false,
         }),
 
-        new StyleLintPlugin({
-            files: [Path.join(privatePath, '/**/*.scss')],
-            failOnError: false,
-            configFile: Path.join(__dirname, 'stylelint.config.js'),
-        }),
-
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify(
                 process.env.NODE_ENV || 'development',
@@ -205,7 +181,15 @@ module.exports = {
                 ],
             },
         }),
-    ],
+    ].concat(
+        Glob.sync(Path.join(privatePath, '/**/*.scss')).length
+            ? new StyleLintPlugin({
+                  files: Glob.sync(Path.join(privatePath, '/**/*.scss')),
+                  failOnError: false,
+                  configFile: Glob.join(__dirname, 'stylelint.config.js'),
+              })
+            : [],
+    ),
     watch: false,
     stats: 'errors-warnings',
 };

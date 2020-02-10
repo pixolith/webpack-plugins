@@ -9,6 +9,7 @@ const webpack = require('webpack'),
     Consola = require('consola'),
     publicPath = process.env.PUBLIC_PATH,
     isModern = process.env.MODE === 'modern',
+    glob = require('glob'),
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
     watcher = require('@pixolith/webpack-watcher');
 
@@ -132,16 +133,31 @@ module.exports = {
                 ],
             },
             {
-                test: /\.png$/,
-                use: 'url-loader?limit=100000',
+                test: /\.(html)$/,
+                use: 'html-loader',
             },
             {
-                test: /\.jpg$/,
-                use: 'file-loader',
+                test: /\.png|\.jpg$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 100000,
+                            outputPath: 'Images',
+                        },
+                    },
+                ],
             },
             {
-                test: /\.woff$/,
-                use: 'file-loader',
+                test: /(\.woff|\.woff2)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: 'Fonts',
+                        },
+                    },
+                ],
             },
             {
                 test: /\.svg$/,
@@ -229,7 +245,7 @@ module.exports = {
             'Access-Control-Allow-Headers':
                 'X-Requested-With, content-type, Authorization',
         },
-        stats: 'minimal',
+        stats: 'errors-warnings',
         after() {
             if (!isProd) {
                 Consola.success(
@@ -254,13 +270,6 @@ module.exports = {
         new WriteFilePlugin({
             exitOnErrors: false,
             test: /^(?!.*(hot)).*/,
-        }),
-
-        new StyleLintPlugin({
-            files:
-                'www/typo3conf/ext/*/Resources/Private/Src/Scss/Globals/**/*.scss',
-            failOnError: false,
-            configFile: path.join(__dirname, 'stylelint.config.js'),
         }),
 
         new webpack.DefinePlugin({
@@ -290,7 +299,15 @@ module.exports = {
                 ],
             },
         }),
-    ],
+    ].concat(
+        glob.sync(path.join(basePath, 'Scss/**/*.scss')).length
+            ? new StyleLintPlugin({
+                  files: glob.sync(path.join(basePath, 'Scss/**/*.scss')),
+                  failOnError: false,
+                  configFile: path.join(__dirname, 'stylelint.config.js'),
+              })
+            : [],
+    ),
     watch: false,
     stats: {
         colors: true,

@@ -10,7 +10,7 @@ const Path = require('path'),
     outputConfig = {
         futureEmitAssets: true,
         path: Path.resolve(process.cwd(), publicPath),
-        publicPath: './',
+        publicPath: '/',
         filename: (chunkData) => {
             let pluginName = chunkData.chunk.name
                 .toLowerCase()
@@ -74,6 +74,29 @@ module.exports = {
                 options: {
                     configFile: Path.resolve(__dirname, 'babel.config.js'),
                 },
+            },
+            {
+                test: /\.png|\.jpg$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 100000,
+                            outputPath: '../images',
+                        },
+                    },
+                ],
+            },
+            {
+                test: /(\.woff|\.woff2)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: '../fonts',
+                        },
+                    },
+                ],
             },
         ],
     },

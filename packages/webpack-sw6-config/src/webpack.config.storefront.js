@@ -106,6 +106,29 @@ module.exports = {
                     },
                 },
             },
+            {
+                test: /\.png|\.jpg$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 100000,
+                            outputPath: 'images',
+                        },
+                    },
+                ],
+            },
+            {
+                test: /(\.woff|\.woff2)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: 'fonts',
+                        },
+                    },
+                ],
+            },
         ],
     },
     output: outputConfig,
