@@ -30,29 +30,31 @@ const Path = require('path'),
         hot: !isProd,
     };
 
-const createEntry = () => {
-    let entriesPlugins = entry(
-        (filePath) =>
-            ChangeCase.paramCase(filePath.match(/plugins\/(Pxsw[\w]*)\//)[1]),
-        Path.resolve(privatePath, 'index.js'),
-    );
-
-    let entriesVendor = entry(
-        (filePath) =>
-            ChangeCase.paramCase(filePath.match(/(vendor\/pxsw\/[\w-]*)\//)[1]),
-        Path.resolve(vendorPath, 'index.js'),
-    );
-
-    if (process.env.DEBUG) {
-        Consola.info('[DEBUG]: Webpack entry points:');
-        Consola.info({ ...entriesPlugins, ...entriesVendor });
-    }
-
-    return { ...entriesPlugins, ...entriesVendor };
-};
-
 module.exports = {
-    entry: createEntry(),
+    entry: () => {
+        let entriesPlugins = entry(
+            (filePath) =>
+                ChangeCase.paramCase(
+                    filePath.match(/plugins\/(Pxsw[\w]*)\//)[1],
+                ),
+            Path.resolve(privatePath, 'index.js'),
+        );
+
+        let entriesVendor = entry(
+            (filePath) =>
+                ChangeCase.paramCase(
+                    filePath.match(/(vendor\/pxsw\/[\w-]*)\//)[1],
+                ),
+            Path.resolve(vendorPath, 'index.js'),
+        );
+
+        if (process.env.DEBUG) {
+            Consola.info('[DEBUG]: Webpack entry points:');
+            Consola.info({ ...entriesPlugins, ...entriesVendor });
+        }
+
+        return { ...entriesPlugins, ...entriesVendor };
+    },
     resolve: {
         modules: [
             'node_modules',
