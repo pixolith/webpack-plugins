@@ -15,7 +15,7 @@ const webpack = require('webpack'),
     HookPlugin = require('@pixolith/webpack-hook-plugin');
 
 let runBefore = () => {
-    Consola.info('Cleaning and Building index files');
+    Consola.info('Running initial script');
     watcher.clean();
     watcher.run();
     console.table({
