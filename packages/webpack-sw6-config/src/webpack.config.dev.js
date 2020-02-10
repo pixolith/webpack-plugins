@@ -11,29 +11,7 @@ const webpack = require('webpack'),
     FilenameLinterPlugin = require('@pixolith/webpack-filename-linter-plugin'),
     watcher = require('@pixolith/webpack-watcher'),
     isModern = process.env.MODE === 'modern',
-    pkg = require('./../package.json'),
     HookPlugin = require('@pixolith/webpack-hook-plugin');
-
-let runBefore = () => {
-    Consola.info('Running initial script');
-    watcher.clean();
-    watcher.run();
-    console.table({
-        isProd: isProd,
-        isModern: isModern,
-        pluginPath: process.env.PLUGIN_PATH,
-        vendorPath: process.env.VENDOR_PATH,
-        publicPath: process.env.PUBLIC_PATH,
-        sharedAssetPath: process.env.SHARED_SCSS_PATH,
-        shopwareMode: process.env.SHOPWARE_MODE,
-        jsTranspile: process.env.JS_TRANSPILE,
-        globalResourcesPaths: process.env.RESOURCES_PATHS,
-        debug: process.env.DEBUG,
-        version: pkg.version,
-    });
-};
-
-runBefore();
 
 module.exports = {
     target: 'web',
@@ -183,11 +161,6 @@ module.exports = {
     plugins: [
         new HookPlugin({
             failed() {
-                watcher.run();
-            },
-            beforeRun() {
-                Consola.info('Cleaning output folder');
-                watcher.clean();
                 watcher.run();
             },
         }),

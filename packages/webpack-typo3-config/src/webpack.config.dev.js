@@ -10,25 +10,7 @@ const webpack = require('webpack'),
     publicPath = process.env.PUBLIC_PATH,
     isModern = process.env.MODE === 'modern',
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
-    pkg = require('./../package.json'),
     watcher = require('@pixolith/webpack-watcher');
-
-let runBefore = () => {
-    Consola.info('Cleaning and Building index files');
-    watcher.clean();
-    watcher.run();
-    console.table({
-        isProd: isProd,
-        isModern: isModern,
-        pluginPath: process.env.PLUGIN_PATH,
-        publicPath: process.env.PUBLIC_PATH,
-        jsTranspile: process.env.JS_TRANSPILE,
-        globalResourcesPaths: process.env.RESOURCES_PATHS,
-        version: pkg.version,
-    });
-};
-
-runBefore();
 
 module.exports = {
     target: 'web',
@@ -260,11 +242,6 @@ module.exports = {
     plugins: [
         new HookPlugin({
             failed() {
-                watcher.run();
-            },
-            beforeRun() {
-                Consola.info('Cleaning output folder');
-                watcher.clean();
                 watcher.run();
             },
         }),

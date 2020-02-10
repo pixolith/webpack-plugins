@@ -6,7 +6,7 @@ const Path = require('path'),
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
     isProd = process.env.NODE_ENV === 'production',
-    isModern = process.env.MODE === 'modern',
+    //isModern = process.env.MODE === 'modern',
     outputConfig = {
         futureEmitAssets: true,
         path: Path.resolve(process.cwd(), publicPath),
