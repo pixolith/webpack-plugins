@@ -32,18 +32,16 @@ const Path = require('path'),
         hot: !isProd,
     };
 
-const createEntry = () => {
-    let entriesPlugins = entry(
-        (filePath) =>
-            changeCase.paramCase(filePath.match(/plugins\/(Pxsw[\w]*)\//)[1]),
-        Path.resolve(privatePath, 'index.js'),
-    );
-
-    return { ...entriesPlugins };
-};
-
 module.exports = {
-    entry: createEntry(),
+    entry: () => {
+        let entriesPlugins = entry(
+            (filePath) =>
+                changeCase.paramCase(filePath.match(/plugins\/(Pxsw[\w]*)\//)[1]),
+            Path.resolve(privatePath, 'index.js'),
+        );
+
+        return { ...entriesPlugins };
+    },
     performance: {
         maxEntrypointSize: 300000,
         hints: false,
