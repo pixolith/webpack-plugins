@@ -142,6 +142,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                                 head.appendChild(link);`;
                                             })
                                             .join('\n')}
+                                    }
                                     </script>
                                 `;
                             }
