@@ -1,7 +1,7 @@
 {
     "name": "@pixolith/webpack-sw6-config",
     "public": true,
-    "version": "1.0.47",
+    "version": "1.0.48",
     "description": "",
     "main": "src/index.js",
     "scripts": {},
@@ -33,7 +33,7 @@
         "@pixolith/webpack-filename-linter-plugin": "^1.0.26",
         "@pixolith/webpack-hook-plugin": "^1.0.2",
         "@pixolith/webpack-twig-assets-emitter-plugin": "^1.0.31",
-        "@pixolith/webpack-watcher": "^1.0.39",
+        "@pixolith/webpack-watcher": "^1.0.48",
         "autoprefixer": "^9.7.4",
         "babel-eslint": "^10.0.3",
         "babel-loader": "^8.0.6",
