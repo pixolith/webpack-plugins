@@ -79,6 +79,6 @@
         "write-file-webpack-plugin": "^4.5.1"
     },
     "devDependencies": {
-        "@pixolith/webpack-filename-linter-plugin": "^1.0.26",
+        "@pixolith/webpack-filename-linter-plugin": "^1.0.26"
     }
 }
