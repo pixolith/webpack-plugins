@@ -92,6 +92,15 @@ module.exports = {
                     },
                 ],
             },
+            {
+                test: /\.js$/,
+                loader: 'string-replace-loader',
+                options: {
+                    search: 'import PluginManager from \'src/plugin-system/plugin.manager\'',
+                    replace: (match, p1, offset, string) => 'const PluginManager = window.PluginManager',
+                    flags: 'g'
+                }
+            }
         ],
     },
     devServer: {
