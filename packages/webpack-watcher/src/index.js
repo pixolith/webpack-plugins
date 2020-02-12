@@ -122,9 +122,13 @@ const watcher = {
     compile(filePaths = []) {
         filePaths.forEach((filePath) => {
             let files = watcher.walkTheLine(filePath).sort((a, b) => {
-                // sort the path lengh
-                if (a.split('/').length - 1 !== b.split('/').length - 1) {
-                    return a.split('/').length - 1 < b.split('/').length - 1;
+                // sort index.js files by path length
+                if (a.indexOf('index.js') !== -1 && b.indexOf('index.js') !== -1) {
+                    if (a.split('/').length !== b.split('/').length ) {
+                        return (b.split('/').length) - (a.split('/').length);
+                    }
+
+                    return a.localeCompare(b);
                 }
 
                 // index.js at the end
