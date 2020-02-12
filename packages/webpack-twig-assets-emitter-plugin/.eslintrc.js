@@ -25,6 +25,7 @@ module.exports = {
         'no-unused-vars': 2,
         'no-bitwise': 2,
         'eol-last': 2,
+        indent: 0,
         'dot-notation': 2,
         'dot-location': [2, 'property'],
         eqeqeq: [2, 'allow-null'],
