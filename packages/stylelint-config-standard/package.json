@@ -1,6 +1,6 @@
 {
     "name": "@pixolith/stylelint-config-standard",
-    "version": "1.0.0",
+    "version": "1.0.52",
     "description": "",
     "main": "src/index.js",
     "files": [
