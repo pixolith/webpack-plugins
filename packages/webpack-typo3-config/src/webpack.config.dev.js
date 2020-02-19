@@ -211,7 +211,7 @@ module.exports = {
         ],
     },
     output: {
-        path: path.join(process.cwd(), 'www', publicPath),
+        path: path.join(process.cwd(), 'public', publicPath),
         publicPath: path.join(publicPath, '/'),
         filename: 'Js/[name].js',
     },
