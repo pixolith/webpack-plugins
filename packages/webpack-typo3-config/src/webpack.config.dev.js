@@ -234,10 +234,7 @@ module.exports = {
         sockHost: 'node.px-staging.de',
         watchContentBase: false,
         sockPort: 8080,
-        overlay: {
-            warnings: true,
-            errors: true,
-        },
+        overlay: false,
         headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods':

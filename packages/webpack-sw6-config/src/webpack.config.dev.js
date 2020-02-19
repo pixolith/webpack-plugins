@@ -96,11 +96,13 @@ module.exports = {
                 test: /\.js$/,
                 loader: 'string-replace-loader',
                 options: {
-                    search: 'import PluginManager from \'src/plugin-system/plugin.manager\'',
-                    replace: (match, p1, offset, string) => 'const PluginManager = window.PluginManager',
-                    flags: 'g'
-                }
-            }
+                    search:
+                        "import PluginManager from 'src/plugin-system/plugin.manager'",
+                    replace: (match, p1, offset, string) =>
+                        'const PluginManager = window.PluginManager',
+                    flags: 'g',
+                },
+            },
         ],
     },
     devServer: {
@@ -108,10 +110,7 @@ module.exports = {
         sockHost: 'node.px-staging.de',
         watchContentBase: false,
         sockPort: 8080,
-        overlay: {
-            warnings: true,
-            errors: true,
-        },
+        overlay: false,
         headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods':
