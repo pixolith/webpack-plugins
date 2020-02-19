@@ -20,7 +20,7 @@ const webpack = require('webpack'),
                     vendor: {
                         // exclude all css because of a bug with css chunking order
                         test: /[\\/]node_modules[\\/](?!resetcss)/,
-                        name: 'vendor',
+                        name: 'vendor_' + process.env.MODE,
                         chunks: 'all',
                     },
                 },
