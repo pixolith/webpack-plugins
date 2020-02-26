@@ -163,11 +163,9 @@ module.exports = {
                 test: /\.svg$/,
                 use: [
                     {
-                        loader: 'file-loader',
-                        options: {
-                            outputPath: 'Icons',
-                        },
+                        loader: 'svg-sprite-loader',
                     },
+                    'svg-transform-loader',
                     {
                         loader: 'svgo-loader',
                         options: {
