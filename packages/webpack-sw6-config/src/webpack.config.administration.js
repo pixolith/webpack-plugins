@@ -8,7 +8,6 @@ const Path = require('path'),
     isProd = process.env.NODE_ENV === 'production',
     //isModern = process.env.MODE === 'modern',
     outputConfig = {
-        futureEmitAssets: true,
         path: Path.resolve(process.cwd(), publicPath),
         publicPath: '/',
         filename: (chunkData) => {
@@ -36,7 +35,9 @@ module.exports = {
     entry: () => {
         let entriesPlugins = entry(
             (filePath) =>
-                changeCase.paramCase(filePath.match(/plugins\/(Pxsw[\w]*)\//)[1]),
+                changeCase.paramCase(
+                    filePath.match(/plugins\/(Pxsw[\w]*)\//)[1],
+                ),
             Path.resolve(privatePath, 'index.js'),
         );
 
@@ -102,7 +103,7 @@ module.exports = {
     plugins: [
         new AssetsCopyPlugin({
             includes: ['js', 'css'],
-            ignoreFiles: [/\*.hot-update.js/],
+            ignoreFiles: [/[-\w.]*.hot-update.js/],
             files: [
                 {
                     from: publicPath,
