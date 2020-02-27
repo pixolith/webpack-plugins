@@ -17,7 +17,7 @@ const webpack = require('webpack'),
             sideEffects: false,
             splitChunks: {
                 cacheGroups: {
-                    vendor: {
+                    ['vendor_' + process.env.MODE]: {
                         // exclude all css because of a bug with css chunking order
                         test: /[\\/]node_modules[\\/](?!resetcss)/,
                         name: 'vendor_' + process.env.MODE,
