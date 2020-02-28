@@ -11,7 +11,7 @@ const webpack = require('webpack'),
         mode: 'production',
         optimization: {
             concatenateModules: true,
-            namedModules: false,
+            namedModules: true,
             removeAvailableModules: true,
             removeEmptyChunks: true,
             sideEffects: false,
