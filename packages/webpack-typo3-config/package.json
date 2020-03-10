@@ -1,7 +1,7 @@
 {
     "name": "@pixolith/webpack-typo3-config",
     "public": true,
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "",
     "main": "src/index.js",
     "scripts": {},
@@ -32,7 +32,7 @@
         "@pixolith/stylelint-config-standard": "^1.0.52",
         "@pixolith/webpack-filename-linter-plugin": "^1.0.26",
         "@pixolith/webpack-hook-plugin": "^1.0.2",
-        "@pixolith/webpack-watcher": "^1.1.0",
+        "@pixolith/webpack-watcher": "^1.1.1",
         "autoprefixer": "^9.7.4",
         "babel-eslint": "^10.0.3",
         "babel-loader": "^8.0.6",
