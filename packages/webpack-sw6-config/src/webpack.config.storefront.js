@@ -8,6 +8,8 @@ const Path = require('path'),
     entry = require('webpack-glob-entry'),
     isProd = process.env.NODE_ENV === 'production',
     isModern = process.env.MODE === 'modern',
+    CopyPlugin = require('copy-webpack-plugin'),
+    SvgStorePlugin = require('external-svg-sprite-loader'),
     outputConfig = {
         path: Path.join(process.cwd(), 'www/public'),
         publicPath: '/',
@@ -99,12 +101,17 @@ module.exports = {
 
                     return false;
                 },
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        configFile: Path.resolve(__dirname, 'babel.config.js'),
+                use: [
+                    {
+                        loader: 'babel-loader',
+                        options: {
+                            configFile: Path.resolve(
+                                __dirname,
+                                'babel.config.js',
+                            ),
+                        },
                     },
-                },
+                ],
             },
             {
                 test: /\.png|\.jpg$/,
@@ -125,6 +132,45 @@ module.exports = {
                         loader: 'file-loader',
                         options: {
                             outputPath: 'fonts',
+                        },
+                    },
+                ],
+            },
+            {
+                test: /\.svg$/,
+                use: [
+                    {
+                        loader: SvgStorePlugin.loader,
+                        options: {
+                            name: 'sprite/sprite.svg',
+                            iconName: '[name]',
+                        },
+                    },
+                    {
+                        loader: 'svgo-loader',
+                        options: {
+                            plugins: [
+                                // don't enable this
+                                { removeViewBox: false },
+                                //
+                                { cleanupAttrs: true },
+                                { removeDoctype: true },
+                                { removeXMLProcInst: true },
+                                { cleanupEnableBackground: true },
+                                { convertStyleToAttrs: true },
+                                { convertPathData: true },
+                                { cleanupIDs: false },
+                                { minifyStyles: true },
+                                { removeUselessDefs: true },
+                                { convertShapeToPath: true },
+                                { removeUnusedNS: true },
+                                { removeDimensions: true },
+                                { convertTransform: true },
+                                { collapseGroups: true },
+                                { removeComments: true },
+                                { removeEditorsNSData: true },
+                                { removeUnknownsAndDefaults: true },
+                            ],
                         },
                     },
                 ],
@@ -154,6 +200,26 @@ module.exports = {
                 },
             },
         }),
+
+        new SvgStorePlugin({
+            sprite: {
+                startX: 10,
+                startY: 10,
+                deltaX: 20,
+                deltaY: 20,
+                iconHeight: 20,
+            },
+        }),
+
+        new CopyPlugin([
+            {
+                from: Path.join(process.cwd(), 'www/public/sprite/sprite.svg'),
+                to: Path.join(
+                    process.cwd(),
+                    'www/custom/plugins/PxswTheme/src/Resources/views/storefront/_sprite.svg',
+                ),
+            },
+        ]),
 
         new ExtractCssChunks(extractCssChunksConfig),
     ],

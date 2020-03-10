@@ -17,7 +17,8 @@ module.exports = {
     extends: ['eslint:recommended'],
     // add your custom rules here
     rules: {
-        indent: [2, 4, { SwitchCase: 0 }],
+        // indent is done with prettier
+        indent: 0,
         quotes: [2, 'single', 'avoid-escape'],
         'brace-style': [2, '1tbs'],
         'comma-dangle': [2, 'only-multiline'],

@@ -16,7 +16,8 @@ const Fs = require('fs'),
             : null,
     Glob = require('glob'),
     SCSS_FOLDER = process.env.SCSS_FOLDER || 'scss',
-    JS_FOLDER = process.env.JS_FOLDER || 'js';
+    JS_FOLDER = process.env.JS_FOLDER || 'js',
+    ICONS_FOLDER = process.env.ICONS_FOLDER || 'icons';
 
 const watcher = {
     watch() {
@@ -123,9 +124,12 @@ const watcher = {
         filePaths.forEach((filePath) => {
             let files = watcher.walkTheLine(filePath).sort((a, b) => {
                 // sort index.js files by path length
-                if (a.indexOf('index.js') !== -1 && b.indexOf('index.js') !== -1) {
-                    if (a.split('/').length !== b.split('/').length ) {
-                        return (b.split('/').length) - (a.split('/').length);
+                if (
+                    a.indexOf('index.js') !== -1 &&
+                    b.indexOf('index.js') !== -1
+                ) {
+                    if (a.split('/').length !== b.split('/').length) {
+                        return b.split('/').length - a.split('/').length;
                     }
 
                     return a.localeCompare(b);
@@ -177,8 +181,31 @@ const watcher = {
                             ),
                         )
                     ) {
-                        files = ['./../../shared/scss/index.scss'].concat(
-                            files,
+                        files = [
+                            `./../../shared/${SCSS_FOLDER}/index.scss`,
+                        ].concat(files);
+                    }
+
+                    if (
+                        Fs.existsSync(
+                            Path.resolve(
+                                filePath,
+                                `../../../shared/${ICONS_FOLDER}`,
+                            ),
+                        )
+                    ) {
+                        files = files.concat(
+                            Glob.sync(
+                                Path.resolve(
+                                    filePath,
+                                    `../../../shared/${ICONS_FOLDER}/*.svg`,
+                                ),
+                            ).map(
+                                (path) =>
+                                    `./../../shared/${ICONS_FOLDER}/${Path.basename(
+                                        path,
+                                    )}`,
+                            ),
                         );
                     }
                 }

@@ -85,40 +85,6 @@ module.exports = {
                 ],
             },
             {
-                test: /\.svg$/,
-                use: [
-                    {
-                        loader: 'svg-sprite-loader',
-                    },
-                    'svg-transform-loader',
-                    {
-                        loader: 'svgo-loader',
-                        options: {
-                            plugins: [
-                                { removeViewBox: false },
-                                { cleanupAttrs: true },
-                                { removeDoctype: true },
-                                { removeXMLProcInst: true },
-                                { cleanupEnableBackground: true },
-                                { convertStyleToAttrs: true },
-                                { convertPathData: true },
-                                { cleanupIDs: false },
-                                { minifyStyles: true },
-                                { removeUselessDefs: true },
-                                { convertShapeToPath: true },
-                                { removeUnusedNS: true },
-                                { removeDimensions: true },
-                                { convertTransform: true },
-                                { collapseGroups: true },
-                                { removeComments: true },
-                                { removeEditorsNSData: true },
-                                { removeUnknownsAndDefaults: true },
-                            ],
-                        },
-                    },
-                ],
-            },
-            {
                 test: /\.(html|twig)$/,
                 use: [
                     {
@@ -144,7 +110,10 @@ module.exports = {
         sockHost: 'node.px-staging.de',
         watchContentBase: false,
         sockPort: 8080,
-        overlay: false,
+        overlay: {
+            warnings: true,
+            errors: true,
+        },
         headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods':
