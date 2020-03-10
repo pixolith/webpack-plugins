@@ -166,6 +166,7 @@ module.exports = {
                 js: 'paramCase',
                 woff: 'paramCase',
                 woff2: 'paramCase',
+                svg: 'paramCase',
             },
         }),
 
