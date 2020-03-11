@@ -21,7 +21,10 @@ const Fs = require('fs'),
 
 const watcher = {
     watch() {
-        const fileList = Glob.sync(pluginPath);
+        const fileList = [].concat(
+            Glob.sync(pluginPath),
+            Glob.sync(sharedPath),
+        );
 
         const watcherInstance = Chokidar.watch(fileList, {
             persistent: true,

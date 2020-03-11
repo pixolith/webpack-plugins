@@ -207,7 +207,7 @@ module.exports = {
                 startY: 10,
                 deltaX: 20,
                 deltaY: 20,
-                iconHeight: 20,
+                iconHeight: 48,
             },
         }),
 
