@@ -6,6 +6,7 @@ const Path = require('path'),
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
     isProd = process.env.NODE_ENV === 'production',
+    SvgStorePlugin = require('external-svg-sprite-loader'),
     //isModern = process.env.MODE === 'modern',
     outputConfig = {
         path: Path.resolve(process.cwd(), publicPath),
@@ -97,6 +98,45 @@ module.exports = {
                     },
                 ],
             },
+            {
+                test: /\.svg$/,
+                use: [
+                    {
+                        loader: SvgStorePlugin.loader,
+                        options: {
+                            name: 'sprite/sprite.svg',
+                            iconName: '[name]',
+                        },
+                    },
+                    {
+                        loader: 'svgo-loader',
+                        options: {
+                            plugins: [
+                                // don't enable this
+                                { removeViewBox: false },
+                                //
+                                { cleanupAttrs: true },
+                                { removeDoctype: true },
+                                { removeXMLProcInst: true },
+                                { cleanupEnableBackground: true },
+                                { convertStyleToAttrs: true },
+                                { convertPathData: true },
+                                { cleanupIDs: false },
+                                { minifyStyles: true },
+                                { removeUselessDefs: true },
+                                { convertShapeToPath: true },
+                                { removeUnusedNS: true },
+                                { removeDimensions: true },
+                                { convertTransform: true },
+                                { collapseGroups: true },
+                                { removeComments: true },
+                                { removeEditorsNSData: true },
+                                { removeUnknownsAndDefaults: true },
+                            ],
+                        },
+                    },
+                ],
+            },
         ],
     },
     output: outputConfig,
@@ -121,6 +161,16 @@ module.exports = {
                     },
                 },
             ],
+        }),
+
+        new SvgStorePlugin({
+            sprite: {
+                startX: 10,
+                startY: 10,
+                deltaX: 20,
+                deltaY: 20,
+                iconHeight: 48,
+            },
         }),
 
         new ExtractCssChunks(extractCssChunksConfig),
