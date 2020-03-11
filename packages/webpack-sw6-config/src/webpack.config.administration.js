@@ -143,7 +143,7 @@ module.exports = {
     plugins: [
         new AssetsCopyPlugin({
             includes: ['js', 'css'],
-            ignoreFiles: [/[-\w.]*.hot-update.js/],
+            ignoreFiles: [/[-\w.]*.hot-update.js/, /sprite\/sprite.svg/],
             files: [
                 {
                     from: publicPath,
