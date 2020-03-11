@@ -43,7 +43,6 @@ module.exports = {
                 exclude: (file) => /node_modules/.test(file),
                 options: {
                     formatter: require('eslint-friendly-formatter'),
-                    configFile: Path.resolve(__dirname, '.eslintrc.js'),
                 },
             },
             {
@@ -98,7 +97,7 @@ module.exports = {
                 options: {
                     search:
                         "import PluginManager from 'src/plugin-system/plugin.manager'",
-                    //match, p1, offset, string
+                    // match, p1, offset, string
                     replace: () => 'const PluginManager = window.PluginManager',
                     flags: 'g',
                 },
@@ -199,7 +198,6 @@ module.exports = {
             ? new StyleLintPlugin({
                   files: Glob.sync(Path.join(privatePath, '/**/*.scss')),
                   failOnError: false,
-                  configFile: Path.join(__dirname, 'stylelint.config.js'),
               })
             : [],
     ),

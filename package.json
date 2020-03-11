@@ -1,14 +1,15 @@
 {
-    "name": "root",
+    "name": "webpack-plugins",
     "private": true,
     "devDependencies": {
         "eslint": "^6.8.0",
+        "eslint-config-recommended": "^4.0.0",
         "lerna": "^3.20.2"
     },
-    "prettier": "./packages/prettier-config/src/index.json",
+    "prettier": "./packages/prettier-config-standard/src/index.json",
     "eslintConfig": {
         "extends": [
-            "./packages/eslint-config/src/index.js"
+            "./packages/eslint-config-standard/src/index.js"
         ]
     }
 }

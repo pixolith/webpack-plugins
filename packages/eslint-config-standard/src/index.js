@@ -12,7 +12,6 @@ module.exports = {
     extends: ['eslint:recommended'],
     // add your custom rules here
     rules: {
-        indent: [2, 4, { SwitchCase: 0 }],
         quotes: [2, 'single', 'avoid-escape'],
         'brace-style': [2, '1tbs'],
         'comma-dangle': [2, 'only-multiline'],
@@ -25,6 +24,7 @@ module.exports = {
         'no-unused-vars': 2,
         'no-bitwise': 2,
         'eol-last': 2,
+        indent: 0,
         'dot-notation': 2,
         'dot-location': [2, 'property'],
         eqeqeq: [2, 'allow-null'],

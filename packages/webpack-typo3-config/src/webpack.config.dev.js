@@ -59,7 +59,6 @@ module.exports = {
                 enforce: 'pre',
                 options: {
                     formatter: require('eslint-friendly-formatter'),
-                    configFile: path.resolve(__dirname, '.eslintrc.js'),
                 },
             },
             {
@@ -301,7 +300,6 @@ module.exports = {
             ? new StyleLintPlugin({
                   files: glob.sync(path.join(basePath, 'Scss/**/*.scss')),
                   failOnError: false,
-                  configFile: path.join(__dirname, 'stylelint.config.js'),
               })
             : [],
     ),
