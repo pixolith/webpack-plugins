@@ -24,7 +24,7 @@ const setup = () => {
         shopwareMode: process.env.SHOPWARE_MODE,
         jsTranspile: process.env.JS_TRANSPILE,
         globalResourcesPaths: process.env.RESOURCES_PATHS,
-        debug: process.env.DEBUG,
+        debug: process.env.DEBUG || false,
         version: pkg.version,
     });
 };
