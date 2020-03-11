@@ -28,7 +28,7 @@ FilenameLinterPlugin.prototype.apply = function(compiler) {
                         .replace(ext, '')
                         .replace(prefix, '');
 
-                if (!rule && changeCase[options.rules.default](name) === name) {
+                if (!rule) {
                     return false;
                 }
 
