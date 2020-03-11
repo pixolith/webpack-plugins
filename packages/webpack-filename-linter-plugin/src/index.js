@@ -28,10 +28,7 @@ FilenameLinterPlugin.prototype.apply = function(compiler) {
                         .replace(ext, '')
                         .replace(prefix, '');
 
-                if (!rule) {
-                    consola.info(
-                        `[${this.pluginName}]: '${fileType}' has no defined rule`,
-                    );
+                if (!rule && changeCase[options.rules.default](name) === name) {
                     return false;
                 }
 
