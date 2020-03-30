@@ -162,11 +162,16 @@ const watcher = {
                 return;
             }
 
-            let isJS = Path.extname(files[files.length - 1]) === '.js';
-            let isSCSS = Path.extname(files[files.length - 1]) === '.scss';
+            let isJS = files[files.length - 1]
+                .split('/')
+                .filter((path) => path === 'js').length;
+
+            let isSCSS = files[files.length - 1]
+                .split('/')
+                .filter((path) => path === 'scss').length;
 
             if (isJS) {
-                name = `../index${Path.extname(files[files.length - 1])}`;
+                name = '../index.js';
 
                 let cssFiles = Glob.sync(
                     `${filePath.replace(JS_FOLDER, SCSS_FOLDER)}/**/*.scss`,
@@ -219,7 +224,7 @@ const watcher = {
             }
 
             if (isSCSS) {
-                name = `index${Path.extname(files[files.length - 1])}`;
+                name = 'index.scss';
                 prefix = '@import "';
                 affix = '";\n';
             }
