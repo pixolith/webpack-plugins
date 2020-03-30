@@ -170,7 +170,7 @@ const watcher = {
                 .filter((path) => path === 'scss').length;
 
             if (isJS) {
-                name = `../index.js`;
+                name = '../index.js';
 
                 let cssFiles = Glob.sync(
                     `${filePath.replace(JS_FOLDER, SCSS_FOLDER)}/**/*.scss`,
@@ -223,7 +223,7 @@ const watcher = {
             }
 
             if (isSCSS) {
-                name = `index.scss`;
+                name = 'index.scss';
                 prefix = '@import "';
                 affix = '";\n';
             }
