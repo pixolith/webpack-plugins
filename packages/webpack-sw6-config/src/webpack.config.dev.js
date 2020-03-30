@@ -153,6 +153,20 @@ module.exports = {
     },
     plugins: [
         new HookPlugin({
+            beforeCompile() {
+                let path = Path.join(process.cwd(), 'www/public/sprite'),
+                    filename = 'sprite.svg',
+                    exists = fs.existsSync(path);
+
+                if (!exists) {
+                    fs.mkdirSync(path);
+                    fs.appendFile(Path.join(path, filename), '#', (err) => {
+                        if (err) {
+                            throw err;
+                        }
+                    });
+                }
+            },
             failed() {
                 watcher.run();
             },

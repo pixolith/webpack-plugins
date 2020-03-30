@@ -17,7 +17,8 @@ const Fs = require('fs'),
     Glob = require('glob'),
     SCSS_FOLDER = process.env.SCSS_FOLDER || 'scss',
     JS_FOLDER = process.env.JS_FOLDER || 'js',
-    ICONS_FOLDER = process.env.ICONS_FOLDER || 'icons';
+    ICONS_FOLDER = process.env.ICONS_FOLDER || 'icons',
+    allowedExtensions = ['.js', '.scss', '.css'];
 
 const watcher = {
     watch() {
@@ -228,7 +229,13 @@ const watcher = {
             }
 
             files
-                .filter((file) => !file.includes(name))
+                .filter((file) => {
+                    return (
+                        file &&
+                        !file.includes(name) &&
+                        allowedExtensions.includes(Path.extname(file))
+                    );
+                })
                 .forEach((file) => {
                     buffer +=
                         prefix +

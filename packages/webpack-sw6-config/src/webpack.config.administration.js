@@ -7,6 +7,7 @@ const Path = require('path'),
     AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
     isProd = process.env.NODE_ENV === 'production',
     SvgStorePlugin = require('external-svg-sprite-loader'),
+    CopyPlugin = require('copy-webpack-plugin'),
     //isModern = process.env.MODE === 'modern',
     outputConfig = {
         path: Path.resolve(process.cwd(), publicPath),
@@ -172,6 +173,16 @@ module.exports = {
                 iconHeight: 48,
             },
         }),
+
+        new CopyPlugin([
+            {
+                from: Path.join(process.cwd(), 'www/public/sprite/sprite.svg'),
+                to: Path.join(
+                    process.cwd(),
+                    'www/custom/plugins/PxswTheme/src/Resources/views/administration/_sprite.svg',
+                ),
+            },
+        ]),
 
         new ExtractCssChunks(extractCssChunksConfig),
     ],
