@@ -153,7 +153,7 @@ module.exports = {
     },
     plugins: [
         new HookPlugin({
-            beforeCompile() {
+            beforeCompile(compiler, callback) {
                 let path = Path.join(process.cwd(), 'www/public/sprite'),
                     filename = 'sprite.svg',
                     exists = fs.existsSync(path);
@@ -166,6 +166,8 @@ module.exports = {
                         }
                     });
                 }
+
+                callback();
             },
             failed() {
                 watcher.run();
