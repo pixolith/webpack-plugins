@@ -165,13 +165,12 @@ const watcher = {
             let isJS = files[files.length - 1]
                 .split('/')
                 .filter((path) => path === 'js').length;
-
             let isSCSS = files[files.length - 1]
                 .split('/')
                 .filter((path) => path === 'scss').length;
 
             if (isJS) {
-                name = '../index.js';
+                name = `../index.js`;
 
                 let cssFiles = Glob.sync(
                     `${filePath.replace(JS_FOLDER, SCSS_FOLDER)}/**/*.scss`,
@@ -224,13 +223,9 @@ const watcher = {
             }
 
             if (isSCSS) {
-                name = 'index.scss';
+                name = `index.scss`;
                 prefix = '@import "';
                 affix = '";\n';
-            }
-
-            if (!prefix && !affix) {
-                Consola.error('filetype not supported', filePath);
             }
 
             files
@@ -253,6 +248,11 @@ const watcher = {
                     'if (module.hot) {\n' +
                     '    module.hot.accept();\n' +
                     '}\n';
+            }
+
+            if (!isJS && !isSCSS) {
+                Consola.error('If you ever get here call 911');
+                return;
             }
 
             Fs.writeFileSync(`${filePath}/${name}`, buffer);
