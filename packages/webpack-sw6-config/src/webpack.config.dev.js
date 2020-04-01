@@ -159,7 +159,9 @@ module.exports = {
                     exists = fs.existsSync(path);
 
                 if (!exists) {
-                    fs.mkdirSync(path);
+                    fs.mkdirSync(path, {
+                        recursive: true,
+                    });
                     fs.appendFile(Path.join(path, filename), '#', (err) => {
                         if (err) {
                             throw err;
