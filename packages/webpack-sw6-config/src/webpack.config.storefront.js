@@ -1,4 +1,5 @@
 const Path = require('path'),
+    Fs = require('fs'),
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     privatePath = process.env.PLUGIN_PATH,
     vendorPath = process.env.VENDOR_PATH,
@@ -10,8 +11,10 @@ const Path = require('path'),
     isModern = process.env.MODE === 'modern',
     CopyPlugin = require('copy-webpack-plugin'),
     SvgStorePlugin = require('external-svg-sprite-loader'),
+    publicPath = 'www/public',
+    HookPlugin = require('@pixolith/webpack-hook-plugin'),
     outputConfig = {
-        path: Path.join(process.cwd(), 'www/public'),
+        path: Path.join(process.cwd(), publicPath),
         publicPath: '/',
         chunkFilename: `js/[name]${
             isModern ? '.modern' : '' + isProd ? '.[contenthash]' : ''
@@ -179,6 +182,26 @@ module.exports = {
     },
     output: outputConfig,
     plugins: [
+        new HookPlugin({
+            beforeCompile(compiler, callback) {
+                let path = Path.join(process.cwd(), publicPath, 'sprite'),
+                    filename = 'sprite.svg',
+                    exists = Fs.existsSync(Path.join(path, filename));
+
+                if (!exists) {
+                    Fs.mkdirSync(path, {
+                        recursive: true,
+                    });
+                    Fs.appendFile(Path.join(path, filename), '#', (err) => {
+                        if (err) {
+                            throw err;
+                        }
+                    });
+                }
+
+                callback();
+            },
+        }),
         new TwigAssetEmitterPlugin({
             includes: ['js', 'css'],
             ignoreFiles: [],
@@ -213,11 +236,12 @@ module.exports = {
 
         new CopyPlugin([
             {
-                from: Path.join(process.cwd(), 'www/public/sprite/sprite.svg'),
+                from: Path.join(process.cwd(), publicPath, 'sprite/sprite.svg'),
                 to: Path.join(
                     process.cwd(),
                     'www/custom/plugins/PxswTheme/src/Resources/views/storefront/_sprite.svg',
                 ),
+                force: true,
             },
         ]),
 

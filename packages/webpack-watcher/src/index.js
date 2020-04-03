@@ -18,7 +18,7 @@ const Fs = require('fs'),
     SCSS_FOLDER = process.env.SCSS_FOLDER || 'scss',
     JS_FOLDER = process.env.JS_FOLDER || 'js',
     ICONS_FOLDER = process.env.ICONS_FOLDER || 'icons',
-    allowedExtensions = ['.js', '.scss', '.css'];
+    allowedExtensions = ['.js', '.scss', '.css', '.svg'];
 
 const watcher = {
     watch() {
@@ -251,6 +251,12 @@ const watcher = {
             }
 
             if (!isJS && !isSCSS) {
+                Consola.error(
+                    'This basically means there are a bunch of ressources but no direct include so we wont do anything',
+                );
+                Consola.error(
+                    'For instance shared should not be directly included',
+                );
                 Consola.error('If you ever get here call 911');
                 return;
             }

@@ -1,4 +1,5 @@
 const Path = require('path'),
+    Fs = require('fs'),
     privatePath = process.env.PLUGIN_PATH,
     changeCase = require('change-case'),
     entry = require('webpack-glob-entry'),
@@ -8,9 +9,11 @@ const Path = require('path'),
     isProd = process.env.NODE_ENV === 'production',
     SvgStorePlugin = require('external-svg-sprite-loader'),
     CopyPlugin = require('copy-webpack-plugin'),
+    HookPlugin = require('@pixolith/webpack-hook-plugin'),
     //isModern = process.env.MODE === 'modern',
+    outputPath = Path.resolve(process.cwd(), publicPath),
     outputConfig = {
-        path: Path.resolve(process.cwd(), publicPath),
+        path: outputPath,
         publicPath: '/',
         filename: (chunkData) => {
             let pluginName = chunkData.chunk.name
@@ -142,6 +145,26 @@ module.exports = {
     },
     output: outputConfig,
     plugins: [
+        new HookPlugin({
+            beforeCompile(compiler, callback) {
+                let path = Path.join(process.cwd(), publicPath, 'sprite'),
+                    filename = 'sprite.svg',
+                    exists = Fs.existsSync(Path.join(path, filename));
+
+                if (!exists) {
+                    Fs.mkdirSync(path, {
+                        recursive: true,
+                    });
+                    Fs.appendFile(Path.join(path, filename), '#', (err) => {
+                        if (err) {
+                            throw err;
+                        }
+                    });
+                }
+
+                callback();
+            },
+        }),
         new AssetsCopyPlugin({
             includes: ['js', 'css'],
             ignoreFiles: [/[-\w.]*.hot-update.js/, /sprite\/sprite.svg/],
@@ -176,11 +199,12 @@ module.exports = {
 
         new CopyPlugin([
             {
-                from: Path.join(process.cwd(), 'www/public/sprite/sprite.svg'),
+                from: Path.join(process.cwd(), publicPath, 'sprite/sprite.svg'),
                 to: Path.join(
                     process.cwd(),
                     'www/custom/plugins/PxswTheme/src/Resources/views/administration/_sprite.svg',
                 ),
+                force: true,
             },
         ]),
 
