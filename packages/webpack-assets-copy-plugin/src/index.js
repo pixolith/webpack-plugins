@@ -24,18 +24,24 @@ AssetsCopyPlugin.prototype.apply = function(compiler) {
             let _compilationAssets = JSON.parse(
                 JSON.stringify(compilation.assets),
             );
-            let _compilationAssetsKeys = Object.keys(_compilationAssets);
+            let _compilationAssetsKeys = Object.keys(_compilationAssets),
+                _filteredCompilationAssetsKeys = [];
 
             _compilationAssetsKeys.forEach((assetKey) => {
-                ignoreFiles.forEach((ignoreFile) => {
-                    if (ignoreFile.test(assetKey)) {
-                        delete _compilationAssets[assetKey];
-                    }
+                let isIgnored = ignoreFiles.filter((ignoreFile) => {
+                    return ignoreFile.test(assetKey);
                 });
+
+                if (
+                    !isIgnored.length &&
+                    !_filteredCompilationAssetsKeys.includes(assetKey)
+                ) {
+                    _filteredCompilationAssetsKeys.push(assetKey);
+                }
             });
 
             const filesTasks = files.map((file) => async () => {
-                const tasks = _compilationAssetsKeys.map(
+                const tasks = _filteredCompilationAssetsKeys.map(
                     (assetKey) => async () => {
                         if (
                             !includes
