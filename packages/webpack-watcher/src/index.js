@@ -24,7 +24,7 @@ const watcher = {
     watch() {
         const fileList = [].concat(
             Glob.sync(pluginPath),
-            Glob.sync(sharedPath),
+            sharedPath ? Glob.sync(sharedPath) : [],
         );
 
         const watcherInstance = Chokidar.watch(fileList, {
@@ -112,7 +112,7 @@ const watcher = {
         let files = Fs.readdirSync(path)
             .filter((file) => file.charAt(0) !== '.')
             .filter((file) => file)
-            .map(function(file) {
+            .map((file) => {
                 var subpath = path + '/' + file;
                 if (Fs.lstatSync(subpath).isDirectory()) {
                     return watcher.walkTheLine(subpath);
@@ -164,10 +164,10 @@ const watcher = {
 
             let isJS = files[files.length - 1]
                 .split('/')
-                .filter((path) => path === 'js').length;
+                .filter((path) => path.toLowerCase() === 'js').length;
             let isSCSS = files[files.length - 1]
                 .split('/')
-                .filter((path) => path === 'scss').length;
+                .filter((path) => path.toLowerCase() === 'scss').length;
 
             if (isJS) {
                 name = '../index.js';
