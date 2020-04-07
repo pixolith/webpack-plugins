@@ -29,20 +29,20 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: (file) => {
-                    if (/node_modules/.test(file)) {
-                        return true;
-                    }
-
                     if (
                         !isModern &&
+                        /node_modules/.test(file) &&
                         JSON.parse(process.env.JS_TRANSPILE) &&
-                        JSON.parse(process.env.JS_TRANSPILE).length
+                        JSON.parse(process.env.JS_TRANSPILE).length &&
+                        JSON.parse(process.env.JS_TRANSPILE).filter((lib) => {
+                            return new RegExp(lib).test(file);
+                        }).length > 0
                     ) {
-                        return (
-                            JSON.parse(process.env.JS_TRANSPILE).filter((lib) =>
-                                lib.test(file),
-                            ).length > 0
-                        );
+                        return false;
+                    }
+
+                    if (/node_modules/.test(file)) {
+                        return true;
                     }
 
                     return false;
