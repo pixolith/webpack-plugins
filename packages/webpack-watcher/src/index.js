@@ -224,8 +224,8 @@ const watcher = {
 
             if (isSCSS) {
                 name = 'index.scss';
-                prefix = '@import "';
-                affix = '";\n';
+                prefix = "@import '";
+                affix = "';\n";
             }
 
             files

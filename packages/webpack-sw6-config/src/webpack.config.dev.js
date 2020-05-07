@@ -212,10 +212,11 @@ module.exports = {
             },
         }),
     ].concat(
-        Glob.sync(Path.join(privatePath, '/**/*.scss')).length
+        Glob.sync(Path.join(privatePath, '/**/*.s?(a|c)ss')).length
             ? new StyleLintPlugin({
-                  files: Glob.sync(Path.join(privatePath, '/**/*.scss')),
+                  files: '**/Pxsw*/**/*.s?(a|c)ss',
                   failOnError: false,
+                  fix: false,
                   configFile: Path.join(__dirname, 'stylelint.config.js'),
               })
             : [],

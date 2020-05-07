@@ -1,8 +1,21 @@
 {
-    "$schema": "http://json.schemastore.org/prettierrc",
     "semi": true,
     "arrowParens": "always",
     "singleQuote": true,
     "trailingComma": "all",
-    "endOfLine": "lf"
+    "endOfLine": "lf",
+    "overrides": [
+        {
+            "files": "*.yml",
+            "options": {
+                "tabWidth": 2
+            }
+        },
+        {
+            "files": "*.s?(a|c)ss",
+            "options": {
+                "trailingComma": "none"
+            }
+        }
+    ]
 }

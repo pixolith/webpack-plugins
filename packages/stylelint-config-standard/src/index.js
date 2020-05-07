@@ -1,9 +1,8 @@
 module.exports = {
-    extends: 'stylelint-config-standard',
+    extends: 'stylelint-prettier/recommended',
     rules: {
         'at-rule-empty-line-before': null,
         'at-rule-no-unknown': null,
-        'block-closing-brace-newline-after': 'always',
         'color-hex-length': null,
         'comment-empty-line-before': null,
         'comment-whitespace-inside': null,
@@ -11,7 +10,6 @@ module.exports = {
         'declaration-empty-line-before': null,
         'declaration-colon-newline-after': null,
         'declaration-block-no-redundant-longhand-properties': null,
-        indentation: 4,
         'length-zero-no-unit': null,
         'no-descending-specificity': null,
         'max-nesting-depth': 8,
