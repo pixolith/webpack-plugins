@@ -37,7 +37,7 @@ module.exports = {
         'require-atomic-updates': 'off',
         'space-before-function-paren': [
             2,
-            { anonymous: 'never', named: 'never' },
+            { anonymous: 'always', named: 'never' },
         ],
         strict: [2, 'global'],
     },

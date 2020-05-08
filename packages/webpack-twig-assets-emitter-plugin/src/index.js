@@ -15,7 +15,7 @@ const TwigAssetEmitterPlugin = function TwigAssetEmitterPlugin(options) {
     this.options = options;
 };
 
-TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
+TwigAssetEmitterPlugin.prototype.apply = function (compiler) {
     const options = this.options;
 
     compiler.hooks.afterEmit.tapAsync(
@@ -34,7 +34,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
             );
             let _compilationAssetsKeys = Object.keys(_compilationAssets);
 
-            _compilationAssetsKeys.forEach((assetKey, index) => {
+            _compilationAssetsKeys.forEach((assetKey) => {
                 ignoreFiles.forEach((ignoreFile) => {
                     if (ignoreFile.test(assetKey)) {
                         delete _compilationAssets[assetKey];
@@ -101,13 +101,13 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             if (templateKey === 'hints') {
                                 output = `${files[key].js
                                     .map((file) => {
-                                        return `<link rel="preload" href="/${file}" as="script">`;
+                                        return `<link crossorigin="anonymous" rel="preload" href="/${file}" as="script">`;
                                     })
                                     .join('\n')}`;
 
                                 output += `\n${files[key].css
                                     .map((file) => {
-                                        return `<link rel="preload" href="/${file}" as="style">`;
+                                        return `<link crossorigin="anonymous" rel="preload" href="/${file}" as="style">`;
                                     })
                                     .join('\n')}`;
                             }
