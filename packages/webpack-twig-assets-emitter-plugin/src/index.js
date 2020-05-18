@@ -121,7 +121,8 @@ TwigAssetEmitterPlugin.prototype.apply = function (compiler) {
                             }
 
                             if (templateKey === 'stylesmodern') {
-                                output = `
+                                output = files[key].css.length
+                                    ? `
                                     ${files[key].css
                                         .map((file) => {
                                             return `<link rel="stylesheet" href="/${file}">`;
@@ -144,7 +145,8 @@ TwigAssetEmitterPlugin.prototype.apply = function (compiler) {
                                             .join('\n')}
                                     }
                                     </script>
-                                `;
+                                `
+                                    : '';
                             }
 
                             if (templateKey === 'scriptsmodern') {
