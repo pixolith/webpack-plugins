@@ -209,7 +209,7 @@ module.exports = {
                 );
                 let spriteOutputPath = Path.join(
                     process.cwd(),
-                    'www/custom/plugins/PxswTheme/src/Resources/views/administration/_sprite.svg',
+                    'www/custom/plugins/PxswTheme/src/Resources/views/storefront/_sprite.svg',
                 );
                 Fs.copyFileSync(spriteInputPath, spriteOutputPath);
                 callback();
