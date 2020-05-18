@@ -8,7 +8,6 @@ const Path = require('path'),
     AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
     isProd = process.env.NODE_ENV === 'production',
     SvgStorePlugin = require('external-svg-sprite-loader'),
-    CopyPlugin = require('copy-webpack-plugin'),
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
     //isModern = process.env.MODE === 'modern',
     outputPath = Path.resolve(process.cwd(), publicPath),
@@ -164,6 +163,20 @@ module.exports = {
 
                 callback();
             },
+
+            afterEmit(compiler, callback) {
+                let spriteInputPath = Path.join(
+                    process.cwd(),
+                    publicPath,
+                    'sprite/sprite.svg',
+                );
+                let spriteOutputPath = Path.join(
+                    process.cwd(),
+                    'www/custom/plugins/PxswTheme/src/Resources/views/administration/_sprite.svg',
+                );
+                Fs.copyFileSync(spriteInputPath, spriteOutputPath);
+                callback();
+            },
         }),
         new AssetsCopyPlugin({
             includes: ['js', 'css'],
@@ -196,17 +209,6 @@ module.exports = {
                 iconHeight: 48,
             },
         }),
-
-        new CopyPlugin([
-            {
-                from: Path.join(process.cwd(), publicPath, 'sprite/sprite.svg'),
-                to: Path.join(
-                    process.cwd(),
-                    'www/custom/plugins/PxswTheme/src/Resources/views/administration/_sprite.svg',
-                ),
-                force: true,
-            },
-        ]),
 
         new ExtractCssChunks(extractCssChunksConfig),
     ],

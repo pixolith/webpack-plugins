@@ -9,7 +9,6 @@ const Path = require('path'),
     entry = require('webpack-glob-entry'),
     isProd = process.env.NODE_ENV === 'production',
     isModern = process.env.MODE === 'modern',
-    CopyPlugin = require('copy-webpack-plugin'),
     SvgStorePlugin = require('external-svg-sprite-loader'),
     publicPath = 'www/public',
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
@@ -201,6 +200,20 @@ module.exports = {
 
                 callback();
             },
+
+            afterEmit(compiler, callback) {
+                let spriteInputPath = Path.join(
+                    process.cwd(),
+                    publicPath,
+                    'sprite/sprite.svg',
+                );
+                let spriteOutputPath = Path.join(
+                    process.cwd(),
+                    'www/custom/plugins/PxswTheme/src/Resources/views/administration/_sprite.svg',
+                );
+                Fs.copyFileSync(spriteInputPath, spriteOutputPath);
+                callback();
+            },
         }),
         new TwigAssetEmitterPlugin({
             includes: ['js', 'css'],
@@ -233,17 +246,6 @@ module.exports = {
                 iconHeight: 48,
             },
         }),
-
-        new CopyPlugin([
-            {
-                from: Path.join(process.cwd(), publicPath, 'sprite/sprite.svg'),
-                to: Path.join(
-                    process.cwd(),
-                    'www/custom/plugins/PxswTheme/src/Resources/views/storefront/_sprite.svg',
-                ),
-                force: true,
-            },
-        ]),
 
         new ExtractCssChunks(extractCssChunksConfig),
     ],
