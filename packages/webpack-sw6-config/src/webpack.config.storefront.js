@@ -208,10 +208,22 @@ module.exports = {
                     'sprite/sprite.svg',
                 );
                 let spriteOutputPath = Path.join(
-                    process.cwd(),
-                    'www/custom/plugins/PxswTheme/src/Resources/views/storefront/_sprite.svg',
+                        process.cwd(),
+                        'www/custom/plugins/PxswTheme/src/Resources/views/storefront',
+                    ),
+                    spritOutputFilename = '_sprite.svg';
+                exists = Fs.existsSync(spriteOutputPath);
+
+                if (!exists) {
+                    Fs.mkdirSync(spriteOutputPath, {
+                        recursive: true,
+                    });
+                }
+
+                Fs.copyFileSync(
+                    spriteInputPath,
+                    Path.join(spriteOutputPath, spritOutputFilename),
                 );
-                Fs.copyFileSync(spriteInputPath, spriteOutputPath);
                 callback();
             },
         }),
