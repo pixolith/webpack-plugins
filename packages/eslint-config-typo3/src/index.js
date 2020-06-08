@@ -45,5 +45,6 @@ module.exports = {
             { anonymous: 'never', named: 'never' },
         ],
         strict: [2, 'global'],
+        'require-await': 2,
     },
 };
