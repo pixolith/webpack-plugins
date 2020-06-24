@@ -2,7 +2,6 @@ const fs = require('fs');
 const Path = require('path');
 const mkdirp = require('mkdirp');
 const { promisify } = require('util');
-const rimraf = require('rimraf');
 const consola = require('consola');
 const pSeries = require('p-series');
 const changeCase = require('change-case');
@@ -15,7 +14,7 @@ const TwigAssetEmitterPlugin = function TwigAssetEmitterPlugin(options) {
     this.options = options;
 };
 
-TwigAssetEmitterPlugin.prototype.apply = function (compiler) {
+TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
     const options = this.options;
 
     compiler.hooks.afterEmit.tapAsync(
@@ -69,13 +68,6 @@ TwigAssetEmitterPlugin.prototype.apply = function (compiler) {
                     });
                 }
             });
-
-            rimraf.sync(
-                'www/custom/plugins/*/src/Resources/views/storefront/**/_px*.twig',
-            );
-            rimraf.sync(
-                'www/vendor/pxsw/*/src/Resources/views/storefront/**/_px*.twig',
-            );
 
             const tasks = Object.keys(options.template).map(
                 (templateKey) => async () => {
@@ -152,10 +144,7 @@ TwigAssetEmitterPlugin.prototype.apply = function (compiler) {
                             if (templateKey === 'scriptsmodern') {
                                 output = `${files[key].js
                                     .map((file) => {
-                                        return `<script type="module" src="/${file}"></script><script defer nomodule src="/${file.replace(
-                                            '.modern',
-                                            '',
-                                        )}"></script>`;
+                                        return `<script defer type="module" src="/${file}"></script>`;
                                     })
                                     .join('\n')}`;
                             }
@@ -226,6 +215,13 @@ TwigAssetEmitterPlugin.prototype.apply = function (compiler) {
                                 pluginPath,
                                 options.template[templateKey].filename,
                             );
+
+                            if (templateKey === 'scriptsmodern') {
+                                template = template.replace(
+                                    'defer',
+                                    'defer nomodule ',
+                                );
+                            }
 
                             await writeFileAsync(
                                 outputPath,
