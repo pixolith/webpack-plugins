@@ -132,7 +132,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                                     '',
                                                 )}";
 
-                                                head.appendChild(link);`;
+                                                document.head.appendChild(link);`;
                                             })
                                             .join('\n')}
                                     }
