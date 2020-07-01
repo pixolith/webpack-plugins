@@ -96,12 +96,6 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                         return `<link crossorigin="anonymous" rel="preload" href="/${file}" as="script">`;
                                     })
                                     .join('\n')}`;
-
-                                output += `\n${files[key].css
-                                    .map((file) => {
-                                        return `<link crossorigin="anonymous" rel="preload" href="/${file}" as="style">`;
-                                    })
-                                    .join('\n')}`;
                             }
 
                             if (templateKey === 'styles') {
@@ -126,7 +120,10 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                     ? `
                                     ${files[key].css
                                         .map((file) => {
-                                            return `<link rel="stylesheet" href="/${file}">`;
+                                            return `
+                                                <link crossorigin="anonymous" rel="preload" href="/${file}" as="style">
+                                                <link rel="stylesheet" href="/${file}">
+                                            `;
                                         })
                                         .join('\n')}
                                 `
