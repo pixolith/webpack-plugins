@@ -91,11 +91,35 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             });
 
                             if (templateKey === 'hints') {
-                                output = `${files[key].js
-                                    .map((file) => {
-                                        return `<link crossorigin="anonymous" rel="preload" href="/${file}" as="script">`;
-                                    })
-                                    .join('\n')}`;
+                                if (
+                                    templateKey === 'hints' &&
+                                    files[key].css.filter((file) =>
+                                        file.includes('modern'),
+                                    ).length
+                                ) {
+                                    output = `${files[key].css
+                                        .map((file) => {
+                                            return ` <link crossorigin="anonymous" rel="preload" href="/${file}" as="style">\n`;
+                                        })
+                                        .join('\n')}`;
+                                }
+
+                                if (
+                                    templateKey === 'hints' &&
+                                    files[key].js.filter((file) =>
+                                        file.includes('modern'),
+                                    ).length
+                                ) {
+                                    output += `${files[key].js
+                                        .map((file) => {
+                                            return `<link crossorigin="anonymous" rel="preload" href="/${file}" as="script">\n`;
+                                        })
+                                        .join('\n')}`;
+                                }
+
+                                if (!output) {
+                                    return;
+                                }
                             }
 
                             if (templateKey === 'styles') {
@@ -121,7 +145,6 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                     ${files[key].css
                                         .map((file) => {
                                             return `
-                                                <link crossorigin="anonymous" rel="preload" href="/${file}" as="style">
                                                 <link rel="stylesheet" href="/${file}">
                                             `;
                                         })
