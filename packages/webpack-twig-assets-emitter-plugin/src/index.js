@@ -107,7 +107,16 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             if (templateKey === 'styles') {
                                 output = `${files[key].css
                                     .map((file) => {
-                                        return `<link rel="stylesheet" href="/${file}">`;
+                                        return `<script>
+                                        if (window.isIE11) {
+                                            var link = document.createElement("link");
+
+                                            link.rel = "stylesheet";
+                                            link.href = "/${file}";
+
+                                            document.head.appendChild(link);
+                                        }
+                                        </script>`;
                                     })
                                     .join('\n')}`;
                             }
@@ -120,23 +129,6 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                             return `<link rel="stylesheet" href="/${file}">`;
                                         })
                                         .join('\n')}
-                                    <script>
-                                    if (window.isIE11) {
-                                        ${files[key].css
-                                            .map((file) => {
-                                                return `var link = document.createElement("link");
-
-                                                link.rel = "stylesheet";
-                                                link.href = "/${file.replace(
-                                                    '.modern',
-                                                    '',
-                                                )}";
-
-                                                document.head.appendChild(link);`;
-                                            })
-                                            .join('\n')}
-                                    }
-                                    </script>
                                 `
                                     : '';
                             }
