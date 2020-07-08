@@ -198,7 +198,12 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                 );
                                 template = template.replace(
                                     '{{ parent() }}',
-                                    '',
+                                    '{% if shopware.config.PxswProject.config.pxswServerEnvironment != \'live\' %}',
+                                );
+
+                                template = template.replace(
+                                    '{% endblock %}',
+                                    '{% endif %}\n{% endblock %}',
                                 );
                             }
 
