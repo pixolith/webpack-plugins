@@ -112,7 +112,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                 ) {
                                     output += `${files[key].js
                                         .map((file) => {
-                                            return `<link rel="preload" href="/${file}" as="script">\n`;
+                                            return `<link rel="preload" crossorigin="anonymous" href="/${file}" as="script">\n`;
                                         })
                                         .join('\n')}`;
                                 }
