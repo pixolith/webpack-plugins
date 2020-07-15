@@ -83,16 +83,16 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                         Object.keys(files).map(async (key) => {
                             let output = '';
                             let template = await readFileAsync(
-                                options.template[templateKey].filename,
+                                'node_modules/@pixolith/webpack-twig-assets-emitter-plugin/src/' + options.template[templateKey].filename,
                                 'utf8',
                             ).catch((err) => {
                                 consola.error(err);
                                 process.exit(1);
                             });
 
-                            if (templateKey === 'hints') {
+                            if (templateKey === 'hintsmodern') {
                                 if (
-                                    templateKey === 'hints' &&
+                                    templateKey === 'hintsmodern' &&
                                     files[key].css.filter((file) =>
                                         file.includes('modern'),
                                     ).length
@@ -104,12 +104,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                         .join('\n')}`;
                                 }
 
-                                if (
-                                    templateKey === 'hints' &&
-                                    files[key].js.filter((file) =>
-                                        file.includes('modern'),
-                                    ).length
-                                ) {
+                                if (templateKey === 'hintsmodern') {
                                     output += `${files[key].js
                                         .map((file) => {
                                             return `<link rel="preload" crossorigin="anonymous" href="/${file}" as="script">\n`;
@@ -125,16 +120,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             if (templateKey === 'styles') {
                                 output = `${files[key].css
                                     .map((file) => {
-                                        return `<script>
-                                        if (window.isIE11) {
-                                            var link = document.createElement("link");
-
-                                            link.rel = "stylesheet";
-                                            link.href = "/${file}";
-
-                                            document.head.appendChild(link);
-                                        }
-                                        </script>`;
+                                        return `<script>if(window.isIE11){var link = document.createElement("link");link.rel = "stylesheet";link.href = "/${file}";document.head.appendChild(link);}</script>`;
                                     })
                                     .join('\n')}`;
                             }
@@ -164,7 +150,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             if (templateKey === 'scripts') {
                                 output = `${files[key].js
                                     .map((file) => {
-                                        return `<script defer src="/${file}"></script>`;
+                                        return `<script defer nomodule src="/${file}"></script>`;
                                     })
                                     .join('\n')}`;
                             }
@@ -232,13 +218,6 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                 pluginPath,
                                 options.template[templateKey].filename,
                             );
-
-                            if (templateKey === 'scriptsmodern') {
-                                template = template.replace(
-                                    'defer',
-                                    'defer nomodule ',
-                                );
-                            }
 
                             await writeFileAsync(
                                 outputPath,

@@ -234,17 +234,17 @@ module.exports = {
                 [isModern ? 'scriptsmodern' : 'scripts']: {
                     namespace: '@Storefront/storefront',
                     path: '',
-                    filename: '_px_base.html.twig',
+                    filename: isModern ? '_px_base_modern.html.twig' : '_px_base.html.twig',
                 },
                 [isModern ? 'stylesmodern' : 'styles']: {
                     namespace: '@Storefront/storefront',
                     path: 'layout',
-                    filename: '_px_meta.html.twig',
+                    filename: isModern ? '_px_meta_modern.html.twig' : '_px_meta.html.twig',
                 },
-                hints: {
+                [isModern ? 'hintsmodern' : 'hints']: {
                     namespace: '@Storefront/storefront',
                     path: 'layout',
-                    filename: '_px_meta.html.twig',
+                    filename: isModern ? '_px_meta_modern.html.twig' : '_px_meta.html.twig',
                 },
             },
         }),
