@@ -83,7 +83,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                         Object.keys(files).map(async (key) => {
                             let output = '';
                             let template = await readFileAsync(
-                                `${__dirname}/src/${options.template[templateKey].filename}`,
+                                `${__dirname}/${options.template[templateKey].filename}`,
                                 'utf8',
                             ).catch((err) => {
                                 consola.error(err);
