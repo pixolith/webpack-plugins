@@ -72,11 +72,6 @@ module.exports = {
                 process.cwd(),
                 '/www/vendor/shopware/storefront/Resources/app/storefront/src',
             ),
-            '@swStorefront': Path.join(process.cwd()),
-            '@swBootstrap': Path.join(
-                process.cwd(),
-                '/www/vendor/shopware/storefront/Resources/app/storefront/vendor/bootstrap/scss',
-            ),
         },
     },
     module: {
@@ -212,7 +207,8 @@ module.exports = {
                         'www/custom/plugins/PxswTheme/src/Resources/views/storefront',
                     ),
                     spritOutputFilename = '_sprite.svg';
-                exists = Fs.existsSync(spriteOutputPath);
+
+                let exists = Fs.existsSync(spriteOutputPath);
 
                 if (!exists) {
                     Fs.mkdirSync(spriteOutputPath, {
@@ -234,17 +230,23 @@ module.exports = {
                 [isModern ? 'scriptsmodern' : 'scripts']: {
                     namespace: '@Storefront/storefront',
                     path: '',
-                    filename: isModern ? '_px_base_modern.html.twig' : '_px_base.html.twig',
+                    filename: isModern
+                        ? '_px_base_modern.html.twig'
+                        : '_px_base.html.twig',
                 },
                 [isModern ? 'stylesmodern' : 'styles']: {
                     namespace: '@Storefront/storefront',
                     path: 'layout',
-                    filename: isModern ? '_px_meta_modern.html.twig' : '_px_meta.html.twig',
+                    filename: isModern
+                        ? '_px_meta_modern.html.twig'
+                        : '_px_meta.html.twig',
                 },
                 [isModern ? 'hintsmodern' : 'hints']: {
                     namespace: '@Storefront/storefront',
                     path: 'layout',
-                    filename: isModern ? '_px_meta_modern.html.twig' : '_px_meta.html.twig',
+                    filename: isModern
+                        ? '_px_meta_modern.html.twig'
+                        : '_px_meta.html.twig',
                 },
             },
         }),

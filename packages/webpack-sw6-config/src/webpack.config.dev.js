@@ -111,7 +111,7 @@ module.exports = {
         watchContentBase: false,
         sockPort: 8080,
         overlay: {
-            warnings: true,
+            warnings: false,
             errors: true,
         },
         headers: {

@@ -29,7 +29,7 @@ const webpack = require('webpack'),
                         ie8: false,
                         module: false,
                         nameCache: null, // or specify a name cache object
-                        safari10: false,
+                        safari10: !isModern,
                         toplevel: false,
                         warnings: false,
                     },

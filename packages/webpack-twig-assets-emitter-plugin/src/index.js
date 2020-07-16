@@ -83,7 +83,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                         Object.keys(files).map(async (key) => {
                             let output = '';
                             let template = await readFileAsync(
-                                'node_modules/@pixolith/webpack-twig-assets-emitter-plugin/src/' + options.template[templateKey].filename,
+                                `${__dirname}/src/${options.template[templateKey].filename}`,
                                 'utf8',
                             ).catch((err) => {
                                 consola.error(err);
@@ -184,7 +184,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                 );
                                 template = template.replace(
                                     '{{ parent() }}',
-                                    '{% if shopware.config.PxswProject.config.pxswServerEnvironment != \'live\' %}',
+                                    "{% if shopware.config.PxswProject.config.pxswServerEnvironment != 'live' %}",
                                 );
 
                                 template = template.replace(

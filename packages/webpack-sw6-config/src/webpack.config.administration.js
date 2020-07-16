@@ -175,7 +175,8 @@ module.exports = {
                         'www/custom/plugins/PxswTheme/src/Resources/views/administration',
                     ),
                     spritOutputFilename = '_sprite.svg';
-                exists = Fs.existsSync(spriteOutputPath);
+
+                let exists = Fs.existsSync(spriteOutputPath);
 
                 if (!exists) {
                     Fs.mkdirSync(spriteOutputPath, {
