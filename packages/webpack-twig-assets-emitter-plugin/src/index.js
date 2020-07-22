@@ -150,7 +150,12 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             if (templateKey === 'scripts') {
                                 output = `${files[key].js
                                     .map((file) => {
-                                        return `<script defer nomodule src="/${file}"></script>`;
+                                        return `<script defer ${
+                                            process.env.NODE_ENV ===
+                                            'development'
+                                                ? ''
+                                                : 'nomodule'
+                                        } src="/${file}"></script>`;
                                     })
                                     .join('\n')}`;
                             }
