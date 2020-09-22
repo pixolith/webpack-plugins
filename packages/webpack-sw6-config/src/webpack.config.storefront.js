@@ -226,7 +226,7 @@ module.exports = {
         }),
         new TwigAssetEmitterPlugin({
             includes: ['js', 'css'],
-            ignoreFiles: [],
+            ignoreFiles: [/.*icons.*\.js/],
             template: {
                 [isModern ? 'scriptsmodern' : 'scripts']: {
                     namespace: '@Storefront/storefront',

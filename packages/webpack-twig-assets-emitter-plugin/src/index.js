@@ -33,13 +33,18 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
             );
             let _compilationAssetsKeys = Object.keys(_compilationAssets);
 
-            _compilationAssetsKeys.forEach((assetKey) => {
-                ignoreFiles.forEach((ignoreFile) => {
-                    if (ignoreFile.test(assetKey)) {
-                        delete _compilationAssets[assetKey];
-                    }
-                });
-            });
+            _compilationAssetsKeys = _compilationAssetsKeys.filter(
+                (assetKey) => {
+                    let isIgnored = false;
+                    ignoreFiles.forEach((ignoreFile) => {
+                        if (ignoreFile.test(assetKey)) {
+                            isIgnored = true;
+                        }
+                    });
+
+                    return !isIgnored;
+                },
+            );
 
             _compilationAssetsKeys.forEach((key) => {
                 let validFiles = includes.filter((include) => {
