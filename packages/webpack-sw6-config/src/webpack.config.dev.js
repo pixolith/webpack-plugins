@@ -2,6 +2,7 @@ const webpack = require('webpack'),
     Path = require('path'),
     Consola = require('consola'),
     fs = require('fs'),
+    ASSET_URL = process.env.ASSET_URL || '/',
     OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin'),
     StyleLintPlugin = require('stylelint-webpack-plugin'),
     isProd = process.env.NODE_ENV === 'production',
@@ -74,6 +75,7 @@ module.exports = {
                         loader: 'sass-loader',
                         options: {
                             sourceMap: !isProd,
+                            data: `$asset_url: "${ASSET_URL}"`,
                         },
                     },
                     {
@@ -196,6 +198,7 @@ module.exports = {
             'process.env.NODE_ENV': JSON.stringify(
                 process.env.NODE_ENV || 'development',
             ),
+            'process.env.ASSET_URL': JSON.stringify(ASSET_URL),
         }),
 
         new OptimizeCssAssetsPlugin({

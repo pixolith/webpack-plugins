@@ -11,10 +11,11 @@ const Path = require('path'),
     isModern = process.env.MODE === 'modern',
     SvgStorePlugin = require('external-svg-sprite-loader'),
     publicPath = 'www/public',
+    ASSET_URL = process.env.ASSET_URL || '/',
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
     outputConfig = {
         path: Path.join(process.cwd(), publicPath),
-        publicPath: '/',
+        publicPath: ASSET_URL,
         chunkFilename: `js/[name]${
             isModern ? '.modern' : '' + isProd ? '.[contenthash]' : ''
         }.js`,
