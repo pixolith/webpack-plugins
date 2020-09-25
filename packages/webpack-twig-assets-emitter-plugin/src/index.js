@@ -104,7 +104,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                 ) {
                                     output = `${files[key].css
                                         .map((file) => {
-                                            return ` <link rel="preload" href="/${file}" as="style">\n`;
+                                            return `<link rel="preload" href="{{ asset_url }}${file}" as="style">\n`;
                                         })
                                         .join('\n')}`;
                                 }
@@ -112,7 +112,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                 if (templateKey === 'hintsmodern') {
                                     output += `${files[key].js
                                         .map((file) => {
-                                            return `<link rel="preload" crossorigin="anonymous" href="/${file}" as="script">\n`;
+                                            return `<link rel="preload" crossorigin="anonymous" href="{{ asset_url }}${file}" as="script">\n`;
                                         })
                                         .join('\n')}`;
                                 }
@@ -125,7 +125,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             if (templateKey === 'styles') {
                                 output = `${files[key].css
                                     .map((file) => {
-                                        return `<script>if(window.isIE11){var link = document.createElement("link");link.rel = "stylesheet";link.href = "/${file}";document.head.appendChild(link);}</script>`;
+                                        return `<script>if(window.isIE11){var link = document.createElement("link");link.rel = "stylesheet";link.href = "{{ asset_url }}${file}";document.head.appendChild(link);}</script>`;
                                     })
                                     .join('\n')}`;
                             }
@@ -136,7 +136,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                     ${files[key].css
                                         .map((file) => {
                                             return `
-                                                <link rel="stylesheet" href="/${file}">
+                                                <link rel="stylesheet" href="{{ asset_url }}${file}">
                                             `;
                                         })
                                         .join('\n')}
@@ -147,7 +147,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             if (templateKey === 'scriptsmodern') {
                                 output = `${files[key].js
                                     .map((file) => {
-                                        return `<script defer type="module" src="/${file}"></script>`;
+                                        return `<script defer type="module" src="{{ asset_url }}${file}"></script>`;
                                     })
                                     .join('\n')}`;
                             }
@@ -160,7 +160,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                             'development'
                                                 ? ''
                                                 : 'nomodule'
-                                        } src="/${file}"></script>`;
+                                        } src="{{ asset_url }}${file}"></script>`;
                                     })
                                     .join('\n')}`;
                             }
