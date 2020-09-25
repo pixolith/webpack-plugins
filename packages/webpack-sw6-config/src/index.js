@@ -26,7 +26,7 @@ const setup = () => {
         globalResourcesPaths: process.env.RESOURCES_PATHS,
         debug: process.env.DEBUG || false,
         version: pkg.version,
-        assetPath: process.env.ASSET_PATH,
+        assetUrl: process.env.ASSET_URL,
     });
 };
 
