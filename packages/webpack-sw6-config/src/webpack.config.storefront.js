@@ -277,13 +277,15 @@ module.exports = {
                     priority: -20,
                     reuseExistingChunk: true,
                 },
-                icons: {
-                    maxSize: isProd ? 100000 : 0,
-                    // exclude all css because of a bug with css chunking order
-                    test: /(.svg)/,
-                    name: 'icons',
-                    chunks: 'all',
-                },
+                icons: isProd
+                    ? {
+                          maxSize: 0,
+                          // exclude all css because of a bug with css chunking order
+                          test: /(.svg)/,
+                          name: 'icons',
+                          chunks: 'all',
+                      }
+                    : false,
             },
         },
     },
