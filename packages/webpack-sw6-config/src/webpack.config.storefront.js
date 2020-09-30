@@ -265,29 +265,4 @@ module.exports = {
 
         new ExtractCssChunks(extractCssChunksConfig),
     ],
-
-    optimization: {
-        splitChunks: {
-            cacheGroups: {
-                defaultVendors: {
-                    test: /[\\/]node_modules[\\/]/,
-                    priority: -10,
-                },
-                default: {
-                    minChunks: 2,
-                    priority: -20,
-                    reuseExistingChunk: true,
-                },
-                icons: isProd
-                    ? {
-                          maxSize: 0,
-                          // exclude all css because of a bug with css chunking order
-                          test: /(.svg)/,
-                          name: 'icons',
-                          chunks: 'all',
-                      }
-                    : false,
-            },
-        },
-    },
 };
