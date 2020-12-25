@@ -128,21 +128,14 @@ module.exports = {
             key: fs.readFileSync(
                 Path.join(
                     process.cwd() +
-                        '/ansible/shopware6/roles/apache/files/px-staging.de.key',
+                        '/deployment/local/_wildcard.ddev.site+1-key.pem',
                 ),
             ),
             cert: fs.readFileSync(
                 Path.join(
                     process.cwd() +
-                        '/ansible/shopware6/roles/apache/files/px-staging.de.crt',
+                        '/deployment/local/_wildcard.ddev.site+1.pem',
                 ),
-            ),
-            ca: fs.readFileSync(
-                Path.join(
-                    process.cwd() +
-                        '/ansible/shopware6/roles/apache/files/intermediate.crt',
-                ),
-            ),
         },
         after() {
             if (!isProd) {
