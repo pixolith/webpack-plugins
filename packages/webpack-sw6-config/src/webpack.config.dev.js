@@ -136,6 +136,7 @@ module.exports = {
                     process.cwd() +
                         '/deployment/local/_wildcard.ddev.site+1.pem',
                 ),
+            ),
         },
         after() {
             if (!isProd) {
