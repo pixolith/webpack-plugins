@@ -23,13 +23,13 @@ module.exports = {
             'node_modules',
             Path.resolve(privatePath, 'js'),
             Path.resolve(
-                './www/vendor/shopware/storefront/Resources/app/storefront/vendor',
+                './vendor/shopware/storefront/Resources/app/storefront/vendor',
             ),
         ],
         alias: {
             src: Path.join(
                 process.cwd(),
-                '/www/vendor/shopware/storefront/Resources/app/storefront/src',
+                '/vendor/shopware/storefront/Resources/app/storefront/src',
             ),
         },
     },
@@ -156,7 +156,7 @@ module.exports = {
     plugins: [
         new HookPlugin({
             beforeCompile(compiler, callback) {
-                let path = Path.join(process.cwd(), 'www/public/sprite'),
+                let path = Path.join(process.cwd(), 'public/sprite'),
                     filename = 'sprite.svg',
                     exists = fs.existsSync(path);
 

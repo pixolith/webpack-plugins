@@ -20,7 +20,7 @@ const AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin');
 new AssetsCopyPlugin({
     includes: ['js', 'css'],
     ignoreFiles: [/\*.hot-update.js/],
-    from: 'www/public/bundles',
-    to: 'www/custom/plugins/{plugin}/src/Resources/public',
+    from: 'public/bundles',
+    to: 'custom/plugins/{plugin}/src/Resources/public',
 }),
 ```

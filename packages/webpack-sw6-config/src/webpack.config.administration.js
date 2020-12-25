@@ -57,13 +57,13 @@ module.exports = {
             Path.resolve(privatePath, 'js'),
             Path.resolve(
                 process.cwd(),
-                'www/vendor/shopware/storefront/Resources/app/storefront/vendor',
+                'vendor/shopware/storefront/Resources/app/storefront/vendor',
             ),
         ],
         alias: {
             src: Path.join(
                 process.cwd(),
-                'www/vendor/shopware/storefront/Resources/app/storefront/src',
+                'vendor/shopware/storefront/Resources/app/storefront/src',
             ),
         },
     },
@@ -173,7 +173,7 @@ module.exports = {
                 );
                 let spriteOutputPath = Path.join(
                         process.cwd(),
-                        'www/custom/plugins/PxswTheme/src/Resources/views/administration',
+                        'custom/plugins/PxswTheme/src/Resources/views/administration',
                     ),
                     spritOutputFilename = '_sprite.svg';
 
@@ -198,7 +198,7 @@ module.exports = {
             files: [
                 {
                     from: publicPath,
-                    to: 'www/custom/plugins/$plugin/src/Resources/public',
+                    to: 'custom/plugins/$plugin/src/Resources/public',
                     replace: (fromPath, toPath) => {
                         let pluginName = changeCase.pascalCase(
                             Path.basename(fromPath).replace(

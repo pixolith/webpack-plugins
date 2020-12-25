@@ -10,7 +10,7 @@ const Path = require('path'),
     isProd = process.env.NODE_ENV === 'production',
     isModern = process.env.MODE === 'modern',
     SvgStorePlugin = require('external-svg-sprite-loader'),
-    publicPath = 'www/public',
+    publicPath = 'public',
     ASSET_URL = process.env.ASSET_URL || '/',
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
     outputConfig = {
@@ -65,13 +65,13 @@ module.exports = {
             'node_modules',
             Path.resolve(privatePath, 'js'),
             Path.resolve(
-                './www/vendor/shopware/storefront/Resources/app/storefront/vendor',
+                './vendor/shopware/storefront/Resources/app/storefront/vendor',
             ),
         ],
         alias: {
             src: Path.join(
                 process.cwd(),
-                '/www/vendor/shopware/storefront/Resources/app/storefront/src',
+                '/vendor/shopware/storefront/Resources/app/storefront/src',
             ),
         },
     },
@@ -206,7 +206,7 @@ module.exports = {
                 );
                 let spriteOutputPath = Path.join(
                         process.cwd(),
-                        'www/custom/plugins/PxswTheme/src/Resources/views/storefront',
+                        'custom/plugins/PxswTheme/src/Resources/views/storefront',
                     ),
                     spritOutputFilename = '_sprite.svg';
 

@@ -166,14 +166,12 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             }
 
                             // check if our plugin is in "vendor" or in "custom"
-                            let pluginPath = `www/custom/plugins/${changeCase.pascalCase(
+                            let pluginPath = `custom/plugins/${changeCase.pascalCase(
                                 key,
                             )}`;
 
                             if (key.includes('vendor')) {
-                                pluginPath = `www/vendor/pxsw/${key.substr(
-                                    12,
-                                )}`;
+                                pluginPath = `vendor/pxsw/${key.substr(12)}`;
                             }
 
                             pluginPath = Path.join(
