@@ -128,13 +128,12 @@ module.exports = {
             key: fs.readFileSync(
                 Path.join(
                     process.cwd() +
-                        '/.ddev/bootstrap/_wildcard.px-staging.de+1-key.pem',
+                        '/.ddev/ssl/_wildcard.px-staging.de+1-key.pem',
                 ),
             ),
             cert: fs.readFileSync(
                 Path.join(
-                    process.cwd() +
-                        '/.ddev/bootstrap/_wildcard.px-staging.de+1.pem',
+                    process.cwd() + '/.ddev/ssl/_wildcard.px-staging.de+1.pem',
                 ),
             ),
         },
