@@ -124,7 +124,7 @@ module.exports = {
                 'X-Requested-With, content-type, Authorization',
         },
         stats: 'errors-warnings',
-        https: {
+        https: !isProd ? {
             key: fs.readFileSync(
                 Path.join(
                     process.cwd() +
@@ -136,7 +136,7 @@ module.exports = {
                     process.cwd() + '/.ddev/ssl/_wildcard.px-staging.de+1.pem',
                 ),
             ),
-        },
+        }: false,
         after() {
             if (!isProd) {
                 Consola.success(
