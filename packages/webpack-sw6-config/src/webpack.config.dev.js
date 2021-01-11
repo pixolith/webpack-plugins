@@ -124,19 +124,28 @@ module.exports = {
                 'X-Requested-With, content-type, Authorization',
         },
         stats: 'errors-warnings',
-        https: !isProd ? {
-            key: fs.readFileSync(
-                Path.join(
-                    process.cwd() +
-                        '/.ddev/ssl/_wildcard.px-staging.de+1-key.pem',
-                ),
-            ),
-            cert: fs.readFileSync(
-                Path.join(
-                    process.cwd() + '/.ddev/ssl/_wildcard.px-staging.de+1.pem',
-                ),
-            ),
-        }: false,
+        https: !isProd
+            ? {
+                  ca: fs.readFileSync(
+                      Path.join(
+                          process.cwd() +
+                              '/.ddev/ssl/_wildcard.px-staging.de+1-client.pem',
+                      ),
+                  ),
+                  key: fs.readFileSync(
+                      Path.join(
+                          process.cwd() +
+                              '/.ddev/ssl/_wildcard.px-staging.de+1-key.pem',
+                      ),
+                  ),
+                  cert: fs.readFileSync(
+                      Path.join(
+                          process.cwd() +
+                              '/.ddev/ssl/_wildcard.px-staging.de+1.pem',
+                      ),
+                  ),
+              }
+            : false,
         after() {
             if (!isProd) {
                 Consola.success(
