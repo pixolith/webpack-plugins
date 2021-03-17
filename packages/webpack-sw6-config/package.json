@@ -31,6 +31,7 @@
         "@babel/plugin-transform-runtime": "^7.8.3",
         "@babel/preset-env": "^7.8.4",
         "@pixolith/eslint-config-sw6": "^4.3.0",
+        "@pixolith/external-svg-sprite-loader": "^4.3.0",
         "@pixolith/stylelint-config-standard": "^4.3.0",
         "@pixolith/webpack-assets-copy-plugin": "^4.3.0",
         "@pixolith/webpack-filename-linter-plugin": "^4.3.0",
