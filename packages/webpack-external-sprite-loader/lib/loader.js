@@ -5,34 +5,13 @@ const imageminSvgo = require('imagemin-svgo');
 const loaderUtils = require('loader-utils');
 
 /**
- * @typedef {Object} LoaderOptions
- * @property {string} iconName
- * @property {string} name
- * @property {string} publicPath
- * @property {Object} svgoOptions
- */
-
-/**
- * JSON Schema for the loader options.
- * @constant
- * @type {LoaderOptions}
- */
-const SCHEMA_LOADER_OPTIONS = {
-    iconName: 'string',
-    name: 'string',
-    publicPath: 'string',
-    svgoOptions: 'object',
-    onlySymbols: 'boolean',
-};
-
-/**
  * Default values for every param that can be passed in the loader options.
- * @constant
- * @type {LoaderOptions}
+ * @const
+ * @type {Object}
  */
 const DEFAULT_LOADER_OPTIONS = Object.freeze({
     name: 'img/sprite.svg',
-    iconName: 'icon-[name]-[contenthash:5]',
+    iconName: 'icon-[name]-[hash:5]',
     svgoOptions: Object.freeze({
         plugins: [
             { collapseGroups: true },
@@ -53,19 +32,13 @@ const DEFAULT_LOADER_OPTIONS = Object.freeze({
  * @param {Buffer} content - the content of the SVG file.
  */
 function loader(content) {
-    const { addDependency, mode, resource, resourcePath } = this;
+    const { addDependency, resource, resourcePath } = this;
 
     // Get callback because the SVG is going to be optimized and that is an async operation
     const callback = this.async();
 
-    /**
-     * Parse the loader query and apply the default values in case no values are provided
-     * @type {LoaderOptions}
-     */
-    const { iconName, publicPath, sprite, svgoOptions } = {
-        ...DEFAULT_LOADER_OPTIONS,
-        ...this.getOptions(SCHEMA_LOADER_OPTIONS),
-    };
+    // Parse the loader query and apply the default values in case no values are provided
+    const { iconName, publicPath, sprite, svgoOptions } = Object.assign({}, DEFAULT_LOADER_OPTIONS, loaderUtils.getOptions(this));
 
     // Add the icon as a dependency
     addDependency(resourcePath);
@@ -101,14 +74,14 @@ function loader(content) {
                     var symbolUrl = '${icon.getUrlToSymbol()}';
                     var viewUrl = '${icon.getUrlToView()}';
 
-                    ${mode !== 'production' && hasSamePath ? `
+                    ${process.env.NODE_ENV !== 'production' && hasSamePath ? `
                         var addCacheBust = typeof document !== 'undefined' && document.readyState === 'complete';
 
                         if (addCacheBust) {
                             symbolUrl = '${icon.getUrlToSymbol(true)}';
                             viewUrl = '${icon.getUrlToView(true)}';
                         }
-                    ` : ''}
+                    ` : '' }
 
                     module.exports = {
                         symbol: publicPath + symbolUrl,

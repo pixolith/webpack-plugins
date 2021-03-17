@@ -9,16 +9,6 @@ const SvgDocument = require('./SvgDocument');
 const SvgIcon = require('./SvgIcon');
 
 /**
- * @typedef {Object} SvgSpriteLayout
- * @property {number} startX - sprite start X position.
- * @property {number} startY - sprite start Y position.
- * @property {number} deltaX - free space between icons by X.
- * @property {number} deltaY - free space between icons by Y.
- * @property {number} iconHeight - height to which icons will be resized to.
- * @property {number} rowWidth - used to determine if an icon can stay in the current row or if it must be placed in the next.
- */
-
-/**
  * SVG Sprite
  */
 class SvgSprite {
@@ -75,7 +65,13 @@ class SvgSprite {
 
     /**
      * Generates the sprite content based on the icons (if changes were made).
-     * @param {SvgSpriteLayout} options
+     * @param {Object} options
+     * @param {number} options.startX - sprite start X position.
+     * @param {number} options.startY - sprite start Y position.
+     * @param {number} options.deltaX - free space between icons by X.
+     * @param {number} options.deltaY - free space between icons by Y.
+     * @param {number} options.iconHeight - height to which icons will be resized to.
+     * @param {number} options.rowWidth - used to determine if an icon can stay in the current row or if it must be placed in the next.
      * @return {string}
      */
     generate({
@@ -127,19 +123,19 @@ class SvgSprite {
                 throw new MissingDimensionsException(this.name, icon.name);
             }
 
+            // Add icon symbol to the list of symbols
+            symbols.push(symbol);
+
             if (!this.onlySymbols) {
                 // Add icon defs to the list of defs
                 defs.push(symbolDefs);
 
                 // Create the icon <use/> and add it to the list of uses
-                ses.push(SvgDocument.createUse(icon.name, icon.symbolName, width, height, x, y));
+                uses.push(SvgDocument.createUse(icon.name, icon.symbolName, width, height, x, y));
 
                 // Create the icon <view/> and add it to the list of views
                 views.push(SvgDocument.createView(icon.viewName, `${x} ${y} ${width} ${height}`));
             }
-
-            // Add icon symbol to the list of symbols
-            symbols.push(symbol);
 
             // Calculate the x position for the next icon
             x = x + (iconHeight * Math.ceil(width / iconHeight)) + deltaX;

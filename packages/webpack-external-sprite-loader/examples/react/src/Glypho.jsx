@@ -1,3 +1,5 @@
+import React, { memo } from 'react';
+
 import armchairSilhouette from '../../images/glypho/armchairSilhouette.svg';
 import facebook from '../../images/glypho/facebook.svg';
 import flaskOutline from '../../images/glypho/flaskOutline.svg';
@@ -37,4 +39,4 @@ const Glypho = () => (
     </>
 );
 
-export default Glypho;
+export default memo(Glypho);

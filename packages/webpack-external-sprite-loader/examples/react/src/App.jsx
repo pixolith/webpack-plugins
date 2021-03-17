@@ -1,4 +1,5 @@
-import { hot } from 'react-hot-loader/root';
+import React, { memo } from 'react';
+import { hot } from 'react-hot-loader';
 
 import Complex from './Complex.jsx';
 import Glypho from './Glypho.jsx';
@@ -12,4 +13,4 @@ const App = () => (
     </>
 );
 
-export default process.env.EXAMPLE_HMR ? hot(App) : App;
+export default hot(module)(memo(App));

@@ -1,42 +1,48 @@
 {
   "author": {
-    "name": "Bruno Sampaio",
-    "email": "bens.sampaio@gmail.com",
-    "url": "https://bensampaio.github.io/"
+    "name": "Karify B.V.",
+    "email": "questions@karify.com",
+    "url": "https://www.karify.com"
   },
+  "contributors": [
+    {
+      "name": "Bruno Sampaio",
+      "email": "bruno.sampaio@karify.com",
+      "url": "http://bensampaio.github.io/"
+    }
+  ],
   "dependencies": {
-    "@babel/core": "^7.12.3",
-    "@babel/preset-env": "^7.12.1",
-    "@babel/preset-react": "^7.12.5",
-    "babel-loader": "^8.1.0",
-    "css-loader": "^5.0.1",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.2.0",
     "express": "^4.17.1",
-    "html-webpack-plugin": "^4.5.0",
-    "mini-css-extract-plugin": "^1.3.0",
+    "mini-css-extract-plugin": "^0.8.0",
     "prop-types": "^15.7.2",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-hot-loader": "^4.13.0",
-    "webpack": "^5.4.0",
-    "webpack-cli": "^4.2.0",
-    "webpack-dev-server": "^3.11.0"
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-hot-loader": "^4.12.11",
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.8.0"
   },
   "description": "A usage example for the external-svg-sprite-loader for Webpack and React.",
   "engines": {
-    "node": ">=10.13.0",
+    "node": ">=6.2.0",
     "npm": ">=3.8.0"
   },
   "license": "MIT",
+  "main": "index.js",
   "name": "external-svg-sprite-loader-react-example",
-  "private": true,
   "scripts": {
-    "start:dev": "NODE_ENV=development webpack serve",
-    "start:dev:hot": "EXAMPLE_HMR=1 yarn start:dev",
+    "start:dev": "NODE_ENV=development webpack-dev-server --content-base public/ --port 3000",
+    "start:dev:hot": "yarn start:dev --hot",
     "start:dev:no-hash": "EXAMPLE_NO_HASH=1 yarn start:dev",
-    "start:dev:hot-no-hash": "EXAMPLE_HMR=1 EXAMPLE_NO_HASH=1 yarn start:dev:hot",
+    "start:dev:hot-no-hash": "EXAMPLE_NO_HASH=1 yarn start:dev:hot",
     "start:prd": "NODE_ENV=production node server/build/js/main.js",
-    "build:prd": "NODE_ENV=production webpack",
+    "build:prd": "NODE_ENV=production webpack -p",
     "build:clean": "rm -rf public/build && rm -rf server/build"
   },
-  "version": "0.0.0"
+  "version": "3.4.0"
 }

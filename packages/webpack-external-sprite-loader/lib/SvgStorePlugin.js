@@ -1,7 +1,6 @@
 'use strict';
 
 const Chunk = require('webpack/lib/Chunk');
-const Compilation = require('webpack/lib/Compilation');
 
 const MissingDimensionsException = require('./exceptions/MissingDimensionsException');
 const { DEFAULT_LOADER_OPTIONS } = require('./loader');
@@ -10,7 +9,7 @@ const SvgSprite = require('./SvgSprite');
 /**
  * @property {boolean} emit - determines if sprites must be emitted.
  * @property {string} filename
- * @property {SvgSpriteLayout} sprite - positioning and sizing options for the symbols in a sprite.
+ * @property {{ startX: number, startY: number, deltaX: number, deltaY: number, iconHeight: number, rowWidth: number }} sprite - positioning and sizing options for the symbols in a sprite.
  * @type {Readonly<{emit: boolean, filename: string, sprite: Readonly<{}>}>}
  */
 const DEFAULT_PLUGIN_OPTIONS = Object.freeze({
@@ -43,8 +42,6 @@ class SvgStorePlugin {
      * @param {webpack.Compiler} compiler
      */
     apply(compiler) {
-        const { name } = this.constructor;
-
         /** @type {{ thisCompilation: Tapable }} */
         const { hooks } = compiler;
 
@@ -53,7 +50,7 @@ class SvgStorePlugin {
         // Iterates through the given list of rules and injects a sprite for each rule that uses our loader.
         this.injectSpritesIntoRules(rules);
 
-        hooks.thisCompilation.tap(name, this.exec.bind(this));
+        hooks.thisCompilation.tap(this.constructor.name, this.exec.bind(this));
     }
 
     /**
@@ -67,34 +64,34 @@ class SvgStorePlugin {
     exec(compilation) {
         const { options } = this;
 
-        const { name } = this.constructor;
-
         /** @type {{ optimize: Tapable, optimizeModules: Tapable, additionalAssets: Tapable }} */
         const { hooks } = compilation;
 
         // Generate sprites during the optimization phase
-        hooks.optimize.tap(name, this.generateSprites.bind(this, compilation));
+        hooks.optimize.tap(this.constructor.name, this.generateSprites.bind(this, compilation));
 
-        // Replace the sprites URL with the hashed URL during the modules optimization phase
-        hooks.optimizeModules.tap(name, this.fixSpritePathsInModules.bind(this));
+        // Replace the sprites URL with the hashed URL during the chunks optimization phase
+        hooks.optimizeChunks.tap(this.constructor.name, this.fixSpritePathsInChunks.bind(this));
 
         // Add sprites to the compilation assets
         if (options.emit) {
-            hooks.processAssets.tap({ name, stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL }, this.registerSprites.bind(this, compilation));
+            hooks.additionalAssets.tapAsync(this.constructor.name, this.registerSprites.bind(this, compilation));
         }
 
     }
 
     /**
-     * Looks for sprite URLs in the given modules and replaces them with the URL containing the sprite hash.
-     * @param {Module[]} modules
+     * Looks for sprite URLs in the modules in the given chunks and replaces them with the URL containing the sprite hash.
+     * @param {Chunk[]} chunks
      */
-    fixSpritePathsInModules(modules) {
+    fixSpritePathsInChunks(chunks) {
         const spritesWithInterpolatedName = this.getSpritesWithInterpolateName();
 
         for (const sprite of spritesWithInterpolatedName) {
-            for (const module of modules) {
-                this.replaceSpritePathsInModuleWithInterpolatedPaths(module, sprite);
+            for (const chunk of chunks) {
+                for (const module of chunk.modulesIterable) {
+                    this.replaceSpritePathsInModuleWithInterpolatedPaths(module, sprite);
+                }
             }
         }
 
@@ -200,14 +197,9 @@ class SvgStorePlugin {
      */
     replaceSpritePathsInModuleWithInterpolatedPaths(module, sprite) {
         switch (module.constructor.name) {
-            case 'CssModule': {
-                const { content } = module;
-
-                const newContent = sprite.replacePathsWithInterpolatedPaths(content.toString());
-
-                module.content = Buffer.isBuffer(content) ? Buffer.from(newContent) : newContent;
+            case 'CssModule':
+                module.content = sprite.replacePathsWithInterpolatedPaths(module.content);
                 break;
-            }
 
             case 'NormalModule': {
                 // Skip it if it wasn't changed
@@ -235,9 +227,9 @@ class SvgStorePlugin {
     /**
      * Registers the sprites so that they are part of the final output.
      * @param compilation
-     * @param assets
+     * @param {Function} callback
      */
-    registerSprites(compilation, assets) {
+    registerSprites(compilation, callback) {
         const { sprites } = this;
 
         for (const sprite of sprites) {
@@ -251,17 +243,11 @@ class SvgStorePlugin {
 
             // Create a chunk for the sprite
             const chunk = new Chunk(name);
-
             chunk.ids = [];
-
-            chunk.files.add(resourcePath);
-
-            // Add chunk to the compilation
-            // NOTE: This step is only to allow other plugins to detect the existence of this asset
-            compilation.chunks.add(chunk);
+            chunk.files.push(resourcePath);
 
             // Add the sprite to the compilation assets
-            assets[resourcePath] = {
+            compilation.assets[resourcePath] = {
                 source() {
                     return content;
                 },
@@ -269,7 +255,14 @@ class SvgStorePlugin {
                     return content.length;
                 },
             };
+
+            // Add chunk to the compilation
+            // NOTE: This step is only to allow other plugins to detect the existence of this asset
+            compilation.chunks.push(chunk);
+
         }
+
+        callback();
     }
 
 }

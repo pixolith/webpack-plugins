@@ -1,11 +1,11 @@
 # External SVG Sprite
 
 [![npm version](https://badge.fury.io/js/external-svg-sprite-loader.svg)](https://badge.fury.io/js/external-svg-sprite-loader)
-[![Build Status](https://travis-ci.org/bensampaio/external-svg-sprite-loader.svg?branch=master)](https://travis-ci.org/bensampaio/external-svg-sprite-loader)
+[![Build Status](https://travis-ci.org/karify/external-svg-sprite-loader.svg?branch=master)](https://travis-ci.org/karify/external-svg-sprite-loader)
 
 A loader and plugin for webpack that converts all your SVGs into symbols and merges them into a SVG sprite.
 
-**Important**: There is a breaking change when moving from v3 to v4. Check the [release notes](https://github.com/bensampaio/external-svg-sprite-loader/releases/tag/v4.0.0).
+**Important**: There is a breaking change when moving from v3 to v4. Check the [release notes](https://github.com/karify/external-svg-sprite-loader/releases/tag/v4.0.0).
 
 ## Requirements
 
@@ -29,10 +29,10 @@ yarn add external-svg-sprite-loader
 
 ### Loader options
 
-- `name` - relative path to the sprite file (default: `img/sprite.svg`). The `[contenthash]` placeholder is supported.
+- `name` - relative path to the sprite file (default: `img/sprite.svg`). The `[hash]` placeholder is supported.
 - `iconName` - name for the icon symbol (default: `icon-[name]-[hash:5]`).
 - `publicPath` - custom public path to be used instead of webpack `output.publicPath`. This option might be useful when your webpack `output.publicPath` is set to a different scheme/host/port (e.g.: when you use a CDN). This is because currently the SVG sprite cannot be served from another domain ([read more](https://stackoverflow.com/questions/32850536/cross-domain-svg-sprite)).
-- `svgoOptions` - custom options to be passed to svgo. If you set this option then make sure you add `{ removeViewBox: false }` to the `plugins` otherwise this loader won't work.
+- `svgoOptions` - custom options to be passed to svgo.
 
 ### Plugin options
 
@@ -117,24 +117,24 @@ The imported value will be converted into the `view` url shown above.
 }
 ```
 
-When a SVG is added, removed or changed, the sprite will be re-generated and all files referencing it will be updated. When no `[contenthash]` is used in the `name` option, a cache-busting will be added to the URL so that the browser is forced to re-download the sprite.
+When a SVG is added, removed or changed, the sprite will be re-generated and all files referencing it will be updated. When no `[hash]` is used in the `name` option, a cache-busting will be added to the URL so that the browser is forced to re-download the sprite.
 
 ## Examples
 
-You can find working examples in the `examples` folder. To test the React example under the `examples/react` folder run:
+You can find working examples in the `examples` folder. To test them under the example folder run:
 
 ```bash
 npm install
-npm run start:dev
+npm start:dev
 ```
 
 And then you can see the result in `http://localhost:3000`.
 
 There's some additional commands that you may try:
 
-- `npm run start:dev:hot` to check if sprite updates work with [Hot Module replacement](https://webpack.js.org/guides/hot-module-replacement/).
-- `npm run start:dev:no-hash` to check if sprite updates work, even if the outputted file is the same.
-- `npm run start:dev:hot-no-hash` to check if sprite updates work with [Hot Module replacement](https://webpack.js.org/guides/hot-module-replacement/), even if the outputted file is the same.
+- `npm start:dev:hot` to check if sprite updates work with [Hot Module replacement](https://webpack.js.org/guides/hot-module-replacement/).
+- `npm start:dev:no-hash` to check if sprite updates work, even if the outputted file is the same.
+- `npm start:dev:hot-no-hash` to check if sprite updates work with [Hot Module replacement](https://webpack.js.org/guides/hot-module-replacement/), even if the outputted file is the same.
 - `npm run build:prd && npm run start:prd` to test a production build.
 
 ## Contributing

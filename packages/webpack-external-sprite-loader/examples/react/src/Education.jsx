@@ -1,3 +1,5 @@
+import React, { memo } from 'react';
+
 import apple from '../../images/education/apple.svg';
 import books from '../../images/education/books.svg';
 import notebook from '../../images/education/notebook.svg';
@@ -23,4 +25,4 @@ const Education = () => (
     </>
 );
 
-export default Education;
+export default memo(Education);

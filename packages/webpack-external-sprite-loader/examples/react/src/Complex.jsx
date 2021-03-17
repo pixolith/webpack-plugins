@@ -1,3 +1,5 @@
+import React, { memo } from 'react';
+
 import tail from '../../images/complex/tail.svg';
 
 import CssExample from './CssExample.jsx';
@@ -12,4 +14,4 @@ const Complex = () => (
     </>
 );
 
-export default Complex;
+export default memo(Complex);
