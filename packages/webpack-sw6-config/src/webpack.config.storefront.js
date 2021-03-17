@@ -9,7 +9,7 @@ const Path = require('path'),
     entry = require('webpack-glob-entry'),
     isProd = process.env.NODE_ENV === 'production',
     isModern = process.env.MODE === 'modern',
-    SvgStorePlugin = require('external-svg-sprite-loader'),
+    SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
     publicPath = 'public',
     ASSET_URL = process.env.ASSET_URL || '/',
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
@@ -143,6 +143,7 @@ module.exports = {
                         options: {
                             name: 'sprite/sprite.svg',
                             iconName: '[name]',
+                            onlySymbols: true,
                         },
                     },
                     {
