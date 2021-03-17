@@ -42,5 +42,5 @@
   "scripts": {
     "lint": "eslint '**/*.{js,jsx}'"
   },
-  "version": "4.3.0"
+  "version": "4.3.3"
 }
