@@ -1,0 +1,46 @@
+{
+  "author": {
+    "name": "Bruno Sampaio",
+    "email": "bens.sampaio@gmail.com",
+    "url": "https://bensampaio.github.io/"
+  },
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "imagemin": "^7.0.1",
+    "imagemin-svgo": "^8.0.0",
+    "loader-utils": "^2.0.0",
+    "lodash.escaperegexp": "^4.1.2"
+  },
+  "description": "A webpack loader and plugin that generate SVG sprites out of a collection of SVG files used in your JS and CSS files",
+  "devDependencies": {
+    "eslint": "^7.13.0",
+    "eslint-plugin-react": "^7.21.5",
+    "webpack": "^5.4.0"
+  },
+  "peerDependencies": {
+    "webpack": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=10.13.0",
+    "npm": ">=3.8.0"
+  },
+  "files": [
+    "lib"
+  ],
+  "keywords": [
+    "svg",
+    "webpack",
+    "webpack-loader"
+  ],
+  "license": "MIT",
+  "main": "lib/SvgStorePlugin.js",
+  "name": "@pixolith/external-svg-sprite-loader",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/bensampaio/external-svg-sprite-loader.git"
+  },
+  "scripts": {
+    "lint": "eslint '**/*.{js,jsx}'"
+  },
+  "version": "7.1.3"
+}
