@@ -7,7 +7,7 @@ const Path = require('path'),
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
     isProd = process.env.NODE_ENV === 'production',
-    SvgStorePlugin = require('external-svg-sprite-loader'),
+    SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
     //isModern = process.env.MODE === 'modern',
     outputPath = Path.resolve(process.cwd(), publicPath),
@@ -110,6 +110,7 @@ module.exports = {
                         options: {
                             name: 'sprite/sprite.svg',
                             iconName: '[name]',
+                            onlySymbols: true,
                         },
                     },
                     {
