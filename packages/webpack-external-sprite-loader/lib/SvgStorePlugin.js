@@ -154,7 +154,7 @@ class SvgStorePlugin {
         const resourcePath = rule.options.name || DEFAULT_LOADER_OPTIONS.name;
 
         // Initialize the sprite
-        const sprite = new SvgSprite(resourcePath, rules.options.onlySymbols);
+        const sprite = new SvgSprite(resourcePath, rule.options.onlySymbols);
 
         // Inject sprite into loader options
         rule.options.sprite = sprite;
