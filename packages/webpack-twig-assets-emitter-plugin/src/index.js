@@ -112,7 +112,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                 if (templateKey === 'hintsmodern') {
                                     output += `${files[key].js
                                         .map((file) => {
-                                            return `<link rel="preload" crossorigin="anonymous" href="{{ asset_url }}${file}" as="script">\n`;
+                                            return `<link rel="preload" href="{{ asset_url }}${file}" as="module">\n`;
                                         })
                                         .join('\n')}`;
                                 }
