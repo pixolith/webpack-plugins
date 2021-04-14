@@ -1,18 +1,17 @@
+const config = require('./config');
+
 const webpack = require('webpack'),
     Path = require('path'),
     Consola = require('consola'),
     fs = require('fs'),
-    ASSET_URL = process.env.ASSET_URL || '/',
     OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin'),
     StyleLintPlugin = require('stylelint-webpack-plugin'),
     isProd = process.env.NODE_ENV === 'production',
     WriteFilePlugin = require('write-file-webpack-plugin'),
-    privatePath = process.env.PLUGIN_PATH,
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     FilenameLinterPlugin = require('@pixolith/webpack-filename-linter-plugin'),
     watcher = require('@pixolith/webpack-watcher'),
     Glob = require('glob'),
-    isModern = process.env.MODE === 'modern',
     HookPlugin = require('@pixolith/webpack-hook-plugin');
 
 module.exports = {
@@ -21,15 +20,13 @@ module.exports = {
     resolve: {
         modules: [
             'node_modules',
-            Path.resolve(privatePath, 'js'),
             Path.resolve(
-                './vendor/shopware/storefront/Resources/app/storefront/vendor',
+                config.shopwareVendorPath,
             ),
         ],
         alias: {
             src: Path.join(
-                process.cwd(),
-                '/vendor/shopware/storefront/Resources/app/storefront/src',
+                config.shopwarePluginPath,
             ),
         },
     },
@@ -66,7 +63,7 @@ module.exports = {
                                 path: Path.join(__dirname),
                                 ctx: {
                                     mode: process.env.SHOPWARE_MODE,
-                                    isModern: isModern,
+                                    isModern: config.isModern,
                                 },
                             },
                         },
@@ -75,13 +72,13 @@ module.exports = {
                         loader: 'sass-loader',
                         options: {
                             sourceMap: !isProd,
-                            prependData: `$asset_url: '${ASSET_URL}';`,
+                            prependData: `$asset_url: '${config.assetUrl}';`,
                         },
                     },
                     {
                         loader: 'sass-resources-loader',
                         options: {
-                            resources: JSON.parse(process.env.RESOURCES_PATHS),
+                            resources: [...Glob.sync(config.vendorResourcesPath), ...Glob.sync(config.pluginResourcesPath)],
                         },
                     },
                 ],
@@ -124,7 +121,7 @@ module.exports = {
                 'X-Requested-With, content-type, Authorization',
         },
         stats: 'errors-warnings',
-        https: !isProd
+        https: !config.isProd
             ? {
                   ca: fs.readFileSync(
                       Path.join(
@@ -151,14 +148,14 @@ module.exports = {
                 Consola.success(
                     `Starting webpack in [${process.env.NODE_ENV}] with [${process.env.SHOPWARE_MODE}]`,
                 );
-                watcher.watch();
+                watcher.watch(config);
             }
         },
     },
     plugins: [
         new HookPlugin({
             beforeCompile(compiler, callback) {
-                let path = Path.join(process.cwd(), 'public/sprite'),
+                let path = Path.join(config.outputPath, 'sprite'),
                     filename = 'sprite.svg',
                     exists = fs.existsSync(path);
 
@@ -176,7 +173,7 @@ module.exports = {
                 callback();
             },
             failed() {
-                watcher.run();
+                watcher.run(null, config);
             },
         }),
 
@@ -200,7 +197,7 @@ module.exports = {
             'process.env.NODE_ENV': JSON.stringify(
                 process.env.NODE_ENV || 'development',
             ),
-            'process.env.ASSET_URL': JSON.stringify(ASSET_URL),
+            'process.env.ASSET_URL': JSON.stringify(config.assetUrl),
         }),
 
         new OptimizeCssAssetsPlugin({
@@ -217,9 +214,9 @@ module.exports = {
             },
         }),
     ].concat(
-        Glob.sync(Path.join(privatePath, '/**/*.s?(a|c)ss')).length
+        Glob.sync(Path.join(config.pluginSrcPath, '**/*.s?(a|c)ss')).length
             ? new StyleLintPlugin({
-                  files: '**/Pxsw*/**/*.s?(a|c)ss',
+                  files: Path.join(config.pluginSrcPath.replace(process.cwd(), ''), '**/*.s?(a|c)ss'),
                   failOnError: false,
                   fix: false,
                   configFile: Path.join(__dirname, 'stylelint.config.js'),
