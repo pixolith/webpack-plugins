@@ -1,7 +1,8 @@
+const config = require('./config');
+
 const webpack = require('webpack'),
     TerserPlugin = require('terser-webpack-plugin'),
-    isModern = process.env.MODE === 'modern',
-    config = {
+    productionConfig = {
         devtool: 'none',
         performance: {
             maxEntrypointSize: 300000,
@@ -23,13 +24,13 @@ const webpack = require('webpack'),
                             drop_console: true,
                         },
                         mangle: true,
-                        ecma: isModern ? 6 : 5, // specify one of: 5, 6, 7 or 8
+                        ecma: config.isModern ? 6 : 5, // specify one of: 5, 6, 7 or 8
                         keep_classnames: false,
                         keep_fnames: false,
                         ie8: false,
                         module: false,
                         nameCache: null, // or specify a name cache object
-                        safari10: !isModern,
+                        safari10: !config.isModern,
                         toplevel: false,
                         warnings: false,
                     },
@@ -46,4 +47,4 @@ const webpack = require('webpack'),
         stats: 'normal',
     };
 
-module.exports = config;
+module.exports = productionConfig;

@@ -1,38 +1,34 @@
+const config = require('./config');
+
 const Path = require('path'),
     Fs = require('fs'),
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
-    privatePath = process.env.PLUGIN_PATH,
-    vendorPath = process.env.VENDOR_PATH,
     ChangeCase = require('change-case'),
     Consola = require('consola'),
     TwigAssetEmitterPlugin = require('@pixolith/webpack-twig-assets-emitter-plugin'),
     entry = require('webpack-glob-entry'),
-    isProd = process.env.NODE_ENV === 'production',
-    isModern = process.env.MODE === 'modern',
-    SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
-    publicPath = 'public',
-    ASSET_URL = process.env.ASSET_URL || '/',
+    SvgStorePlugin = require('external-svg-sprite-loader'),
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
     outputConfig = {
-        path: Path.join(process.cwd(), publicPath),
-        publicPath: ASSET_URL,
+        path: config.outputPath,
+        publicPath: config.assetUrl,
         chunkFilename: `js/[name]${
-            isModern ? '.modern' : '' + isProd ? '.[contenthash]' : ''
+            config.isModern ? '.modern' : '' + config.isProd ? '.[contenthash]' : ''
         }.js`,
         filename: (chunkData) => {
-            return `js/${chunkData.chunk.name.toLowerCase()}${(isModern
+            return `js/${chunkData.chunk.name.toLowerCase()}${(config.isModern
                 ? '.modern'
-                : '') + (isProd ? `.${chunkData.chunk.hash}` : '')}.js`;
+                : '') + (config.isProd ? `.${chunkData.chunk.hash}` : '')}.js`;
         },
     },
     extractCssChunksConfig = {
-        filename: `css/[name]${isModern ? '.modern' : ''}${
-            isProd ? '.[contenthash]' : ''
+        filename: `css/[name]${config.isModern ? '.modern' : ''}${
+            config.isProd ? '.[contenthash]' : ''
         }.css`,
-        chunkFilename: `css/[name].vendor${isModern ? '.modern' : ''}${
-            isProd ? '.[contenthash]' : ''
+        chunkFilename: `css/[name].vendor${config.isModern ? '.modern' : ''}${
+            config.isProd ? '.[contenthash]' : ''
         }.css`,
-        hot: !isProd,
+        hot: !config.isProd,
     };
 
 module.exports = {
@@ -40,40 +36,25 @@ module.exports = {
         let entriesPlugins = entry(
             (filePath) =>
                 ChangeCase.paramCase(
-                    filePath.match(/plugins\/(Pxsw[\w]*)\//)[1],
+                    filePath.match(config.pluginMatch)[1],
                 ),
-            Path.resolve(privatePath, 'index.js'),
+            Path.resolve(config.pluginSrcPath, 'index.js'),
         );
 
         let entriesVendor = entry(
             (filePath) =>
                 ChangeCase.paramCase(
-                    filePath.match(/(vendor\/pxsw\/[\w-]*)\//)[1],
+                    filePath.match(config.vendorMatch)[1],
                 ),
-            Path.resolve(vendorPath, 'index.js'),
+            Path.resolve(config.vendorSrcPath, 'index.js'),
         );
 
-        if (process.env.DEBUG) {
+        if (config.isDebug) {
             Consola.info('[DEBUG]: Webpack entry points:');
             Consola.info({ ...entriesPlugins, ...entriesVendor });
         }
 
         return { ...entriesPlugins, ...entriesVendor };
-    },
-    resolve: {
-        modules: [
-            'node_modules',
-            Path.resolve(privatePath, 'js'),
-            Path.resolve(
-                './vendor/shopware/storefront/Resources/app/storefront/vendor',
-            ),
-        ],
-        alias: {
-            src: Path.join(
-                process.cwd(),
-                '/vendor/shopware/storefront/Resources/app/storefront/src',
-            ),
-        },
     },
     module: {
         // loader order is from right to left or from bottom to top depending on the notation but basicly always reverse
@@ -82,11 +63,10 @@ module.exports = {
                 test: /\.js$/,
                 exclude: (file) => {
                     if (
-                        !isModern &&
+                        !config.isModern &&
                         /node_modules/.test(file) &&
-                        JSON.parse(process.env.JS_TRANSPILE) &&
-                        JSON.parse(process.env.JS_TRANSPILE).length &&
-                        JSON.parse(process.env.JS_TRANSPILE).filter((lib) => {
+                        process.env.JS_TRANSPILE &&
+                        process.env.JS_TRANSPILE.split(',').filter((lib) => {
                             return new RegExp(lib).test(file);
                         }).length > 0
                     ) {
@@ -181,7 +161,7 @@ module.exports = {
     plugins: [
         new HookPlugin({
             beforeCompile(compiler, callback) {
-                let path = Path.join(process.cwd(), publicPath, 'sprite'),
+                let path = Path.join(config.outputPath, 'sprite'),
                     filename = 'sprite.svg',
                     exists = Fs.existsSync(Path.join(path, filename));
 
@@ -201,13 +181,12 @@ module.exports = {
 
             afterEmit(compiler, callback) {
                 let spriteInputPath = Path.join(
-                    process.cwd(),
-                    publicPath,
+                    config.outputPath,
                     'sprite/sprite.svg',
                 );
                 let spriteOutputPath = Path.join(
-                        process.cwd(),
-                        'custom/plugins/PxswTheme/src/Resources/views/storefront',
+                        config.spriteOutputPath,
+                        'storefront',
                     ),
                     spritOutputFilename = '_sprite.svg';
 
@@ -230,24 +209,24 @@ module.exports = {
             includes: ['js', 'css'],
             ignoreFiles: [/.*icons.*\.js/],
             template: {
-                [isModern ? 'scriptsmodern' : 'scripts']: {
+                [config.isModern ? 'scriptsmodern' : 'scripts']: {
                     namespace: '@Storefront/storefront',
                     path: '',
-                    filename: isModern
+                    filename: config.isModern
                         ? '_px_base_modern.html.twig'
                         : '_px_base.html.twig',
                 },
-                [isModern ? 'stylesmodern' : 'styles']: {
+                [config.isModern ? 'stylesmodern' : 'styles']: {
                     namespace: '@Storefront/storefront',
                     path: 'layout',
-                    filename: isModern
+                    filename: config.isModern
                         ? '_px_meta_modern.html.twig'
                         : '_px_meta.html.twig',
                 },
-                [isModern ? 'hintsmodern' : 'hints']: {
+                [config.isModern ? 'hintsmodern' : 'hints']: {
                     namespace: '@Storefront/storefront',
                     path: 'layout',
-                    filename: isModern
+                    filename: config.isModern
                         ? '_px_meta_modern.html.twig'
                         : '_px_meta.html.twig',
                 },

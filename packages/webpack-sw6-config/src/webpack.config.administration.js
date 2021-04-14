@@ -1,18 +1,15 @@
+const config = require('./config');
+
 const Path = require('path'),
     Fs = require('fs'),
-    privatePath = process.env.PLUGIN_PATH,
     changeCase = require('change-case'),
     entry = require('webpack-glob-entry'),
-    publicPath = process.env.PUBLIC_PATH,
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
-    isProd = process.env.NODE_ENV === 'production',
-    SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
+    SvgStorePlugin = require('external-svg-sprite-loader'),
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
-    //isModern = process.env.MODE === 'modern',
-    outputPath = Path.resolve(process.cwd(), publicPath),
     outputConfig = {
-        path: outputPath,
+        path: config.outputPath,
         publicPath: '/',
         filename: (chunkData) => {
             let pluginName = chunkData.chunk.name
@@ -32,7 +29,7 @@ const Path = require('path'),
                 '',
             )}/administration/css/${pluginName}.css`;
         },
-        hot: !isProd,
+        hot: !config.isProd,
     };
 
 module.exports = {
@@ -40,32 +37,12 @@ module.exports = {
         let entriesPlugins = entry(
             (filePath) =>
                 changeCase.paramCase(
-                    filePath.match(/plugins\/(Pxsw[\w]*)\//)[1],
+                    filePath.match(config.pluginMatch)[1],
                 ),
-            Path.resolve(privatePath, 'index.js'),
+            Path.join(config.pluginSrcPath, 'index.js'),
         );
 
         return { ...entriesPlugins };
-    },
-    performance: {
-        maxEntrypointSize: 300000,
-        hints: false,
-    },
-    resolve: {
-        modules: [
-            'node_modules',
-            Path.resolve(privatePath, 'js'),
-            Path.resolve(
-                process.cwd(),
-                'vendor/shopware/storefront/Resources/app/storefront/vendor',
-            ),
-        ],
-        alias: {
-            src: Path.join(
-                process.cwd(),
-                'vendor/shopware/storefront/Resources/app/storefront/src',
-            ),
-        },
     },
     module: {
         // loader order is from right to left or from bottom to top depending on the notation but basicly always reverse
@@ -110,7 +87,6 @@ module.exports = {
                         options: {
                             name: 'sprite/sprite.svg',
                             iconName: '[name]',
-                            onlySymbols: true,
                         },
                     },
                     {
@@ -148,7 +124,7 @@ module.exports = {
     plugins: [
         new HookPlugin({
             beforeCompile(compiler, callback) {
-                let path = Path.join(process.cwd(), publicPath, 'sprite'),
+                let path = Path.join(config.outputPath, 'sprite'),
                     filename = 'sprite.svg',
                     exists = Fs.existsSync(Path.join(path, filename));
 
@@ -168,13 +144,12 @@ module.exports = {
 
             afterEmit(compiler, callback) {
                 let spriteInputPath = Path.join(
-                    process.cwd(),
-                    publicPath,
+                    config.outputPath,
                     'sprite/sprite.svg',
                 );
                 let spriteOutputPath = Path.join(
-                        process.cwd(),
-                        'custom/plugins/PxswTheme/src/Resources/views/administration',
+                        config.spriteOutputPath,
+                        'administration',
                     ),
                     spritOutputFilename = '_sprite.svg';
 
@@ -198,7 +173,7 @@ module.exports = {
             ignoreFiles: [/[-\w.]*.hot-update.js/, /sprite\/sprite.svg/],
             files: [
                 {
-                    from: publicPath,
+                    from: config.outputPath,
                     to: 'custom/plugins/$plugin/src/Resources/public',
                     replace: (fromPath, toPath) => {
                         let pluginName = changeCase.pascalCase(
