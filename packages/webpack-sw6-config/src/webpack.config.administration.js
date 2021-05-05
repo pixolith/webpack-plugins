@@ -57,13 +57,13 @@ module.exports = {
             Path.resolve(privatePath, 'js'),
             Path.resolve(
                 process.cwd(),
-                'vendor/shopware/storefront/Resources/app/storefront/vendor',
+                'vendor/shopware/administration/Resources/app/administration/src',
             ),
         ],
         alias: {
             src: Path.join(
                 process.cwd(),
-                'vendor/shopware/storefront/Resources/app/storefront/src',
+                'vendor/shopware/administration/Resources/app/administration/src',
             ),
         },
     },
