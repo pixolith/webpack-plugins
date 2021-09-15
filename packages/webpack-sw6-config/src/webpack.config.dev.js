@@ -81,7 +81,11 @@ module.exports = {
                     {
                         loader: 'sass-resources-loader',
                         options: {
-                            resources: JSON.parse(process.env.RESOURCES_PATHS),
+                            resources: JSON.parse(
+                                process.env.RESOURCES_PATHS,
+                            ).filter((path) => {
+                                return Glob.sync(path).length > 0;
+                            }),
                         },
                     },
                 ],
