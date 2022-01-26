@@ -6,7 +6,6 @@ const webpack = require('webpack'),
     OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin'),
     StyleLintPlugin = require('stylelint-webpack-plugin'),
     isProd = process.env.NODE_ENV === 'production',
-    WriteFilePlugin = require('write-file-webpack-plugin'),
     privatePath = process.env.PLUGIN_PATH,
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     FilenameLinterPlugin = require('@pixolith/webpack-filename-linter-plugin'),
@@ -125,6 +124,7 @@ module.exports = {
             warnings: false,
             errors: true,
         },
+        writeToDisk: true,
         headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods':
@@ -199,10 +199,6 @@ module.exports = {
                 woff2: 'paramCase',
                 svg: 'paramCase',
             },
-        }),
-
-        new WriteFilePlugin({
-            exitOnErrors: false,
         }),
 
         new webpack.DefinePlugin({
