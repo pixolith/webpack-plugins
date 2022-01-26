@@ -76,6 +76,10 @@ module.exports = {
                         options: {
                             sourceMap: !isProd,
                             additionalData: `$asset_url: '${ASSET_URL}';`,
+                            sassOptions: {
+                                quiet: true,
+                                quietDeps: true,
+                            },
                         },
                     },
                     {
