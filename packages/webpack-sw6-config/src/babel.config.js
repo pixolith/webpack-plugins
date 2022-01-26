@@ -23,5 +23,6 @@ module.exports = {
         '@babel/proposal-object-rest-spread',
         '@babel/plugin-proposal-class-properties',
         '@babel/plugin-transform-classes',
+        '@babel/plugin-proposal-optional-chaining',
     ],
 };
