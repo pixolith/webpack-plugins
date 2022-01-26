@@ -1,7 +1,7 @@
 {
     "name": "@pixolith/webpack-sw6-config",
     "public": true,
-    "version": "6.0.5",
+    "version": "6.0.6",
     "description": "",
     "main": "src/index.js",
     "scripts": {},
