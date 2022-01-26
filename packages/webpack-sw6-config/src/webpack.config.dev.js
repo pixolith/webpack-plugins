@@ -13,7 +13,8 @@ const webpack = require('webpack'),
     watcher = require('@pixolith/webpack-watcher'),
     Glob = require('glob'),
     isModern = process.env.MODE === 'modern',
-    HookPlugin = require('@pixolith/webpack-hook-plugin');
+    HookPlugin = require('@pixolith/webpack-hook-plugin'),
+    sass = require('sass');
 
 module.exports = {
     target: 'web',
@@ -77,8 +78,8 @@ module.exports = {
                             sourceMap: !isProd,
                             additionalData: `$asset_url: '${ASSET_URL}';`,
                             sassOptions: {
-                                quiet: true,
                                 quietDeps: true,
+                                logger: sass.Logger.silent,
                             },
                         },
                     },
