@@ -75,7 +75,7 @@ module.exports = {
                         loader: 'sass-loader',
                         options: {
                             sourceMap: !isProd,
-                            prependData: `$asset_url: '${ASSET_URL}';`,
+                            additionalData: `$asset_url: '${ASSET_URL}';`,
                         },
                     },
                     {
