@@ -13,7 +13,8 @@ const webpack = require('webpack'),
     Glob = require('glob'),
     isModern = process.env.MODE === 'modern',
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
-    sass = require('sass');
+    sass = require('sass'),
+    TimeFixPlugin = require('time-fix-plugin');
 
 module.exports = {
     target: 'web',
@@ -200,6 +201,8 @@ module.exports = {
                 svg: 'paramCase',
             },
         }),
+
+        new TimeFixPlugin(),
 
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify(
