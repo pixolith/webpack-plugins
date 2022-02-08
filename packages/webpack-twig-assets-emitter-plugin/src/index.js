@@ -170,8 +170,11 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                 key,
                             )}`;
 
+                            let bundleName = `${changeCase.pascalCase(key)}`;
+
                             if (key.includes('vendor')) {
                                 pluginPath = `vendor/pxsw/${key.substr(12)}`;
+                                bundleName = `Pxsw${changeCase.pascalCase(key.substr(12))}`;
                             }
 
                             pluginPath = Path.join(
@@ -181,6 +184,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                 ),
                             );
 
+                            /* mark the PxswProject plugin as the start of all generated templates */
                             if (key.includes('pxsw-project')) {
                                 template = template.replace(
                                     `{% sw_extends '${Path.join(
@@ -189,15 +193,9 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                         options.template[templateKey].filename,
                                     )}' %}`,
                                     '',
-                                );
-                                template = template.replace(
+                                ).replace(
                                     '{{ parent() }}',
-                                    "{% if config('PxswProject.config.pxswServerEnvironment') != 'live' %}",
-                                );
-
-                                template = template.replace(
-                                    '{% endblock %}',
-                                    '{% endif %}\n{% endblock %}',
+                                    '',
                                 );
                             }
 
@@ -230,6 +228,9 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             await writeFileAsync(
                                 outputPath,
                                 template.replace(
+                                    '{# BUNDLE #}',
+                                    bundleName
+                                ).replace(
                                     `{# ${templateKey.toUpperCase()} #}`,
                                     output.trim(),
                                 ),
