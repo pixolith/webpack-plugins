@@ -1,5 +1,7 @@
 {% sw_extends '@Storefront/storefront/_px_base_modern.html.twig' %}
 {% block px_base_scripts_modern %}
     {{ parent() }}
-    {# SCRIPTSMODERN #}
+    {% if isBundleUsed('{# BUNDLE #}') %}
+        {# SCRIPTSMODERN #}
+    {% endif %}
 {% endblock %}
