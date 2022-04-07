@@ -3,6 +3,7 @@ const Path = require('path'),
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     privatePath = process.env.PLUGIN_PATH,
     vendorPath = process.env.VENDOR_PATH,
+    spritePath = process.env.SPRITE_PATH ?? 'custom/plugins/PxswTheme/src/Resources/views/storefront';
     ChangeCase = require('change-case'),
     Consola = require('consola'),
     TwigAssetEmitterPlugin = require('@pixolith/webpack-twig-assets-emitter-plugin'),
@@ -10,7 +11,7 @@ const Path = require('path'),
     isProd = process.env.NODE_ENV === 'production',
     isModern = process.env.MODE === 'modern',
     SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
-    publicPath = 'public',
+    publicPath = process.env.PUBLIC_PATH,
     ASSET_URL = process.env.ASSET_URL || '/',
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
     outputConfig = {
@@ -207,7 +208,7 @@ module.exports = {
                 );
                 let spriteOutputPath = Path.join(
                         process.cwd(),
-                        'custom/plugins/PxswTheme/src/Resources/views/storefront',
+                        spritePath,
                     ),
                     spritOutputFilename = '_sprite.svg';
 

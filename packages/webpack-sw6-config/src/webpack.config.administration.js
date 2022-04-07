@@ -4,6 +4,7 @@ const Path = require('path'),
     changeCase = require('change-case'),
     entry = require('webpack-glob-entry'),
     publicPath = process.env.PUBLIC_PATH,
+    spritePath = process.env.SPRITE_PATH ?? 'custom/plugins/PxswTheme/src/Resources/views/administration';
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
     isProd = process.env.NODE_ENV === 'production',
@@ -174,7 +175,7 @@ module.exports = {
                 );
                 let spriteOutputPath = Path.join(
                         process.cwd(),
-                        'custom/plugins/PxswTheme/src/Resources/views/administration',
+                        spritePath,
                     ),
                     spritOutputFilename = '_sprite.svg';
 
