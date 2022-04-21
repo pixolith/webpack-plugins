@@ -3,7 +3,7 @@ const Path = require('path'),
     privatePath = process.env.PLUGIN_PATH,
     changeCase = require('change-case'),
     entry = require('webpack-glob-entry'),
-    publicPath = process.env.PUBLIC_PATH,
+    publicPath = 'public',
     spritePath = process.env.SPRITE_PATH ?? 'custom/plugins/PxswTheme/src/Resources/views/administration';
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
@@ -109,9 +109,9 @@ module.exports = {
                     {
                         loader: SvgStorePlugin.loader,
                         options: {
-                            name: 'sprite/sprite.svg',
+                            name: 'sprite/sprite_uses.svg',
                             iconName: '[name]',
-                            onlySymbols: true,
+                            onlySymbols: false,
                         },
                     },
                     {
@@ -150,7 +150,7 @@ module.exports = {
         new HookPlugin({
             beforeCompile(compiler, callback) {
                 let path = Path.join(process.cwd(), publicPath, 'sprite'),
-                    filename = 'sprite.svg',
+                    filename = 'sprite_uses.svg',
                     exists = Fs.existsSync(Path.join(path, filename));
 
                 if (!exists) {
@@ -171,13 +171,13 @@ module.exports = {
                 let spriteInputPath = Path.join(
                     process.cwd(),
                     publicPath,
-                    'sprite/sprite.svg',
+                    'sprite/sprite_uses.svg',
                 );
                 let spriteOutputPath = Path.join(
                         process.cwd(),
                         spritePath,
                     ),
-                    spritOutputFilename = '_sprite.svg';
+                    spritOutputFilename = '_sprite_uses.svg';
 
                 let exists = Fs.existsSync(spriteOutputPath);
 
@@ -196,7 +196,7 @@ module.exports = {
         }),
         new AssetsCopyPlugin({
             includes: ['js', 'css'],
-            ignoreFiles: [/[-\w.]*.hot-update.js/, /sprite\/sprite.svg/],
+            ignoreFiles: [/[-\w.]*.hot-update.js/, /sprite\/sprite_uses.svg/],
             files: [
                 {
                     from: publicPath,
