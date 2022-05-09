@@ -3,7 +3,9 @@ const Path = require('path'),
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     privatePath = process.env.PLUGIN_PATH,
     vendorPath = process.env.VENDOR_PATH,
-    spritePath = process.env.SPRITE_PATH ?? 'custom/plugins/PxswTheme/src/Resources/views/storefront';
+    spritePath = process.env.SPRITE_PATH ?? 'custom/plugins/PxswTheme/src/Resources/views/storefront',
+    swNodePath = process.env.SW_NODE_PATH ?? './vendor/shopware/storefront/Resources/app/storefront/vendor',
+    swAliasPath = process.env.SW_ALIAS_PATH ?? '/vendor/shopware/storefront/Resources/app/storefront/src',
     ChangeCase = require('change-case'),
     Consola = require('consola'),
     TwigAssetEmitterPlugin = require('@pixolith/webpack-twig-assets-emitter-plugin'),
@@ -65,14 +67,12 @@ module.exports = {
         modules: [
             'node_modules',
             Path.resolve(privatePath, 'js'),
-            Path.resolve(
-                './vendor/shopware/storefront/Resources/app/storefront/vendor',
-            ),
+            Path.resolve(swNodePath),
         ],
         alias: {
             src: Path.join(
                 process.cwd(),
-                '/vendor/shopware/storefront/Resources/app/storefront/src',
+                swAliasPath,
             ),
         },
     },

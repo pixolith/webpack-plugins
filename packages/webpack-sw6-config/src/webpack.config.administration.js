@@ -4,7 +4,9 @@ const Path = require('path'),
     changeCase = require('change-case'),
     entry = require('webpack-glob-entry'),
     publicPath = process.env.PUBLIC_PATH,
-    spritePath = process.env.SPRITE_PATH ?? 'custom/plugins/PxswTheme/src/Resources/views/administration';
+    spritePath = process.env.SPRITE_PATH ?? 'custom/plugins/PxswTheme/src/Resources/views/administration',
+    swNodePath = process.env.SW_NODE_PATH ?? 'vendor/shopware/administration/Resources/app/administration/src',
+    swAliasPath = process.env.SW_ALIAS_PATH ?? 'vendor/shopware/administration/Resources/app/administration/src',
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
     isProd = process.env.NODE_ENV === 'production',
@@ -58,13 +60,13 @@ module.exports = {
             Path.resolve(privatePath, 'js'),
             Path.resolve(
                 process.cwd(),
-                'vendor/shopware/administration/Resources/app/administration/src',
+                swNodePath,
             ),
         ],
         alias: {
             src: Path.join(
                 process.cwd(),
-                'vendor/shopware/administration/Resources/app/administration/src',
+                swAliasPath,
             ),
         },
     },
