@@ -1,28 +1,28 @@
 {
-    "name": "@pixolith/webpack-hook-plugin",
-    "public": true,
-    "version": "7.0.0",
-    "description": "",
-    "main": "src/index.js",
-    "scripts": {},
-    "files": [
-        "src/index.js"
-    ],
-    "engines": {
-        "node": ">=8.10.0"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/pixolith/webpack-plugins.git"
-    },
-    "author": "",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/pixolith/webpack-plugins/issues"
-    },
-    "homepage": "https://github.com/pixolith/webpack-plugins/tree/master/packages/webpack-hook-plugin/#readme",
-    "dependencies": {
-        "consola": "^2.15.3"
-    },
-    "gitHead": "da732cf67060679cb798bb2a70067ccfca0eedf7"
+  "name": "@pixolith/webpack-hook-plugin",
+  "public": true,
+  "version": "7.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {},
+  "files": [
+    "src/index.js"
+  ],
+  "engines": {
+    "node": ">=8.10.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixolith/webpack-plugins.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pixolith/webpack-plugins/issues"
+  },
+  "homepage": "https://github.com/pixolith/webpack-plugins/tree/master/packages/webpack-hook-plugin/#readme",
+  "dependencies": {
+    "consola": "^2.15.3"
+  },
+  "gitHead": "da732cf67060679cb798bb2a70067ccfca0eedf7"
 }

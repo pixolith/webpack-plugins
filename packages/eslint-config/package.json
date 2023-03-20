@@ -1,14 +1,14 @@
 {
-    "name": "@pixolith/eslint-config",
-    "version": "6.0.1",
-    "description": "",
-    "main": "src/index.js",
-    "files": [
-        "src"
-    ],
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "author": "",
-    "license": "ISC"
+  "name": "@pixolith/eslint-config",
+  "version": "7.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
 }

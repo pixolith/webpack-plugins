@@ -1,30 +1,30 @@
 {
-    "name": "@pixolith/webpack-assets-copy-plugin",
-    "public": true,
-    "version": "7.0.0",
-    "description": "",
-    "main": "src/index.js",
-    "scripts": {},
-    "files": [
-        "src/"
-    ],
-    "engines": {
-        "node": ">=8.10.0"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/pixolith/webpack-plugins.git"
-    },
-    "author": "",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/pixolith/webpack-plugins/issues"
-    },
-    "homepage": "https://github.com/pixolith/webpack-plugins/tree/master/packages/webpack-twig-assets-emitter-plugin/#readme",
-    "dependencies": {
-        "consola": "^2.15.3",
-        "mkdirp": "^2.1.5",
-        "p-series": "^3.0.0"
-    },
-    "gitHead": "d56f4f9e4fe35a6ee630c6c30b6b2653fc87b231"
+  "name": "@pixolith/webpack-assets-copy-plugin",
+  "public": true,
+  "version": "7.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {},
+  "files": [
+    "src/"
+  ],
+  "engines": {
+    "node": ">=8.10.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixolith/webpack-plugins.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pixolith/webpack-plugins/issues"
+  },
+  "homepage": "https://github.com/pixolith/webpack-plugins/tree/master/packages/webpack-twig-assets-emitter-plugin/#readme",
+  "dependencies": {
+    "consola": "^2.15.3",
+    "mkdirp": "^2.1.5",
+    "p-series": "^3.0.0"
+  },
+  "gitHead": "d56f4f9e4fe35a6ee630c6c30b6b2653fc87b231"
 }
