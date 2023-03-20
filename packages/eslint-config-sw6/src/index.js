@@ -1,6 +1,6 @@
 module.exports = {
     root: true,
-    parser: 'babel-eslint',
+    parser: '@babel/eslint-parser',
     env: {
         browser: true,
         node: true,
@@ -11,6 +11,7 @@ module.exports = {
         Shopware: true,
     },
     parserOptions: {
+        requireConfigFile: false,
         ecmaVersion: 2020,
         sourceType: 'module',
     },

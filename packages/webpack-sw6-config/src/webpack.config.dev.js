@@ -3,15 +3,16 @@ const webpack = require('webpack'),
     Consola = require('consola'),
     fs = require('fs'),
     ASSET_URL = process.env.ASSET_URL || '/',
-    OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin'),
+    CssMinimizerPlugin = require('css-minimizer-webpack-plugin'),
     StyleLintPlugin = require('stylelint-webpack-plugin'),
     isProd = process.env.NODE_ENV === 'production',
     privatePath = process.env.PLUGIN_PATH,
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
+    //MediaQueryPlugin = require('media-query-plugin'),
     FilenameLinterPlugin = require('@pixolith/webpack-filename-linter-plugin'),
+    ESLintPlugin = require('eslint-webpack-plugin'),
     watcher = require('@pixolith/webpack-watcher'),
     Glob = require('glob'),
-    isModern = process.env.MODE === 'modern',
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
     sass = require('sass'),
     TimeFixPlugin = require('time-fix-plugin');
@@ -39,16 +40,6 @@ module.exports = {
         // loader order is from right to left or from bottom to top depending on the notation but basicly always reverse
         rules: [
             {
-                enforce: 'pre',
-                test: /\.js$/,
-                loader: 'eslint-loader',
-                exclude: (file) => /node_modules/.test(file),
-                options: {
-                    formatter: require('eslint-friendly-formatter'),
-                    configFile: Path.resolve(__dirname, '.eslintrc.js'),
-                },
-            },
-            {
                 test: /(\.scss|\.css)$/,
                 use: [
                     isProd ? ExtractCssChunks.loader : 'style-loader',
@@ -59,17 +50,13 @@ module.exports = {
                             sourceMap: !isProd,
                         },
                     },
+                    //{
+                    //    loader: MediaQueryPlugin.loader
+                    //},
                     {
                         loader: 'postcss-loader',
                         options: {
                             sourceMap: !isProd,
-                            config: {
-                                path: Path.join(__dirname),
-                                ctx: {
-                                    mode: process.env.SHOPWARE_MODE,
-                                    isModern: isModern,
-                                },
-                            },
                         },
                     },
                     {
@@ -91,6 +78,7 @@ module.exports = {
                             ).filter((path) => {
                                 return Glob.sync(path).length > 0;
                             }),
+                            hoistUseStatements: true
                         },
                     },
                 ],
@@ -166,6 +154,13 @@ module.exports = {
         },
     },
     plugins: [
+        new ESLintPlugin({
+            exclude: [
+                'node_modules',
+                'vendor/pxsw/enterprise-cms/node_modules',
+                'vendor/shopware'
+            ]
+        }),
         new HookPlugin({
             beforeCompile(compiler, callback) {
                 let path = Path.join(process.cwd(), 'public/sprite'),
@@ -191,7 +186,7 @@ module.exports = {
         }),
 
         new FilenameLinterPlugin({
-            ignoreFiles: [/node_modules/, /custom\/apps/, /vendor\/shopware/, /.*\.plugin\.js/, /.*\.service\.js/, /.*\.helper\.js/],
+            ignoreFiles: [/node_modules/, /custom\/apps/, /vendor\/shopware/],
             rules: {
                 // check cases here https://github.com/blakeembrey/change-case
                 scss: 'paramCase',
@@ -211,19 +206,17 @@ module.exports = {
             'process.env.ASSET_URL': JSON.stringify(ASSET_URL),
         }),
 
-        new OptimizeCssAssetsPlugin({
-            cssProcessor: require('cssnano'),
-            cssProcessorOptions: {
-                preset: [
-                    'default',
-                    {
-                        discardComments: {
-                            removeAll: true,
-                        },
-                    },
-                ],
-            },
-        }),
+        //new MediaQueryPlugin({
+        //    include: [
+        //        'example'
+        //    ],
+        //    queries: {
+        //        '@media(min-width:768px)': 'desktop',
+        //        '@media(min-width:1024px)': 'desktop',
+        //        '@media(min-width:1280px)': 'desktop',
+        //    }
+        //}),
+        new CssMinimizerPlugin(),
     ].concat(
         Glob.sync(Path.join(privatePath, '/**/*.s?(a|c)ss')).length
             ? new StyleLintPlugin({

@@ -113,28 +113,18 @@ module.exports = {
                 ],
             },
             {
-                test: /\.png|\.jpg$/,
-                use: [
-                    {
-                        loader: 'url-loader',
-                        options: {
-                            limit: 100000,
-                            outputPath: 'images',
-                        },
-                    },
-                ],
+                test: /\.(jpe?g|png|gif|ico)(\?v=\d+\.\d+\.\d+)?$/,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'img/[name][ext]'
+                }
             },
             {
-                test: /(\.woff|\.woff2)$/,
-                use: [
-                    {
-                        loader: 'file-loader',
-                        options: {
-                            outputPath: 'fonts',
-                            name: '[name].[ext]',
-                        },
-                    },
-                ],
+                test: /\.(eot|ttf|woff2?)(\?v=\d+\.\d+\.\d+)?$/,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'fonts/[name][ext]'
+                }
             },
             {
                 test: /\.svg$/,
@@ -151,26 +141,23 @@ module.exports = {
                         loader: 'svgo-loader',
                         options: {
                             plugins: [
-                                // don't enable this
-                                { removeViewBox: false },
-                                //
-                                { cleanupAttrs: true },
-                                { removeDoctype: true },
-                                { removeXMLProcInst: true },
-                                { cleanupEnableBackground: true },
-                                { convertStyleToAttrs: true },
-                                { convertPathData: true },
-                                { cleanupIDs: false },
-                                { minifyStyles: true },
-                                { removeUselessDefs: true },
-                                { convertShapeToPath: true },
-                                { removeUnusedNS: true },
-                                { removeDimensions: true },
-                                { convertTransform: true },
-                                { collapseGroups: true },
-                                { removeComments: true },
-                                { removeEditorsNSData: true },
-                                { removeUnknownsAndDefaults: true },
+                                'cleanupAttrs',
+                                'removeDoctype',
+                                'removeXMLProcInst',
+                                'cleanupEnableBackground',
+                                'convertStyleToAttrs',
+                                'convertPathData',
+                                'cleanupIds',
+                                'minifyStyles',
+                                'removeUselessDefs',
+                                'convertShapeToPath',
+                                'removeUnusedNS',
+                                'removeDimensions',
+                                'convertTransform',
+                                'collapseGroups',
+                                'removeComments',
+                                'removeEditorsNSData',
+                                'removeUnknownsAndDefaults',
                             ],
                         },
                     },

@@ -5,14 +5,11 @@ const Path = require('path'),
     entry = require('webpack-glob-entry'),
     publicPath = process.env.PUBLIC_PATH,
     spritePath = process.env.SPRITE_PATH ?? 'custom/plugins/PxswTheme/src/Resources/views/administration',
-    swNodePath = process.env.SW_NODE_PATH ?? 'vendor/shopware/administration/Resources/app/administration/src',
-    swAliasPath = process.env.SW_ALIAS_PATH ?? 'vendor/shopware/administration/Resources/app/administration/src',
     ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
     isProd = process.env.NODE_ENV === 'production',
     SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
-    //isModern = process.env.MODE === 'modern',
     outputPath = Path.resolve(process.cwd(), publicPath),
     outputConfig = {
         path: outputPath,
@@ -50,26 +47,6 @@ module.exports = {
 
         return { ...entriesPlugins };
     },
-    performance: {
-        maxEntrypointSize: 300000,
-        hints: false,
-    },
-    resolve: {
-        modules: [
-            'node_modules',
-            Path.resolve(privatePath, 'js'),
-            Path.resolve(
-                process.cwd(),
-                swNodePath,
-            ),
-        ],
-        alias: {
-            src: Path.join(
-                process.cwd(),
-                swAliasPath,
-            ),
-        },
-    },
     module: {
         // loader order is from right to left or from bottom to top depending on the notation but basicly always reverse
         rules: [
@@ -82,28 +59,18 @@ module.exports = {
                 },
             },
             {
-                test: /\.png|\.jpg$/,
-                use: [
-                    {
-                        loader: 'url-loader',
-                        options: {
-                            limit: 100000,
-                            outputPath: '../images',
-                        },
-                    },
-                ],
+                test: /\.(jpe?g|png|gif|ico)(\?v=\d+\.\d+\.\d+)?$/,
+                type: 'asset/resource',
+                generator: {
+                    filename: '../img/[name][ext]'
+                }
             },
             {
-                test: /(\.woff|\.woff2)$/,
-                use: [
-                    {
-                        loader: 'file-loader',
-                        options: {
-                            outputPath: '../fonts',
-                            name: '[name].[ext]',
-                        },
-                    },
-                ],
+                test: /\.(eot|ttf|woff2?)(\?v=\d+\.\d+\.\d+)?$/,
+                type: 'asset/resource',
+                generator: {
+                    filename: '../fonts/[name][ext]'
+                }
             },
             {
                 test: /\.svg$/,
@@ -120,26 +87,23 @@ module.exports = {
                         loader: 'svgo-loader',
                         options: {
                             plugins: [
-                                // don't enable this
-                                { removeViewBox: false },
-                                //
-                                { cleanupAttrs: true },
-                                { removeDoctype: true },
-                                { removeXMLProcInst: true },
-                                { cleanupEnableBackground: true },
-                                { convertStyleToAttrs: true },
-                                { convertPathData: true },
-                                { cleanupIDs: false },
-                                { minifyStyles: true },
-                                { removeUselessDefs: true },
-                                { convertShapeToPath: true },
-                                { removeUnusedNS: true },
-                                { removeDimensions: true },
-                                { convertTransform: true },
-                                { collapseGroups: true },
-                                { removeComments: true },
-                                { removeEditorsNSData: true },
-                                { removeUnknownsAndDefaults: true },
+                                'cleanupAttrs',
+                                'removeDoctype',
+                                'removeXMLProcInst',
+                                'cleanupEnableBackground',
+                                'convertStyleToAttrs',
+                                'convertPathData',
+                                'cleanupIds',
+                                'minifyStyles',
+                                'removeUselessDefs',
+                                'convertShapeToPath',
+                                'removeUnusedNS',
+                                'removeDimensions',
+                                'convertTransform',
+                                'collapseGroups',
+                                'removeComments',
+                                'removeEditorsNSData',
+                                'removeUnknownsAndDefaults',
                             ],
                         },
                     },

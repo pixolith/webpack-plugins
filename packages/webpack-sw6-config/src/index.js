@@ -6,7 +6,7 @@ const isProd = process.env.NODE_ENV === 'production';
 const pkg = require('./../package.json');
 const isModern = process.env.MODE === 'modern';
 const watcher = require('@pixolith/webpack-watcher');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const Consola = require('consola');
 
 const setup = () => {

@@ -29,3 +29,29 @@ See `/packages` for individual packages
 ```shell
 npm login && lerna publish
 ```
+
+## Working with this repository
+1. set pixolith dependencies of webpack-sw6-config to local file
+```json
+{
+    "@pixolith/webpack-assets-copy-plugin": "file:../webpack-assets-copy-plugin",
+    "@pixolith/webpack-filename-linter-plugin": "file:../webpack-filename-linter-plugin",
+    "@pixolith/webpack-hook-plugin": "file:../webpack-hook-plugin",
+    "@pixolith/webpack-twig-assets-emitter-plugin": "file:../webpack-twig-assets-emitter-plugin",
+    "@pixolith/webpack-watcher": "file:../webpack-watcher"
+}
+```
+
+2. go into webpack-sw6-config and link the npm module
+```shell
+cd packages/webpack-sw6-config
+npm link
+cd ../../
+```
+
+3. require current version with linking feature
+```shell
+npm link --install-links @pixolith/webpack-sw6-config
+```
+
+4. copy some shopware vendor and custom files here to test \o/

@@ -2,3 +2,37 @@
 node_modules
 .DS_STORE
 .idea
+
+#######################################
+# webpack generated files
+**/*.hot-update.js
+custom/plugins/Pxsw*/src/Resources/app/storefront/dist/storefront/js/
+custom/plugins/Pxsw*/src/Resources/app/administration/src/scss/index.scss
+custom/plugins/Pxsw*/src/Resources/app/administration/src/index.js
+custom/plugins/Pxsw*/src/Resources/app/shared/scss/index.scss
+custom/plugins/Pxsw*/src/Resources/app/storefront/private/scss/index.scss
+custom/plugins/Pxsw*/src/Resources/app/storefront/private/index.js
+custom/plugins/Pxsw*/src/Resources/public
+custom/plugins/Pxsw*/src/Resources/views/**/_px_base.html.twig
+custom/plugins/Pxsw*/src/Resources/views/**/_px_meta.html.twig
+custom/plugins/Pxsw*/src/Resources/views/**/_px_base_modern.html.twig
+custom/plugins/Pxsw*/src/Resources/views/**/_px_meta_modern.html.twig
+custom/plugins/Pxsw*/src/Resources/views/**/_sprite.svg
+custom/plugins/Pxsw*/src/Resources/views/**/_sprite_uses.svg
+public/bundles/*
+public/css/*
+public/fonts/*
+public/img/*
+public/js/*
+public/sprite/*
+
+#######################################
+
+# never ignore gitkeep
+!**/.gitkeep
+
+#######################################
+# test files for developing this shitfest
+custom
+vendor
+public

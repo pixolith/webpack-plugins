@@ -3,7 +3,6 @@ const Path = require('path');
 const mkdirp = require('mkdirp');
 const { promisify } = require('util');
 const consola = require('consola');
-const pSeries = require('p-series');
 const changeCase = require('change-case');
 const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);
@@ -241,7 +240,9 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                 },
             );
 
-            await pSeries(tasks);
+            for (const task of tasks) {
+                await task();
+            }
 
             next();
         },

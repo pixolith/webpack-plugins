@@ -39,7 +39,17 @@ FilenameLinterPlugin.prototype.apply = function(compiler) {
                     return false;
                 }
 
-                if (changeCase[rule](name) === name) {
+                let names = name.split('.'),
+                    correct = true;
+
+                names.forEach((nameChunk) => {
+                    if (changeCase[rule](nameChunk) === nameChunk) {
+                        return;
+                    }
+                    correct = false;
+                });
+
+                if (correct) {
                     return false;
                 }
 

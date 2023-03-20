@@ -3,7 +3,6 @@ const path = require('path');
 const mkdirp = require('mkdirp');
 const { promisify } = require('util');
 const consola = require('consola');
-const pSeries = require('p-series');
 const copyFileAsync = promisify(fs.copyFile);
 
 const AssetsCopyPlugin = function AssetsCopyPlugin(options) {
@@ -77,10 +76,14 @@ AssetsCopyPlugin.prototype.apply = function(compiler) {
                     },
                 );
 
-                await pSeries(tasks);
+                for (const task of tasks) {
+                    await task();
+                }
             });
 
-            await pSeries(filesTasks);
+            for (const task of filesTasks) {
+                await task();
+            }
 
             next();
         },

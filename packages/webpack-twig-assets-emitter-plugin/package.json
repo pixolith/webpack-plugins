@@ -1,7 +1,7 @@
 {
     "name": "@pixolith/webpack-twig-assets-emitter-plugin",
     "public": true,
-    "version": "6.1.0",
+    "version": "7.0.0",
     "description": "",
     "main": "src/index.js",
     "scripts": {},
@@ -22,11 +22,11 @@
     },
     "homepage": "https://github.com/pixolith/webpack-plugins/tree/master/packages/webpack-twig-assets-emitter-plugin/#readme",
     "dependencies": {
-        "change-case": "^4.1.1",
-        "consola": "^2.11.3",
-        "mkdirp": "^1.0.3",
-        "p-series": "^2.1.0",
-        "rimraf": "^3.0.1"
+        "change-case": "^4.1.2",
+        "consola": "^2.15.3",
+        "mkdirp": "^2.1.5",
+        "p-series": "^3.0.0",
+        "rimraf": "^4.4.0"
     },
     "gitHead": "d56f4f9e4fe35a6ee630c6c30b6b2653fc87b231"
 }

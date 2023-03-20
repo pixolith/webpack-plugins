@@ -113,11 +113,11 @@ const watcher = {
             .filter((file) => file.charAt(0) !== '.')
             .filter((file) => file)
             .map((file) => {
-                var subpath = path + '/' + file;
-                if (Fs.lstatSync(subpath).isDirectory()) {
-                    return watcher.walkTheLine(subpath);
+                const subPath = path + '/' + file;
+                if (Fs.lstatSync(subPath).isDirectory()) {
+                    return watcher.walkTheLine(subPath);
                 } else {
-                    return path + '/' + file;
+                    return subPath;
                 }
             });
 
@@ -233,6 +233,7 @@ const watcher = {
                     return (
                         file &&
                         !file.includes(name) &&
+                        !file.includes('placeholder.js') &&
                         allowedExtensions.includes(Path.extname(file))
                     );
                 })
@@ -243,7 +244,16 @@ const watcher = {
                         affix;
                 });
 
-            if (isJS) {
+            if (
+                files.filter((file) => {
+                    return (
+                        file &&
+                        !file.includes(name) &&
+                        !file.includes('placeholder.js') &&
+                        ['.js'].includes(Path.extname(file))
+                    );
+                }).length
+            ) {
                 buffer +=
                     'if (module.hot) {\n' +
                     '    module.hot.accept();\n' +

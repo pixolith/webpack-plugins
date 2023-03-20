@@ -2,7 +2,7 @@ const webpack = require('webpack'),
     TerserPlugin = require('terser-webpack-plugin'),
     isModern = process.env.MODE === 'modern',
     config = {
-        devtool: 'none',
+        devtool: 'nosources-source-map',
         performance: {
             maxEntrypointSize: 300000,
             maxAssetSize: 250000,
@@ -11,19 +11,17 @@ const webpack = require('webpack'),
         mode: 'production',
         optimization: {
             concatenateModules: true,
-            namedModules: false,
             removeAvailableModules: true,
             removeEmptyChunks: true,
             sideEffects: false,
             minimizer: [
                 new TerserPlugin({
                     terserOptions: {
-                        extractComments: false,
                         compress: {
                             drop_console: true,
                         },
                         mangle: true,
-                        ecma: isModern ? 6 : 5, // specify one of: 5, 6, 7 or 8
+                        ecma: isModern ? 8 : 5,
                         keep_classnames: false,
                         keep_fnames: false,
                         ie8: false,
@@ -33,6 +31,7 @@ const webpack = require('webpack'),
                         toplevel: false,
                         warnings: false,
                     },
+                    extractComments: false,
                 }),
             ],
         },
