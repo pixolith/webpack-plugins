@@ -11,10 +11,10 @@ module.exports = ({ file, options, env }) => {
         },
         plugins: {
             // to edit target browsers: use "browserslist" field in package.json
-            autoprefixer: {
-                grid: true,
-                env: options.mode + (options.isModern ? ':modern' : ''),
-            },
+            //autoprefixer: {
+            //    grid: true,
+            //    env: options.mode + (options.isModern ? ':modern' : ''),
+            //},
         },
     };
 };

@@ -1,5 +1,6 @@
 const webpack = require('webpack'),
     TerserPlugin = require('terser-webpack-plugin'),
+    CssMinimizerPlugin = require('css-minimizer-webpack-plugin'),
     isModern = process.env.MODE === 'modern',
     config = {
         devtool: 'nosources-source-map',
@@ -15,6 +16,19 @@ const webpack = require('webpack'),
             removeEmptyChunks: true,
             sideEffects: false,
             minimizer: [
+                new CssMinimizerPlugin({
+                    minimizerOptions: {
+                        preset: [
+                            "default",
+                            {
+                                discardComments: { removeAll: true },
+                            },
+                        ],
+                    },
+                    minify: [
+                        CssMinimizerPlugin.cssnanoMinify,
+                    ]
+                }),
                 new TerserPlugin({
                     terserOptions: {
                         compress: {

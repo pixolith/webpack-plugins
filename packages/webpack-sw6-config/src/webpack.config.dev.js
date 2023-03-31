@@ -3,7 +3,6 @@ const webpack = require('webpack'),
     Consola = require('consola'),
     fs = require('fs'),
     ASSET_URL = process.env.ASSET_URL || '/',
-    CssMinimizerPlugin = require('css-minimizer-webpack-plugin'),
     StyleLintPlugin = require('stylelint-webpack-plugin'),
     isProd = process.env.NODE_ENV === 'production',
     privatePath = process.env.PLUGIN_PATH,
@@ -57,6 +56,9 @@ module.exports = {
                         loader: 'postcss-loader',
                         options: {
                             sourceMap: !isProd,
+                            postcssOptions: {
+                                config: Path.resolve(__dirname, 'postcss.config.js'),
+                            },
                         },
                     },
                     {
@@ -91,29 +93,18 @@ module.exports = {
                     },
                 ],
             },
-            {
-                test: /\.js$/,
-                loader: 'string-replace-loader',
-                options: {
-                    search:
-                        "import PluginManager from 'src/plugin-system/plugin.manager'",
-                    //match, p1, offset, string
-                    replace: () => 'const PluginManager = window.PluginManager',
-                    flags: 'g',
-                },
-            },
         ],
     },
+    stats: 'errors-warnings',
     devServer: {
-        disableHostCheck: true,
-        sockHost: 'node.px-staging.de',
-        watchContentBase: false,
-        sockPort: 8080,
-        overlay: {
-            warnings: false,
-            errors: true,
+        allowedHosts: 'all',
+        client: {
+            webSocketURL: 'https://node.px-staging.de:8080',
+            overlay: {
+                warnings: false,
+                errors: true,
+            },
         },
-        writeToDisk: true,
         headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods':
@@ -121,7 +112,6 @@ module.exports = {
             'Access-Control-Allow-Headers':
                 'X-Requested-With, content-type, Authorization',
         },
-        stats: 'errors-warnings',
         https: !isProd
             ? {
                   ca: fs.readFileSync(
@@ -144,7 +134,7 @@ module.exports = {
                   ),
               }
             : false,
-        after() {
+        onAfterSetupMiddleware: function(devServer) {
             if (!isProd) {
                 Consola.success(
                     `Starting webpack in [${process.env.NODE_ENV}] with [${process.env.SHOPWARE_MODE}]`,
@@ -216,7 +206,6 @@ module.exports = {
         //        '@media(min-width:1280px)': 'desktop',
         //    }
         //}),
-        new CssMinimizerPlugin(),
     ].concat(
         Glob.sync(Path.join(privatePath, '/**/*.s?(a|c)ss')).length
             ? new StyleLintPlugin({

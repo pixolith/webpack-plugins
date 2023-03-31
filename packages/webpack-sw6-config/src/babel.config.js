@@ -7,13 +7,6 @@ module.exports = {
                 corejs: 3,
                 debug: false,
                 useBuiltIns: 'usage',
-                targets: {
-                    browsers: require(process.cwd() + '/package.json')
-                        .browserslist[
-                        process.env.SHOPWARE_MODE +
-                            (process.env.MODE ? ':modern' : '')
-                    ],
-                },
             },
         ],
     ],
