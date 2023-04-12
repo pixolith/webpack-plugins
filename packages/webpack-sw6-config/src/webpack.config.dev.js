@@ -147,8 +147,7 @@ module.exports = {
         new ESLintPlugin({
             exclude: [
                 'node_modules',
-                'vendor/pxsw/enterprise-cms/node_modules',
-                'vendor/shopware'
+                'vendor'
             ]
         }),
         new HookPlugin({
@@ -176,7 +175,7 @@ module.exports = {
         }),
 
         new FilenameLinterPlugin({
-            ignoreFiles: [/node_modules/, /custom\/apps/, /vendor\/shopware/],
+            ignoreFiles: [/node_modules/, /custom\/apps/, /vendor/],
             rules: {
                 // check cases here https://github.com/blakeembrey/change-case
                 scss: 'paramCase',
@@ -217,5 +216,4 @@ module.exports = {
             : [],
     ),
     watch: false,
-    stats: 'errors-warnings',
 };
