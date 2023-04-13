@@ -101,7 +101,7 @@ module.exports = {
         client: {
             webSocketURL: {
                 hostname: 'node.px-staging.de',
-                protocol: 'ws',
+                protocol: 'wss',
                 port: 8080,
             },
             overlay: {
@@ -116,7 +116,34 @@ module.exports = {
             'Access-Control-Allow-Headers':
                 'X-Requested-With, content-type, Authorization',
         },
-        server: 'http',
+        server: !isProd
+            ? {
+                type: 'https',
+                options: {
+                    ca: fs.readFileSync(
+                        Path.join(
+                            process.cwd() +
+                            '/.ddev/ssl/_wildcard.px-staging.de+1-client.pem',
+                        ),
+                    ),
+                    key: fs.readFileSync(
+                        Path.join(
+                            process.cwd() +
+                            '/.ddev/ssl/_wildcard.px-staging.de+1-key.pem',
+                        ),
+                    ),
+                    cert: fs.readFileSync(
+                        Path.join(
+                            process.cwd() +
+                            '/.ddev/ssl/_wildcard.px-staging.de+1.pem',
+                        ),
+                    ),
+                }
+            }
+            : 'http',
+        devMiddleware: {
+            writeToDisk: true,
+        },
         onAfterSetupMiddleware: function(devServer) {
             if (!isProd) {
                 Consola.success(
@@ -168,11 +195,6 @@ module.exports = {
                 svg: 'paramCase',
             },
         }),
-
-        new webpack.ProvidePlugin({
-            process: '../../../../process/browser.js',
-        }),
-
         new TimeFixPlugin(),
 
         new webpack.DefinePlugin({
