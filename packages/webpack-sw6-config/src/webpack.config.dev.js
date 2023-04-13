@@ -99,7 +99,11 @@ module.exports = {
     devServer: {
         allowedHosts: 'all',
         client: {
-            webSocketURL: 'https://node.px-staging.de:8080',
+            webSocketURL: {
+                hostname: 'node.px-staging.de',
+                protocol: 'ws',
+                port: 8080,
+            },
             overlay: {
                 warnings: false,
                 errors: true,
@@ -112,28 +116,7 @@ module.exports = {
             'Access-Control-Allow-Headers':
                 'X-Requested-With, content-type, Authorization',
         },
-        https: !isProd
-            ? {
-                  ca: fs.readFileSync(
-                      Path.join(
-                          process.cwd() +
-                              '/.ddev/ssl/_wildcard.px-staging.de+1-client.pem',
-                      ),
-                  ),
-                  key: fs.readFileSync(
-                      Path.join(
-                          process.cwd() +
-                              '/.ddev/ssl/_wildcard.px-staging.de+1-key.pem',
-                      ),
-                  ),
-                  cert: fs.readFileSync(
-                      Path.join(
-                          process.cwd() +
-                              '/.ddev/ssl/_wildcard.px-staging.de+1.pem',
-                      ),
-                  ),
-              }
-            : false,
+        server: 'http',
         onAfterSetupMiddleware: function(devServer) {
             if (!isProd) {
                 Consola.success(
@@ -146,7 +129,7 @@ module.exports = {
     plugins: [
         new ESLintPlugin({
             exclude: [
-                'node_modules',
+                '**/node_modules/**',
                 'vendor'
             ]
         }),
@@ -186,6 +169,10 @@ module.exports = {
             },
         }),
 
+        new webpack.ProvidePlugin({
+            process: '../../../../process/browser.js',
+        }),
+
         new TimeFixPlugin(),
 
         new webpack.DefinePlugin({
@@ -208,11 +195,11 @@ module.exports = {
     ].concat(
         Glob.sync(Path.join(privatePath, '/**/*.s?(a|c)ss')).length
             ? new StyleLintPlugin({
-                  files: '**/Pxsw*/**/*.s?(a|c)ss',
-                  failOnError: false,
-                  fix: false,
-                  configFile: Path.join(__dirname, 'stylelint.config.js'),
-              })
+                files: '**/Pxsw*/**/*.s?(a|c)ss',
+                failOnError: false,
+                fix: false,
+                configFile: Path.join(__dirname, 'stylelint.config.js'),
+            })
             : [],
     ),
     watch: false,
