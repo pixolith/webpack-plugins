@@ -15,13 +15,14 @@ const webpack = require('webpack'),
             removeAvailableModules: true,
             removeEmptyChunks: true,
             sideEffects: false,
+            minimize: true,
             minimizer: [
                 new CssMinimizerPlugin({
                     minimizerOptions: {
                         preset: [
-                            "default",
+                            "advanced",
                             {
-                                discardComments: { removeAll: true },
+                                zIndex: false,
                             },
                         ],
                     },
