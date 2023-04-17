@@ -18,7 +18,7 @@ module.exports = {
     extends: ['eslint:recommended'],
     // add your custom rules here
     rules: {
-        indent: 4,
+        indent: [2, 4],
         quotes: [2, 'single', 'avoid-escape'],
         'brace-style': [2, '1tbs'],
         'comma-dangle': [2, 'only-multiline'],
