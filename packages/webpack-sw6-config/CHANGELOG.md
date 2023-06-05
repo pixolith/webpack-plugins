@@ -1,5 +1,8 @@
 # Changelog
 
+## 6.1.9
+- Added `vendor/store.shopware.com` to be ignored from FilenameLinterPlugin
+
 ## 6.1.8
 - Added `.service.js` and `.helper.js` to accepted file name formats
 
