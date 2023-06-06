@@ -1,20 +1,14 @@
 {
-    "version": "6.1.7",
-    "npmClient": "npm",
-    "command": {
-        "publish": {
-            "ignoreChanges": [
-                "*.md"
-            ],
-            "message": "chore(release): publish"
-        },
-        "bootstrap": {
-            "npmClientArgs": [
-                "--no-package-lock"
-            ]
-        }
+  "version": "6.1.8",
+  "npmClient": "npm",
+  "command": {
+    "publish": {
+      "ignoreChanges": ["*.md"],
+      "message": "chore(release): publish"
     },
-    "packages": [
-        "packages/*"
-    ]
+    "bootstrap": {
+      "npmClientArgs": ["--no-package-lock"]
+    }
+  },
+  "packages": ["packages/*"]
 }
