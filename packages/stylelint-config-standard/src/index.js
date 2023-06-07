@@ -12,6 +12,7 @@ module.exports = {
         'no-descending-specificity': null,
         'max-nesting-depth': 8,
         'scss/at-import-partial-extension': null,
+        'scss/at-import-no-partial-leading-underscore': null,
         'selector-pseudo-element-colon-notation': null,
         'selector-pseudo-class-no-unknown': [
             true,

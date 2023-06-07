@@ -3,7 +3,6 @@ const webpack = require('webpack'),
     Consola = require('consola'),
     fs = require('fs'),
     ASSET_URL = process.env.ASSET_URL || '/',
-    CssMinimizerPlugin = require('css-minimizer-webpack-plugin'),
     StyleLintPlugin = require('stylelint-webpack-plugin'),
     isProd = process.env.NODE_ENV === 'production',
     privatePath = process.env.PLUGIN_PATH,
@@ -57,6 +56,9 @@ module.exports = {
                         loader: 'postcss-loader',
                         options: {
                             sourceMap: !isProd,
+                            postcssOptions: {
+                                config: Path.resolve(__dirname, 'postcss.config.js'),
+                            },
                         },
                     },
                     {
@@ -91,29 +93,22 @@ module.exports = {
                     },
                 ],
             },
-            {
-                test: /\.js$/,
-                loader: 'string-replace-loader',
-                options: {
-                    search:
-                        "import PluginManager from 'src/plugin-system/plugin.manager'",
-                    //match, p1, offset, string
-                    replace: () => 'const PluginManager = window.PluginManager',
-                    flags: 'g',
-                },
-            },
         ],
     },
+    stats: 'errors-warnings',
     devServer: {
-        disableHostCheck: true,
-        sockHost: 'node.px-staging.de',
-        watchContentBase: false,
-        sockPort: 8080,
-        overlay: {
-            warnings: false,
-            errors: true,
+        allowedHosts: 'all',
+        client: {
+            webSocketURL: {
+                hostname: 'node.px-staging.de',
+                protocol: 'wss',
+                port: 8080,
+            },
+            overlay: {
+                warnings: false,
+                errors: true,
+            },
         },
-        writeToDisk: true,
         headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods':
@@ -121,30 +116,35 @@ module.exports = {
             'Access-Control-Allow-Headers':
                 'X-Requested-With, content-type, Authorization',
         },
-        stats: 'errors-warnings',
-        https: !isProd
+        server: !isProd
             ? {
-                  ca: fs.readFileSync(
-                      Path.join(
-                          process.cwd() +
-                              '/.ddev/ssl/_wildcard.px-staging.de+1-client.pem',
-                      ),
-                  ),
-                  key: fs.readFileSync(
-                      Path.join(
-                          process.cwd() +
-                              '/.ddev/ssl/_wildcard.px-staging.de+1-key.pem',
-                      ),
-                  ),
-                  cert: fs.readFileSync(
-                      Path.join(
-                          process.cwd() +
-                              '/.ddev/ssl/_wildcard.px-staging.de+1.pem',
-                      ),
-                  ),
-              }
-            : false,
-        after() {
+                type: 'https',
+                options: {
+                    ca: fs.readFileSync(
+                        Path.join(
+                            process.cwd() +
+                            '/.ddev/ssl/_wildcard.px-staging.de+1-client.pem',
+                        ),
+                    ),
+                    key: fs.readFileSync(
+                        Path.join(
+                            process.cwd() +
+                            '/.ddev/ssl/_wildcard.px-staging.de+1-key.pem',
+                        ),
+                    ),
+                    cert: fs.readFileSync(
+                        Path.join(
+                            process.cwd() +
+                            '/.ddev/ssl/_wildcard.px-staging.de+1.pem',
+                        ),
+                    ),
+                }
+            }
+            : 'http',
+        devMiddleware: {
+            writeToDisk: true,
+        },
+        onAfterSetupMiddleware: function(devServer) {
             if (!isProd) {
                 Consola.success(
                     `Starting webpack in [${process.env.NODE_ENV}] with [${process.env.SHOPWARE_MODE}]`,
@@ -156,9 +156,8 @@ module.exports = {
     plugins: [
         new ESLintPlugin({
             exclude: [
-                'node_modules',
-                'vendor/pxsw/enterprise-cms/node_modules',
-                'vendor/shopware'
+                '**/node_modules/**',
+                'vendor'
             ]
         }),
         new HookPlugin({
@@ -186,7 +185,7 @@ module.exports = {
         }),
 
         new FilenameLinterPlugin({
-            ignoreFiles: [/node_modules/, /custom\/apps/, /vendor\/shopware/, /vendor\/store.shopware.com/],
+            ignoreFiles: [/node_modules/, /custom\/apps/, /vendor/],
             rules: {
                 // check cases here https://github.com/blakeembrey/change-case
                 scss: 'paramCase',
@@ -196,7 +195,6 @@ module.exports = {
                 svg: 'paramCase',
             },
         }),
-
         new TimeFixPlugin(),
 
         new webpack.DefinePlugin({
@@ -216,17 +214,15 @@ module.exports = {
         //        '@media(min-width:1280px)': 'desktop',
         //    }
         //}),
-        new CssMinimizerPlugin(),
     ].concat(
         Glob.sync(Path.join(privatePath, '/**/*.s?(a|c)ss')).length
             ? new StyleLintPlugin({
-                  files: '**/Pxsw*/**/*.s?(a|c)ss',
-                  failOnError: false,
-                  fix: false,
-                  configFile: Path.join(__dirname, 'stylelint.config.js'),
-              })
+                files: '**/Pxsw*/**/*.s?(a|c)ss',
+                failOnError: false,
+                fix: false,
+                configFile: Path.join(__dirname, 'stylelint.config.js'),
+            })
             : [],
     ),
     watch: false,
-    stats: 'errors-warnings',
 };
