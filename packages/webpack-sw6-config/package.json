@@ -66,6 +66,7 @@
     "media-query-plugin": "^1.5.0",
     "postcss": "^8.4.24",
     "postcss-loader": "^7.3.2",
+    "postcss-pxtorem": "^6.0.0",
     "postcss-scss": "^4.0.6",
     "prettier": "^2.8.8",
     "rimraf": "^5.0.1",
