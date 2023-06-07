@@ -166,8 +166,8 @@ module.exports = {
             files: [
                 {
                     from: publicPath,
-                    to: 'custom/plugins/$plugin/src/Resources/public',
-                    replace: (fromPath, toPath) => {
+                    to: 'custom/$pluginFolder/$plugin/src/Resources/public',
+                    replace: async (fromPath, toPath) => {
                         let pluginName = changeCase.pascalCase(
                             Path.basename(fromPath).replace(
                                 Path.extname(fromPath),
@@ -175,6 +175,11 @@ module.exports = {
                             ),
                         );
 
+                        const pluginOrStaticPlugin = await Fs.existsSync('custom/plugins/$plugin/src'.replace('$plugin', pluginName));
+
+                        let pluginFolder = pluginOrStaticPlugin ? 'plugins' : 'static-plugins';
+
+                        toPath = toPath.replace('$pluginFolder', pluginFolder);
                         toPath = toPath.replace('$plugin', pluginName);
                         return toPath;
                     },

@@ -61,7 +61,7 @@ AssetsCopyPlugin.prototype.apply = function(compiler) {
                             file.replace &&
                             typeof file.replace === 'function'
                         ) {
-                            toPath = file.replace(fromPath, toPath);
+                            toPath = await file.replace(fromPath, toPath);
                         }
 
                         toPath = path.resolve(

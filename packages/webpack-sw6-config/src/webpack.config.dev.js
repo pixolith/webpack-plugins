@@ -186,7 +186,7 @@ module.exports = {
         }),
 
         new FilenameLinterPlugin({
-            ignoreFiles: [/node_modules/, /custom\/apps/, /vendor\/shopware/],
+            ignoreFiles: [/node_modules/, /custom\/apps/, /vendor\/shopware/, /vendor\/store.shopware.com/],
             rules: {
                 // check cases here https://github.com/blakeembrey/change-case
                 scss: 'paramCase',
