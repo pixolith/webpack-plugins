@@ -23,7 +23,7 @@ const webpack = require('webpack'),
                             drop_console: true,
                         },
                         mangle: true,
-                        ecma: isModern ? 6 : 5, // specify one of: 5, 6, 7 or 8
+                        ecma: isModern ? 8 : 5, // specify one of: 5, 6, 7 or 8
                         keep_classnames: false,
                         keep_fnames: false,
                         ie8: false,
