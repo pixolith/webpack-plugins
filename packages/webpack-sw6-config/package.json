@@ -1,7 +1,7 @@
 {
   "name": "@pixolith/webpack-sw6-config",
   "public": true,
-  "version": "6.1.10",
+  "version": "6.1.11",
   "description": "",
   "main": "src/index.js",
   "scripts": {},
@@ -32,7 +32,7 @@
     "@babel/plugin-transform-runtime": "^7.16.10",
     "@babel/preset-env": "^7.16.11",
     "@pixolith/eslint-config-sw6": "^6.0.1",
-    "@pixolith/external-svg-sprite-loader": "^6.0.1",
+    "@pixolith/external-svg-sprite-loader": "^6.1.11",
     "@pixolith/stylelint-config-standard": "^6.0.1",
     "@pixolith/webpack-assets-copy-plugin": "^6.0.1",
     "@pixolith/webpack-filename-linter-plugin": "^6.0.1",
