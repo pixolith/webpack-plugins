@@ -14,7 +14,10 @@ module.exports = {
         ecmaVersion: 2020,
         sourceType: 'module',
     },
-    extends: ['eslint:recommended'],
+    extends: [
+        'eslint:recommended',
+        'plugin:json-schema-validator/recommended'
+    ],
     // add your custom rules here
     rules: {
         // indent is done with prettier
