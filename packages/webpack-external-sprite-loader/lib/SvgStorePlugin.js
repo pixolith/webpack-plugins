@@ -270,3 +270,5 @@ class SvgStorePlugin {
 SvgStorePlugin.loader = require.resolve('./loader');
 
 module.exports = SvgStorePlugin;
+
+// bump version
