@@ -62,9 +62,12 @@ module.exports = {
                         },
                     },
                     {
+                        loader: 'resolve-url-loader',
+                    },
+                    {
                         loader: 'sass-loader',
                         options: {
-                            sourceMap: !isProd,
+                            sourceMap: true,
                             additionalData: `$asset_url: '${ASSET_URL}';`,
                             sassOptions: {
                                 quietDeps: true,
@@ -214,15 +217,6 @@ module.exports = {
         //        '@media(min-width:1280px)': 'desktop',
         //    }
         //}),
-    ].concat(
-        Glob.sync(Path.join(privatePath, '/**/*.s?(a|c)ss')).length
-            ? new StyleLintPlugin({
-                files: '**/Pxsw*/**/*.s?(a|c)ss',
-                failOnError: false,
-                fix: false,
-                configFile: Path.join(__dirname, 'stylelint.config.js'),
-            })
-            : [],
-    ),
+    ],
     watch: false,
 };

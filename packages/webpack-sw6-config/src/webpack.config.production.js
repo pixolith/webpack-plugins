@@ -1,6 +1,10 @@
 const webpack = require('webpack'),
     TerserPlugin = require('terser-webpack-plugin'),
     CssMinimizerPlugin = require('css-minimizer-webpack-plugin'),
+    StyleLintPlugin = require('stylelint-webpack-plugin'),
+    Glob = require('glob'),
+    Path = require('path'),
+    privatePath = process.env.PLUGIN_PATH,
     isModern = process.env.MODE === 'modern',
     config = {
         devtool: 'nosources-source-map',
@@ -55,7 +59,16 @@ const webpack = require('webpack'),
                 'process.env': {
                     NODE_ENV: '"production"',
                 },
-            }),
+            }).concat(
+                Glob.sync(Path.join(privatePath, '/**/*.s?(a|c)ss')).length
+                    ? new StyleLintPlugin({
+                        files: '**/Pxsw*/**/*.s?(a|c)ss',
+                        failOnError: false,
+                        fix: false,
+                        configFile: Path.join(__dirname, 'stylelint.config.js'),
+                    })
+                    : [],
+            ),
         ],
         stats: 'normal',
     };
