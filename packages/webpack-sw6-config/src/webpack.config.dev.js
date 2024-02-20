@@ -43,10 +43,19 @@ module.exports = {
                 use: [
                     isProd ? ExtractCssChunks.loader : 'style-loader',
                     {
+                        loader: 'string-replace-loader',
+                        options: {
+                            search: 'ASSET_URL/',
+                            replace: ASSET_URL,
+                            flags: 'g',
+                        },
+                    },
+                    {
                         loader: 'css-loader',
                         options: {
                             importLoaders: 1,
                             sourceMap: !isProd,
+                            url: false // set to false, so we can directly search for the asset url and replace it. sadly we need this for development - cdn works fine before
                         },
                     },
                     //{
@@ -62,12 +71,9 @@ module.exports = {
                         },
                     },
                     {
-                        loader: 'resolve-url-loader',
-                    },
-                    {
                         loader: 'sass-loader',
                         options: {
-                            sourceMap: true,
+                            sourceMap: !isProd,
                             additionalData: `$asset_url: '${ASSET_URL}';`,
                             sassOptions: {
                                 quietDeps: true,
