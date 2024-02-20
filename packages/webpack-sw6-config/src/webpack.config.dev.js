@@ -55,7 +55,11 @@ module.exports = {
                         options: {
                             importLoaders: 1,
                             sourceMap: !isProd,
-                            url: false // set to false, so we can directly search for the asset url and replace it. sadly we need this for development - cdn works fine before
+                            url: {
+                                filter: (url) => {
+                                    return !url.includes('ASSET_URL');
+                                }
+                            }
                         },
                     },
                     //{
