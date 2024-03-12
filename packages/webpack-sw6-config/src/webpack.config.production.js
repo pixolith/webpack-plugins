@@ -24,9 +24,10 @@ const webpack = require('webpack'),
                 new CssMinimizerPlugin({
                     minimizerOptions: {
                         preset: [
-                            "advanced",
+                            "default",
                             {
                                 zIndex: false,
+                                discardComments: { removeAll: true }
                             },
                         ],
                     },

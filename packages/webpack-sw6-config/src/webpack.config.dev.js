@@ -6,7 +6,7 @@ const webpack = require('webpack'),
     StyleLintPlugin = require('stylelint-webpack-plugin'),
     isProd = process.env.NODE_ENV === 'production',
     privatePath = process.env.PLUGIN_PATH,
-    ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
+    MiniCssExtractPlugin = require('mini-css-extract-plugin'),
     //MediaQueryPlugin = require('media-query-plugin'),
     FilenameLinterPlugin = require('@pixolith/webpack-filename-linter-plugin'),
     ESLintPlugin = require('eslint-webpack-plugin'),
@@ -41,25 +41,12 @@ module.exports = {
             {
                 test: /(\.scss|\.css)$/,
                 use: [
-                    isProd ? ExtractCssChunks.loader : 'style-loader',
-                    {
-                        loader: 'string-replace-loader',
-                        options: {
-                            search: 'ASSET_URL/',
-                            replace: ASSET_URL,
-                            flags: 'g',
-                        },
-                    },
+                    isProd ? MiniCssExtractPlugin.loader : 'style-loader',
                     {
                         loader: 'css-loader',
                         options: {
                             importLoaders: 1,
                             sourceMap: !isProd,
-                            url: {
-                                filter: (url) => {
-                                    return !url.includes('ASSET_URL');
-                                }
-                            }
                         },
                     },
                     //{

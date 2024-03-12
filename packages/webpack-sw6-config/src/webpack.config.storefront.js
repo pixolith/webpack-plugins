@@ -1,6 +1,6 @@
 const Path = require('path'),
     Fs = require('fs'),
-    ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
+    MiniCssExtractPlugin = require('mini-css-extract-plugin'),
     privatePath = process.env.PLUGIN_PATH,
     vendorPath = process.env.VENDOR_PATH,
     spritePath = process.env.SPRITE_PATH ?? 'custom/plugins/PxswTheme/src/Resources/views/storefront',
@@ -28,14 +28,13 @@ const Path = require('path'),
                 : '') + (isProd ? `.${chunkData.chunk.hash}` : '')}.js`;
         },
     },
-    extractCssChunksConfig = {
+    miniCssChunksConfig = {
         filename: `css/[name]${isModern ? '.modern' : ''}${
             isProd ? '.[contenthash]' : ''
         }.css`,
         chunkFilename: `css/[name].vendor${isModern ? '.modern' : ''}${
             isProd ? '.[contenthash]' : ''
-        }.css`,
-        hot: !isProd,
+        }.css`
     };
 
 module.exports = {
@@ -252,6 +251,6 @@ module.exports = {
             },
         }),
 
-        new ExtractCssChunks(extractCssChunksConfig),
+        new MiniCssExtractPlugin(miniCssChunksConfig),
     ],
 };

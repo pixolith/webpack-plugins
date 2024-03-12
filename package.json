@@ -2,7 +2,7 @@
     "name": "root",
     "private": true,
     "devDependencies": {
-        "@pixolith/webpack-sw6-config": "^6.1.5",
+        "@pixolith/webpack-sw6-config": "^7.3.0",
         "eslint": "^8.36.0",
         "lerna": "^6.5.1",
         "prettier": "^2.8.4"
@@ -16,9 +16,9 @@
     },
     "browserslist": {
         "storefront": [
-            "> 1%",
-            "last 2 versions",
-            "not ie < 11"
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
         ],
         "storefront:modern": [
             "last 1 chrome version",

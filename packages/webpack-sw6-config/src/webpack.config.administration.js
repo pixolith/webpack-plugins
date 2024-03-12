@@ -5,7 +5,7 @@ const Path = require('path'),
     entry = require('webpack-glob-entry'),
     publicPath = process.env.PUBLIC_PATH,
     spritePath = process.env.SPRITE_PATH ?? 'custom/plugins/PxswTheme/src/Resources/views/administration',
-    ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
+    MiniCssExtractPlugin = require('mini-css-extract-plugin'),
     AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
     isProd = process.env.NODE_ENV === 'production',
     SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
@@ -23,17 +23,7 @@ const Path = require('path'),
                 '',
             )}/administration/js/${pluginName}.js`;
         },
-    },
-    extractCssChunksConfig = {
-        moduleFilename: ({ name }) => {
-            let pluginName = name.replace('vendor-', '').toLowerCase();
-            return `${pluginName.replace(
-                /-/g,
-                '',
-            )}/administration/css/${pluginName}.css`;
-        },
-        hot: !isProd,
-    };
+    }
 
 module.exports = {
     entry: () => {
@@ -197,7 +187,7 @@ module.exports = {
             },
         }),
 
-        new ExtractCssChunks(extractCssChunksConfig),
+        new MiniCssExtractPlugin(),
     ],
 
     optimization: {

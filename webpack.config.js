@@ -6,7 +6,7 @@ if (process.env.SHOPWARE_MODE === 'storefront') {
     process.env.VENDOR_PATH =
         './vendor/pxsw/*/src/Resources/app/storefront/private';
     process.env.SHARED_SCSS_PATH = '../../shared';
-    process.env.JS_TRANSPILE = JSON.stringify(['dom7', 'swiper']);
+    process.env.JS_TRANSPILE = JSON.stringify([]);
     process.env.PUBLIC_PATH = './public';
 }
 
