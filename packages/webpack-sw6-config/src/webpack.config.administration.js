@@ -23,6 +23,15 @@ const Path = require('path'),
                 '',
             )}/administration/js/${pluginName}.js`;
         },
+        cssFilename: (chunkData) => {
+            let pluginName = chunkData.chunk.name
+                .toLowerCase()
+                .replace('vendor-', '');
+            return `${pluginName.replace(
+                /-/g,
+                '',
+            )}/administration/css/${pluginName}.css`;
+        },
     }
 
 module.exports = {
@@ -187,7 +196,9 @@ module.exports = {
             },
         }),
 
-        new MiniCssExtractPlugin(),
+        new MiniCssExtractPlugin({
+            filename: outputConfig.cssFilename,
+        }),
     ],
 
     optimization: {
