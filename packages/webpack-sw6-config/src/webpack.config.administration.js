@@ -22,7 +22,18 @@ const Path = require('path'),
                 /-/g,
                 '',
             )}/administration/js/${pluginName}.js`;
-        },
+        }
+    },
+    miniCssChunksConfig  = {
+        filename: (chunkData) => {
+            let pluginName = chunkData.chunk.name
+                .toLowerCase()
+                .replace('vendor-', '');
+            return `${pluginName.replace(
+                /-/g,
+                '',
+            )}/administration/css/${pluginName}.css`;
+        }
     }
 
 module.exports = {
@@ -187,7 +198,7 @@ module.exports = {
             },
         }),
 
-        new MiniCssExtractPlugin(),
+        new MiniCssExtractPlugin(miniCssChunksConfig),
     ],
 
     optimization: {
