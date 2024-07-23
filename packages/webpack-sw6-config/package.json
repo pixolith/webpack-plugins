@@ -82,6 +82,7 @@
     "svg-sprite-loader": "^6.0.11",
     "svg-transform-loader": "^2.0.13",
     "svgo-loader": "^4.0.0",
+    "swc-loader": "^0.2.3",
     "terser-webpack-plugin": "^5.3.9",
     "time-fix-plugin": "^2.0.7",
     "url-loader": "^4.1.1",
