@@ -1,9 +1,8 @@
 const webpack = require('webpack'),
     Path = require('path'),
     Consola = require('consola'),
-    fs = require('fs'),
+    Fs = require('fs'),
     ASSET_URL = process.env.ASSET_URL || '/',
-    StyleLintPlugin = require('stylelint-webpack-plugin'),
     isProd = process.env.NODE_ENV === 'production',
     privatePath = process.env.PLUGIN_PATH,
     MiniCssExtractPlugin = require('mini-css-extract-plugin'),
@@ -13,7 +12,7 @@ const webpack = require('webpack'),
     watcher = require('@pixolith/webpack-watcher'),
     Glob = require('glob'),
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
-    sass = require('sass'),
+    Sass = require('sass'),
     TimeFixPlugin = require('time-fix-plugin');
 
 module.exports = {
@@ -68,7 +67,7 @@ module.exports = {
                             additionalData: `$asset_url: '${ASSET_URL}';`,
                             sassOptions: {
                                 quietDeps: true,
-                                logger: sass.Logger.silent,
+                                logger: Sass.Logger.silent,
                             },
                         },
                     },
@@ -120,19 +119,19 @@ module.exports = {
             ? {
                 type: 'https',
                 options: {
-                    ca: fs.readFileSync(
+                    ca: Fs.readFileSync(
                         Path.join(
                             process.cwd() +
                             '/.ddev/ssl/_wildcard.px-staging.de+1-client.pem',
                         ),
                     ),
-                    key: fs.readFileSync(
+                    key: Fs.readFileSync(
                         Path.join(
                             process.cwd() +
                             '/.ddev/ssl/_wildcard.px-staging.de+1-key.pem',
                         ),
                     ),
-                    cert: fs.readFileSync(
+                    cert: Fs.readFileSync(
                         Path.join(
                             process.cwd() +
                             '/.ddev/ssl/_wildcard.px-staging.de+1.pem',
@@ -164,13 +163,13 @@ module.exports = {
             beforeCompile(compiler, callback) {
                 let path = Path.join(process.cwd(), 'public/sprite'),
                     filename = 'sprite.svg',
-                    exists = fs.existsSync(path);
+                    exists = Fs.existsSync(path);
 
                 if (!exists) {
-                    fs.mkdirSync(path, {
+                    Fs.mkdirSync(path, {
                         recursive: true,
                     });
-                    fs.appendFile(Path.join(path, filename), '#', (err) => {
+                    Fs.appendFile(Path.join(path, filename), '#', (err) => {
                         if (err) {
                             throw err;
                         }

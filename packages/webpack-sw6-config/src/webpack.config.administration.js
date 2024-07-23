@@ -1,13 +1,15 @@
 const Path = require('path'),
     Fs = require('fs'),
+    Entry = require('webpack-glob-entry'),
     privatePath = process.env.PLUGIN_PATH,
-    changeCase = require('change-case'),
-    entry = require('webpack-glob-entry'),
+    vendorPath = process.env.VENDOR_PATH,
     publicPath = process.env.PUBLIC_PATH,
-    spritePath = process.env.SPRITE_PATH ?? 'custom/plugins/PxswTheme/src/Resources/views/administration',
-    MiniCssExtractPlugin = require('mini-css-extract-plugin'),
-    AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
+    spritePath = process.env.SPRITE_PATH ?? 'custom/static-plugins/PxswTheme/src/Resources/views/administration',
     isProd = process.env.NODE_ENV === 'production',
+    ChangeCase = require('change-case'),
+    MiniCssExtractPlugin = require('mini-css-extract-plugin'),
+    Consola = require('consola'),
+    AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
     SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
     HookPlugin = require('@pixolith/webpack-hook-plugin'),
     outputPath = Path.resolve(process.cwd(), publicPath),
@@ -17,18 +19,20 @@ const Path = require('path'),
         filename: (chunkData) => {
             let pluginName = chunkData.chunk.name
                 .toLowerCase()
-                .replace('vendor-', '');
+                .replace('vendor-', '')
+                .replace('pxsw-pxsw-', 'pxsw-');
             return `${pluginName.replace(
                 /-/g,
                 '',
             )}/administration/js/${pluginName}.js`;
         }
     },
-    miniCssChunksConfig  = {
+    miniCssChunksConfig = {
         filename: (chunkData) => {
             let pluginName = chunkData.chunk.name
                 .toLowerCase()
-                .replace('vendor-', '');
+                .replace('vendor-', '')
+                .replace('pxsw-pxsw-', 'pxsw-');
             return `${pluginName.replace(
                 /-/g,
                 '',
@@ -38,15 +42,28 @@ const Path = require('path'),
 
 module.exports = {
     entry: () => {
-        let entriesPlugins = entry(
+        let entriesPlugins = Entry(
             (filePath) =>
-                changeCase.paramCase(
+                ChangeCase.paramCase(
                     filePath.match(/plugins\/(Pxsw[\w]*)\//)[1],
                 ),
             Path.resolve(privatePath, 'index.js'),
         );
 
-        return { ...entriesPlugins };
+        let entriesVendor = Entry(
+            (filePath) =>
+                ChangeCase.paramCase(
+                    filePath.match(/(vendor\/pxsw\/[\w-]*)\//)[1],
+                ),
+            Path.resolve(vendorPath, 'index.js'),
+        );
+
+        if (process.env.DEBUG) {
+            Consola.info('[DEBUG]: Webpack entry points:');
+            Consola.info({...entriesPlugins, ...entriesVendor});
+        }
+
+        return {...entriesPlugins, ...entriesVendor};
     },
     module: {
         // loader order is from right to left or from bottom to top depending on the notation but basicly always reverse
@@ -161,32 +178,6 @@ module.exports = {
                 callback();
             },
         }),
-        new AssetsCopyPlugin({
-            includes: ['js', 'css'],
-            ignoreFiles: [/[-\w.]*.hot-update.js/, /sprite\/sprite_uses.svg/],
-            files: [
-                {
-                    from: publicPath,
-                    to: 'custom/$pluginFolder/$plugin/src/Resources/public',
-                    replace: async (fromPath, toPath) => {
-                        let pluginName = changeCase.pascalCase(
-                            Path.basename(fromPath).replace(
-                                Path.extname(fromPath),
-                                '',
-                            ),
-                        );
-
-                        const pluginOrStaticPlugin = await Fs.existsSync('custom/plugins/$plugin/src'.replace('$plugin', pluginName));
-
-                        let pluginFolder = pluginOrStaticPlugin ? 'plugins' : 'static-plugins';
-
-                        toPath = toPath.replace('$pluginFolder', pluginFolder);
-                        toPath = toPath.replace('$plugin', pluginName);
-                        return toPath;
-                    },
-                },
-            ],
-        }),
 
         new SvgStorePlugin({
             sprite: {
@@ -199,7 +190,36 @@ module.exports = {
         }),
 
         new MiniCssExtractPlugin(miniCssChunksConfig),
-    ],
+    ].concat(
+        isProd ?
+            new AssetsCopyPlugin({
+                includes: ['js', 'css'],
+                ignoreFiles: [/[-\w.]*.hot-update.js/, /sprite\/sprite_uses.svg/],
+                files: [
+                    {
+                        from: publicPath,
+                        to: '$pluginPath/$plugin/src/Resources/public',
+                        replace: async (fromPath, toPath) => {
+                            let pluginName = ChangeCase.pascalCase(
+                                Path.basename(fromPath).replace(
+                                    Path.extname(fromPath),
+                                    '',
+                                ),
+                            );
+
+                            let isPlugin = await Fs.existsSync(`custom/plugins/${pluginName}/src`),
+                                isStaticPlugin = await Fs.existsSync(`custom/static-plugins/${pluginName}/src`);
+
+                            let pluginFolder = isPlugin ? 'custom/plugins' : (isStaticPlugin ? 'custom/static-plugins' : 'vendor/pxsw');
+
+                            toPath = toPath.replace('$pluginPath', pluginFolder);
+                            toPath = toPath.replace('$plugin', pluginName);
+                            return toPath;
+                        },
+                    },
+                ],
+            }) : [],
+    ),
 
     optimization: {
         splitChunks: false,

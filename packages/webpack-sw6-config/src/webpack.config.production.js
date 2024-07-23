@@ -5,7 +5,6 @@ const webpack = require('webpack'),
     Glob = require('glob'),
     Path = require('path'),
     privatePath = process.env.PLUGIN_PATH,
-    isModern = process.env.MODE === 'modern',
     config = {
         devtool: 'nosources-source-map',
         performance: {
@@ -15,11 +14,8 @@ const webpack = require('webpack'),
         },
         mode: 'production',
         optimization: {
-            concatenateModules: true,
-            removeAvailableModules: true,
-            removeEmptyChunks: true,
-            sideEffects: false,
-            minimize: true,
+            splitChunks: false,
+            runtimeChunk: false,
             minimizer: [
                 new CssMinimizerPlugin({
                     minimizerOptions: {
@@ -36,21 +32,13 @@ const webpack = require('webpack'),
                     ]
                 }),
                 new TerserPlugin({
+                    minify: TerserPlugin.swcMinify,
                     terserOptions: {
                         compress: {
                             drop_console: true,
                         },
-                        mangle: true,
-                        ecma: isModern ? 8 : 5,
-                        keep_classnames: false,
-                        keep_fnames: false,
-                        ie8: false,
-                        module: false,
-                        nameCache: null, // or specify a name cache object
-                        safari10: !isModern,
-                        toplevel: false,
-                        warnings: false,
                     },
+                    parallel: true,
                     extractComments: false,
                 }),
             ],

@@ -18,7 +18,7 @@ const Fs = require('fs'),
     SCSS_FOLDER = process.env.SCSS_FOLDER || 'scss',
     JS_FOLDER = process.env.JS_FOLDER || 'js',
     ICONS_FOLDER = process.env.ICONS_FOLDER || 'icons',
-    allowedExtensions = ['.js', '.scss', '.css', '.svg'];
+    allowedExtensions = ['.ts', '.js', '.scss', '.css', '.svg'];
 
 const watcher = {
     watch() {
@@ -111,6 +111,7 @@ const watcher = {
     walkTheLine(path) {
         let files = Fs.readdirSync(path)
             .filter((file) => file.charAt(0) !== '.')
+            .filter((file) => !file.startsWith('async-'))
             .filter((file) => file)
             .map((file) => {
                 const subPath = path + '/' + file;

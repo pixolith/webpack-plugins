@@ -1,7 +1,4 @@
 {% sw_extends '@Storefront/storefront/layout/_px_meta.html.twig' %}
 {% block px_meta_head %}
-    {{ parent() }}
-    {% if isBundleUsed('{# BUNDLE #}') %}
-        {# STYLES #}
-    {% endif %}
+    {{ parent() }}{% if isBundleUsed('{# BUNDLE #}') %}{# HINTS #}{# STYLES #}{% endif %}
 {% endblock %}

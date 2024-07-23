@@ -3,15 +3,14 @@ const Path = require('path'),
     MiniCssExtractPlugin = require('mini-css-extract-plugin'),
     privatePath = process.env.PLUGIN_PATH,
     vendorPath = process.env.VENDOR_PATH,
-    spritePath = process.env.SPRITE_PATH ?? 'custom/plugins/PxswTheme/src/Resources/views/storefront',
+    spritePath = process.env.SPRITE_PATH ?? 'custom/static-plugins/PxswTheme/src/Resources/views/storefront',
     swNodePath = process.env.SW_NODE_PATH ?? './vendor/shopware/storefront/Resources/app/storefront/vendor',
     swAliasPath = process.env.SW_ALIAS_PATH ?? '/vendor/shopware/storefront/Resources/app/storefront/src',
+    isProd = process.env.NODE_ENV === 'production',
     ChangeCase = require('change-case'),
     Consola = require('consola'),
     TwigAssetEmitterPlugin = require('@pixolith/webpack-twig-assets-emitter-plugin'),
-    entry = require('webpack-glob-entry'),
-    isProd = process.env.NODE_ENV === 'production',
-    isModern = process.env.MODE === 'modern',
+    Entry = require('webpack-glob-entry'),
     SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
     publicPath = process.env.PUBLIC_PATH,
     ASSET_URL = process.env.ASSET_URL || '/',
@@ -19,27 +18,29 @@ const Path = require('path'),
     outputConfig = {
         path: Path.join(process.cwd(), publicPath),
         publicPath: ASSET_URL,
-        chunkFilename: `js/[name]${
-            isModern ? '.modern' : '' + isProd ? '.[contenthash]' : ''
-        }.js`,
+        chunkFilename: (chunkData) => {
+            return `js/chunk[name]${
+                isProd ? '.[contenthash:6]' : ''
+            }.js`;
+        },
         filename: (chunkData) => {
-            return `js/${chunkData.chunk.name.toLowerCase()}${(isModern
-                ? '.modern'
-                : '') + (isProd ? `.${chunkData.chunk.hash}` : '')}.js`;
+            return `js/${chunkData.chunk.name.toLowerCase()}${
+                isProd ? `.[contenthash:6]` : ''
+            }.js`;
         },
     },
     miniCssChunksConfig = {
-        filename: `css/[name]${isModern ? '.modern' : ''}${
+        filename: `css/[name]${
             isProd ? '.[contenthash]' : ''
         }.css`,
-        chunkFilename: `css/[name].vendor${isModern ? '.modern' : ''}${
+        chunkFilename: `css/[name].vendor${
             isProd ? '.[contenthash]' : ''
         }.css`
     };
 
 module.exports = {
     entry: () => {
-        let entriesPlugins = entry(
+        let entriesPlugins = Entry(
             (filePath) =>
                 ChangeCase.paramCase(
                     filePath.match(/plugins\/(Pxsw[\w]*)\//)[1],
@@ -47,7 +48,7 @@ module.exports = {
             Path.resolve(privatePath, 'index.js'),
         );
 
-        let entriesVendor = entry(
+        let entriesVendor = Entry(
             (filePath) =>
                 ChangeCase.paramCase(
                     filePath.match(/(vendor\/pxsw\/[\w-]*)\//)[1],
@@ -81,32 +82,30 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: (file) => {
-                    if (
-                        !isModern &&
-                        /node_modules/.test(file) &&
-                        JSON.parse(process.env.JS_TRANSPILE) &&
-                        JSON.parse(process.env.JS_TRANSPILE).length &&
-                        JSON.parse(process.env.JS_TRANSPILE).filter((lib) => {
-                            return new RegExp(lib).test(file);
-                        }).length > 0
-                    ) {
-                        return false;
-                    }
-
-                    if (/node_modules/.test(file)) {
-                        return true;
-                    }
-
-                    return false;
+                    return /node_modules/.test(file);
                 },
                 use: [
                     {
-                        loader: 'babel-loader',
+                        loader: 'swc-loader',
                         options: {
-                            configFile: Path.resolve(
-                                __dirname,
-                                'babel.config.js',
-                            ),
+                            env: {
+                                mode: 'entry',
+                                coreJs: '3.34.0',
+                                // .browserlist settings are not found by swc-loader, so we load it manually: https://github.com/swc-project/swc/issues/3365
+                                targets: require('browserslist').loadConfig({
+                                    config: './package.json',
+                                }),
+                            },
+                            jsc: {
+                                parser: {
+                                    syntax: 'typescript',
+                                },
+                                transform: {
+                                    // NEXT-30535 - Restore babel option to not use defineProperty for class fields.
+                                    // Previously (in v6.5.x) this was done by `@babel/preset-typescript` automatically.
+                                    useDefineForClassFields: false,
+                                },
+                            },
                         },
                     },
                 ],
@@ -215,28 +214,22 @@ module.exports = {
         }),
         new TwigAssetEmitterPlugin({
             includes: ['js', 'css'],
-            ignoreFiles: [/.*icons.*\.js/],
+            ignoreFiles: [/.*icons.*\.js/, /.*chunk.*\.js/],
             template: {
-                [isModern ? 'scriptsmodern' : 'scripts']: {
+                'scripts': {
                     namespace: '@Storefront/storefront',
                     path: '',
-                    filename: isModern
-                        ? '_px_base_modern.html.twig'
-                        : '_px_base.html.twig',
+                    filename: '_px_base.html.twig',
                 },
-                [isModern ? 'stylesmodern' : 'styles']: {
+                'styles': {
                     namespace: '@Storefront/storefront',
                     path: 'layout',
-                    filename: isModern
-                        ? '_px_meta_modern.html.twig'
-                        : '_px_meta.html.twig',
+                    filename: '_px_meta.html.twig',
                 },
-                [isModern ? 'hintsmodern' : 'hints']: {
+                'hints': {
                     namespace: '@Storefront/storefront',
                     path: 'layout',
-                    filename: isModern
-                        ? '_px_meta_modern.html.twig'
-                        : '_px_meta.html.twig',
+                    filename: '_px_meta.html.twig',
                 },
             },
         }),

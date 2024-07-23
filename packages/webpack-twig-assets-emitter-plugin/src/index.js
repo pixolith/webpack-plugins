@@ -94,27 +94,22 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                 process.exit(1);
                             });
 
-                            if (templateKey === 'hintsmodern') {
+                            if (templateKey === 'hints') {
                                 if (
-                                    templateKey === 'hintsmodern' &&
-                                    files[key].css.filter((file) =>
-                                        file.includes('modern'),
-                                    ).length
+                                    files[key].css.length
                                 ) {
                                     output = `${files[key].css
                                         .map((file) => {
-                                            return `<link rel="preload" href="{{ asset_url }}${file}" as="style">\n`;
+                                            return `<link rel="preload" href="{{ asset_url }}${file}" as="style">`;
                                         })
                                         .join('\n')}`;
                                 }
 
-                                if (templateKey === 'hintsmodern') {
-                                    output += `${files[key].js
-                                        .map((file) => {
-                                            return `<link rel="modulepreload" href="{{ asset_url }}${file}">\n`;
-                                        })
-                                        .join('\n')}`;
-                                }
+                                output += `${files[key].js
+                                    .map((file) => {
+                                        return `<link rel="modulepreload" href="{{ asset_url }}${file}">\n`;
+                                    })
+                                    .join('\n')}`;
 
                                 if (!output) {
                                     return;
@@ -122,14 +117,6 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             }
 
                             if (templateKey === 'styles') {
-                                output = `${files[key].css
-                                    .map((file) => {
-                                        return `<script>if(window.isIE11){var link = document.createElement("link");link.rel = "stylesheet";link.href = "{{ asset_url }}${file}";document.head.appendChild(link);}</script>`;
-                                    })
-                                    .join('\n')}`;
-                            }
-
-                            if (templateKey === 'stylesmodern') {
                                 output = files[key].css.length
                                     ? `
                                     ${files[key].css
@@ -143,23 +130,10 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                     : '';
                             }
 
-                            if (templateKey === 'scriptsmodern') {
-                                output = `${files[key].js
-                                    .map((file) => {
-                                        return `<script defer type="module" src="{{ asset_url }}${file}"></script>`;
-                                    })
-                                    .join('\n')}`;
-                            }
-
                             if (templateKey === 'scripts') {
                                 output = `${files[key].js
                                     .map((file) => {
-                                        return `<script defer ${
-                                            process.env.NODE_ENV ===
-                                            'development'
-                                                ? ''
-                                                : 'nomodule'
-                                        } src="{{ asset_url }}${file}"></script>`;
+                                        return `<script defer type="module" src="{{ asset_url }}${file}"></script>`;
                                     })
                                     .join('\n')}`;
                             }

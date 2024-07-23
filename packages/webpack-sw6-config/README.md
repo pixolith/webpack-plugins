@@ -5,7 +5,7 @@
 ### Install
 
 ```bash
-npm install @pixolith/webpack-sw6-config--save-dev
+npm install @pixolith/webpack-sw6-config --save-dev
 ```
 
 ### Require the plugin
