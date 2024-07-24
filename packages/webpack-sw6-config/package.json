@@ -1,7 +1,7 @@
 {
   "name": "@pixolith/webpack-sw6-config",
   "public": true,
-  "version": "8.0.2",
+  "version": "8.0.3",
   "description": "",
   "main": "src/index.js",
   "scripts": {},
@@ -35,7 +35,7 @@
     "@pixolith/webpack-assets-copy-plugin": "^8.0.0",
     "@pixolith/webpack-filename-linter-plugin": "^8.0.0",
     "@pixolith/webpack-hook-plugin": "^8.0.0",
-    "@pixolith/webpack-twig-assets-emitter-plugin": "^8.0.0",
+    "@pixolith/webpack-twig-assets-emitter-plugin": "^8.0.3",
     "@pixolith/webpack-watcher": "^8.0.0",
     "@swc/core": "^1.7.0",
     "autoprefixer": "^10.4.14",
