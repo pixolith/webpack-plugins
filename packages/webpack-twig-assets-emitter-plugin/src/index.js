@@ -35,6 +35,12 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
             _compilationAssetsKeys = _compilationAssetsKeys.filter(
                 (assetKey) => {
                     let isIgnored = false;
+
+                    // remove all files that are empty
+                    if (_compilationAssets[assetKey]._size <= 10) {
+                        return false;
+                    }
+
                     ignoreFiles.forEach((ignoreFile) => {
                         if (ignoreFile.test(assetKey)) {
                             isIgnored = true;
@@ -95,9 +101,7 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             });
 
                             if (templateKey === 'hints') {
-                                if (
-                                    files[key].css.length
-                                ) {
+                                if (files[key].css.length) {
                                     output = `${files[key].css
                                         .map((file) => {
                                             return `<link rel="preload" href="{{ asset_url }}${file}" as="style">`;
@@ -105,11 +109,13 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                                         .join('\n')}`;
                                 }
 
-                                output += `${files[key].js
-                                    .map((file) => {
-                                        return `<link rel="modulepreload" href="{{ asset_url }}${file}">\n`;
-                                    })
-                                    .join('\n')}`;
+                                if (files[key].js.length) {
+                                    output += `${files[key].js
+                                        .map((file) => {
+                                            return `<link rel="modulepreload" href="{{ asset_url }}${file}">\n`;
+                                        })
+                                        .join('\n')}`;
+                                }
 
                                 if (!output) {
                                     return;
@@ -117,25 +123,23 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             }
 
                             if (templateKey === 'styles') {
-                                output = files[key].css.length
-                                    ? `
-                                    ${files[key].css
+                                if (files[key].css.length) {
+                                    output += `${files[key].css
                                         .map((file) => {
-                                            return `
-                                                <link rel="stylesheet" href="{{ asset_url }}${file}">
-                                            `;
+                                            return `<link rel="stylesheet" href="{{ asset_url }}${file}">`;
                                         })
-                                        .join('\n')}
-                                `
-                                    : '';
+                                        .join('\n')}`;
+                                }
                             }
 
                             if (templateKey === 'scripts') {
-                                output = `${files[key].js
-                                    .map((file) => {
-                                        return `<script defer type="module" src="{{ asset_url }}${file}"></script>`;
-                                    })
-                                    .join('\n')}`;
+                                if (files[key].js.length) {
+                                    output = `${files[key].js
+                                        .map((file) => {
+                                            return `<script defer type="module" src="{{ asset_url }}${file}"></script>`;
+                                        })
+                                        .join('\n')}`;
+                                }
                             }
 
                             // check if our plugin is in "vendor" or in "custom"
@@ -182,15 +186,13 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                             ).catch((err) => consola.error(err));
 
                             if (exists) {
-                                let file = await readFileAsync(
+                                template = await readFileAsync(
                                     Path.join(
                                         pluginPath,
                                         options.template[templateKey].filename,
                                     ),
                                     'utf-8',
                                 );
-
-                                template = file;
                             }
 
                             let outputPath = Path.join(

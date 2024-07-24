@@ -31,10 +31,10 @@ const Path = require('path'),
     },
     miniCssChunksConfig = {
         filename: `css/[name]${
-            isProd ? '.[contenthash]' : ''
+            isProd ? '.[contenthash:6]' : ''
         }.css`,
         chunkFilename: `css/[name].vendor${
-            isProd ? '.[contenthash]' : ''
+            isProd ? '.[contenthash:6]' : ''
         }.css`
     };
 
