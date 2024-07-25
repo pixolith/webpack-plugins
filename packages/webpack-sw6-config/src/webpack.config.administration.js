@@ -200,12 +200,11 @@ module.exports = {
                         from: publicPath,
                         to: '$pluginPath/$plugin/src/Resources/public',
                         replace: async (fromPath, toPath) => {
-                            let pluginName = ChangeCase.pascalCase(
-                                Path.basename(fromPath).replace(
+                            let composerPluginName = Path.basename(fromPath).replace(
                                     Path.extname(fromPath),
                                     '',
-                                ),
-                            );
+                                ).replace('pxsw-', ''),
+                                pluginName = ChangeCase.pascalCase(composerPluginName);
 
                             let isPlugin = await Fs.existsSync(`custom/plugins/${pluginName}/src`),
                                 isStaticPlugin = await Fs.existsSync(`custom/static-plugins/${pluginName}/src`);
@@ -213,7 +212,13 @@ module.exports = {
                             let pluginFolder = isPlugin ? 'custom/plugins' : (isStaticPlugin ? 'custom/static-plugins' : 'vendor/pxsw');
 
                             toPath = toPath.replace('$pluginPath', pluginFolder);
-                            toPath = toPath.replace('$plugin', pluginName);
+                            if (!isPlugin && !isStaticPlugin) {
+                                let isDoublePxswPlugin = await Fs.existsSync(`vendor/pxsw/pxsw-${composerPluginName}/src`);
+                                toPath = toPath.replace('$plugin', isDoublePxswPlugin ? `pxsw-${composerPluginName}` : composerPluginName);
+                            } else {
+                                toPath = toPath.replace('$plugin', pluginName);
+                            }
+
                             return toPath;
                         },
                     },
