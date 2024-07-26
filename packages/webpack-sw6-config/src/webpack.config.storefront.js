@@ -9,7 +9,7 @@ const Path = require('path'),
     isProd = process.env.NODE_ENV === 'production',
     ChangeCase = require('change-case'),
     Consola = require('consola'),
-    TwigAssetEmitterPlugin = require('@pixolith/webpack-twig-assets-emitter-plugin'),
+    Sw6PluginMapEmitterPlugin = require('@pixolith/webpack-sw6-plugin-map-emitter'),
     Entry = require('webpack-glob-entry'),
     SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
     publicPath = process.env.PUBLIC_PATH,
@@ -212,26 +212,10 @@ module.exports = {
                 callback();
             },
         }),
-        new TwigAssetEmitterPlugin({
+
+        new Sw6PluginMapEmitterPlugin({
             includes: ['js', 'css'],
             ignoreFiles: [/.*icons.*\.js/, /.*chunk.*\.js/],
-            template: {
-                'scripts': {
-                    namespace: '@Storefront/storefront',
-                    path: '',
-                    filename: '_px_base.html.twig',
-                },
-                'styles': {
-                    namespace: '@Storefront/storefront',
-                    path: 'layout',
-                    filename: '_px_meta.html.twig',
-                },
-                'hints': {
-                    namespace: '@Storefront/storefront',
-                    path: 'layout',
-                    filename: '_px_meta.html.twig',
-                },
-            },
         }),
 
         new SvgStorePlugin({

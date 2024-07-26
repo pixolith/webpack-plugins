@@ -194,6 +194,7 @@ module.exports = {
                 svg: 'paramCase',
             },
         }),
+
         new TimeFixPlugin(),
 
         new webpack.DefinePlugin({
