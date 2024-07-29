@@ -1,6 +1,7 @@
 const Fs = require('fs'),
     Path = require('path'),
-    ChangeCase = require('change-case');
+    ChangeCase = require('change-case'),
+    Mkdirp = require('mkdirp');
 const { promisify } = require('util');
 const writeFileAsync = promisify(Fs.writeFile);
 
@@ -90,6 +91,9 @@ Sw6PluginMapEmitter.prototype.apply = function(compiler) {
                     pluginMap[bundleName] = files[key];
                 }),
             );
+
+            await mkdirp('var');
+
             await writeFileAsync(
                 'var/px_plugins.json',
                 JSON.stringify(pluginMap),
