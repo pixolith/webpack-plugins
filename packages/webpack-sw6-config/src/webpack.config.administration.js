@@ -204,7 +204,7 @@ module.exports = {
                                     Path.extname(fromPath),
                                     '',
                                 ).replace('pxsw-', ''),
-                                pluginName = ChangeCase.pascalCase(composerPluginName);
+                                pluginName = 'Pxsw' + ChangeCase.pascalCase(composerPluginName);
 
                             let isPlugin = await Fs.existsSync(`custom/plugins/${pluginName}/src`),
                                 isStaticPlugin = await Fs.existsSync(`custom/static-plugins/${pluginName}/src`);
