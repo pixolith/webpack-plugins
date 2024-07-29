@@ -92,7 +92,7 @@ Sw6PluginMapEmitter.prototype.apply = function(compiler) {
                 }),
             );
 
-            await mkdirp('var');
+            await Mkdirp('var');
 
             await writeFileAsync(
                 'var/px_plugins.json',
