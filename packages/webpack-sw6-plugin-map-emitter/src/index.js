@@ -99,6 +99,8 @@ Sw6PluginMapEmitter.prototype.apply = function(compiler) {
                 JSON.stringify(pluginMap),
                 'utf-8'
             )
+
+            next();
         });
 };
 

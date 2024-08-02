@@ -101,7 +101,7 @@ module.exports = {
             webSocketURL: {
                 hostname: 'node.px-staging.de',
                 protocol: 'wss',
-                port: 8080,
+                port: process.env.SHOPWARE_MODE === 'administration' ? 8080 : 8081,
             },
             overlay: {
                 warnings: false,
@@ -115,6 +115,7 @@ module.exports = {
             'Access-Control-Allow-Headers':
                 'X-Requested-With, content-type, Authorization',
         },
+        port: process.env.SHOPWARE_MODE === 'administration' ? 8080 : 8081,
         server: !isProd
             ? {
                 type: 'https',
@@ -143,13 +144,17 @@ module.exports = {
         devMiddleware: {
             writeToDisk: true,
         },
-        onAfterSetupMiddleware: function(devServer) {
-            if (!isProd) {
-                Consola.success(
-                    `Starting webpack in [${process.env.NODE_ENV}] with [${process.env.SHOPWARE_MODE}]`,
-                );
-                watcher.watch();
+        setupMiddlewares: (middlewares, devServer) => {
+            if (!devServer) {
+                throw new Error("webpack-dev-server is not defined")
             }
+
+            Consola.success(
+                `Starting webpack in [${process.env.NODE_ENV}] with [${process.env.SHOPWARE_MODE}]`,
+            );
+            watcher.watch();
+
+            return middlewares;
         },
     },
     plugins: [

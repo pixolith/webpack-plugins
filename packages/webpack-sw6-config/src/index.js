@@ -11,7 +11,6 @@ const Consola = require('consola');
 const setup = () => {
     Consola.info('Cleaning output folder');
     watcher.clean();
-    Consola.info('Building index files');
     watcher.run();
     console.table({
         isProd: isProd,
@@ -20,7 +19,6 @@ const setup = () => {
         publicPath: process.env.PUBLIC_PATH,
         sharedAssetPath: process.env.SHARED_SCSS_PATH,
         shopwareMode: process.env.SHOPWARE_MODE,
-        jsTranspile: process.env.JS_TRANSPILE,
         globalResourcesPaths: process.env.RESOURCES_PATHS,
         debug: process.env.DEBUG || false,
         version: pkg.version,

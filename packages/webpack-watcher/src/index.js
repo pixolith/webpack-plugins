@@ -25,6 +25,8 @@ const watcher = {
         const fileList = [].concat(
             Glob.sync(pluginPath),
             sharedPath ? Glob.sync(sharedPath) : [],
+            Glob.sync(vendorPath),
+            sharedVendorPath ? Glob.sync(sharedVendorPath) : [],
         );
 
         const watcherInstance = Chokidar.watch(fileList, {
@@ -101,7 +103,7 @@ const watcher = {
     },
 
     clean() {
-        rimraf.sync(`${publicPath}/**/*.hot-update.*`);
+        rimraf.sync(`${publicPath}/**/*.hot-update.*`, { glob: true });
     },
 
     compare(a, b) {
