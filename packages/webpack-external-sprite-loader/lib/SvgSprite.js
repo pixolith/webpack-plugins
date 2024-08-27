@@ -16,10 +16,24 @@ class SvgSprite {
     /**
      * Initializes all sprite properties.
      * @param {string} resourcePath - the relative path for the sprite based on the output folder.
+     * @param overrideOrder
+     * @param ignoreIconsByName
+     * @param onlySymbols
      */
-    constructor(resourcePath, onlySymbols) {
+    constructor(resourcePath, overrideOrder, ignoreIconsByName, onlySymbols) {
         const name = path.basename(resourcePath).match(/(?!\[[^[\]]*)[\w-]+(?![^[\]]*])/)[0];
         const resourcePathRegExp = new RegExp(escapeRegExp(resourcePath), 'gm');
+
+        // find index of glob entry '**' and split into two arrays
+        const markerIndex = overrideOrder.indexOf('**');
+        if (markerIndex === -1) {
+            throw new Error('overrideOrder must contain a marker "**" for the position of all order irrelevant svgs');
+        }
+
+        this.sortBefore = overrideOrder.slice(0, markerIndex);
+        this.sortAfter = overrideOrder.slice(markerIndex + 1);
+
+        this.ignoreIconsByName = ignoreIconsByName;
 
         /** @member {string} */
         this.content = '';
@@ -90,7 +104,12 @@ class SvgSprite {
 
         // Get sprite properties
         const { icons } = this;
-        const iconsSorted = Object.keys(icons).sort();
+        const iconsSorted = Object.keys(icons).sort(this.customSort.bind(this));
+
+        // Filter out icons that should be ignored and duplicates
+        const iconsFiltered = this.filterDuplicates(
+            iconsSorted.filter(icon => !this.ignoreIconsByName.includes(icons[icon].name))
+        );
 
         // Lists of defs, symbols, uses and views to be included in the sprite.
         const defs = [];
@@ -103,7 +122,7 @@ class SvgSprite {
         let y = startY;
 
         // For every icon in the sprite
-        for (const id of iconsSorted) {
+        for (const id of iconsFiltered) {
 
             // Get the icon metadata
             /** @type {SvgIcon} */
@@ -198,6 +217,37 @@ class SvgSprite {
         return source;
     }
 
+    customSort (a, b) {
+        // Priority 1: Sort by everything before '**' first
+        for (const item of this.sortBefore) {
+            if (a.includes(item) && !b.includes(item)) return -1;
+            if (!a.includes(item) && b.includes(item)) return 1;
+        }
+
+        // Priority 2: Sort by everything after '**' second
+        for (const item of this.sortAfter) {
+            if (a.includes(item) && !b.includes(item)) return 1;
+            if (!a.includes(item) && b.includes(item)) return -1;
+        }
+
+        // Priority 3: If neither contain the above, sort alphabetically
+        return a.localeCompare(b);
+    }
+
+    // Method to filter duplicates by the SVG name (last one wins)
+    filterDuplicates(icons) {
+        const uniqueMap = new Map();
+
+        // Iterate through the icons in reverse order to ensure "last one wins"
+        for (let i = icons.length - 1; i >= 0; i--) {
+            const icon = icons[i];
+            const iconName = icon.substring(icon.lastIndexOf('/') + 1);  // Extract the SVG file name
+            uniqueMap.set(iconName, icon);  // Map the file name to its full path
+        }
+
+        // Convert the map back to an array (values only)
+        return Array.from(uniqueMap.values()).reverse();
+    }
 }
 
 module.exports = SvgSprite;

@@ -12,6 +12,8 @@ const loaderUtils = require('loader-utils');
 const DEFAULT_LOADER_OPTIONS = Object.freeze({
     name: 'img/sprite.svg',
     iconName: 'icon-[name]-[hash:5]',
+    overrideOrder: ['**'],
+    ignoreIconsByName: [],
     svgoOptions: Object.freeze({
         plugins: [
             { collapseGroups: true },

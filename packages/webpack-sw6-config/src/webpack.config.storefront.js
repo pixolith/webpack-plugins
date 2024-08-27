@@ -3,7 +3,8 @@ const Path = require('path'),
     MiniCssExtractPlugin = require('mini-css-extract-plugin'),
     privatePath = process.env.PLUGIN_PATH,
     vendorPath = process.env.VENDOR_PATH,
-    spritePath = process.env.SPRITE_PATH ?? 'custom/static-plugins/PxswTheme/src/Resources/views/storefront',
+    spriteOrder = process.env.SPRITE_ORDER ?? ['pxsw/basic-theme', 'PxswBasicTheme', '**', 'pxsw/customer-theme', 'PxswCustomerTheme'],
+    ignoreIcons = process.env.IGNORE_ICONS ?? [],
     swNodePath = process.env.SW_NODE_PATH ?? './vendor/shopware/storefront/Resources/app/storefront/vendor',
     swAliasPath = process.env.SW_ALIAS_PATH ?? '/vendor/shopware/storefront/Resources/app/storefront/src',
     isProd = process.env.NODE_ENV === 'production',
@@ -14,7 +15,6 @@ const Path = require('path'),
     SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
     publicPath = process.env.PUBLIC_PATH,
     ASSET_URL = process.env.ASSET_URL || '/',
-    HookPlugin = require('@pixolith/webpack-hook-plugin'),
     outputConfig = {
         path: Path.join(process.cwd(), publicPath),
         publicPath: ASSET_URL,
@@ -132,6 +132,8 @@ module.exports = {
                         options: {
                             name: 'sprite/sprite.svg',
                             iconName: '[name]',
+                            overrideOrder: spriteOrder,
+                            ignoreIconsByName: ignoreIcons,
                             onlySymbols: true,
                         },
                     },
@@ -165,68 +167,12 @@ module.exports = {
     },
     output: outputConfig,
     plugins: [
-        new HookPlugin({
-            beforeCompile(compiler, callback) {
-                let path = Path.join(process.cwd(), publicPath, 'sprite'),
-                    filename = 'sprite.svg',
-                    exists = Fs.existsSync(Path.join(path, filename));
-
-                if (!exists) {
-                    Fs.mkdirSync(path, {
-                        recursive: true,
-                    });
-                    Fs.appendFile(Path.join(path, filename), '#', (err) => {
-                        if (err) {
-                            throw err;
-                        }
-                    });
-                }
-
-                callback();
-            },
-
-            afterEmit(compiler, callback) {
-                let spriteInputPath = Path.join(
-                    process.cwd(),
-                    publicPath,
-                    'sprite/sprite.svg',
-                );
-                let spriteOutputPath = Path.join(
-                        process.cwd(),
-                        spritePath,
-                    ),
-                    spritOutputFilename = '_sprite.svg';
-
-                let exists = Fs.existsSync(spriteOutputPath);
-
-                if (!exists) {
-                    Fs.mkdirSync(spriteOutputPath, {
-                        recursive: true,
-                    });
-                }
-
-                Fs.copyFileSync(
-                    spriteInputPath,
-                    Path.join(spriteOutputPath, spritOutputFilename),
-                );
-                callback();
-            },
-        }),
-
         new Sw6PluginMapEmitterPlugin({
             includes: ['js', 'css'],
             ignoreFiles: [/.*icons.*\.js/, /.*chunk.*\.js/],
         }),
 
-        new SvgStorePlugin({
-            sprite: {
-                startX: 10,
-                startY: 10,
-                deltaX: 20,
-                deltaY: 20,
-                iconHeight: 48,
-            },
-        }),
+        new SvgStorePlugin(),
 
         new MiniCssExtractPlugin(miniCssChunksConfig),
     ],

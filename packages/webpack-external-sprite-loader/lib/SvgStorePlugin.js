@@ -71,7 +71,7 @@ class SvgStorePlugin {
         hooks.optimize.tap(this.constructor.name, this.generateSprites.bind(this, compilation));
 
         // Replace the sprites URL with the hashed URL during the chunks optimization phase
-        hooks.optimizeChunks.tap(this.constructor.name, this.fixSpritePathsInChunks.bind(this));
+        // hooks.optimizeChunks.tap(this.constructor.name, this.fixSpritePathsInChunks.bind(this));
 
         // Add sprites to the compilation assets
         if (options.emit) {
@@ -150,8 +150,14 @@ class SvgStorePlugin {
         // Get the sprite resource path either from the rule options or the default options
         const resourcePath = rule.options.name || DEFAULT_LOADER_OPTIONS.name;
 
+        // Add svg loading order
+        const overrideOrder = rule.options.overrideOrder || DEFAULT_LOADER_OPTIONS.overrideOrder;
+
+        // Add ignore icons by name filter option
+        const ignoreIconsByName = rule.options.ignoreIconsByName || DEFAULT_LOADER_OPTIONS.ignoreIconsByName;
+
         // Initialize the sprite
-        const sprite = new SvgSprite(resourcePath, rule.options.onlySymbols);
+        const sprite = new SvgSprite(resourcePath, overrideOrder, ignoreIconsByName, rule.options.onlySymbols);
 
         // Inject sprite into loader options
         rule.options.sprite = sprite;
@@ -259,7 +265,6 @@ class SvgStorePlugin {
             // Add chunk to the compilation
             // NOTE: This step is only to allow other plugins to detect the existence of this asset
             compilation.chunks.push(chunk);
-
         }
 
         callback();
@@ -270,5 +275,3 @@ class SvgStorePlugin {
 SvgStorePlugin.loader = require.resolve('./loader');
 
 module.exports = SvgStorePlugin;
-
-// bump

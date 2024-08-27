@@ -4,14 +4,14 @@ const Path = require('path'),
     privatePath = process.env.PLUGIN_PATH,
     vendorPath = process.env.VENDOR_PATH,
     publicPath = process.env.PUBLIC_PATH,
-    spritePath = process.env.SPRITE_PATH ?? 'custom/static-plugins/PxswTheme/src/Resources/views/administration',
+    spriteOrder = process.env.SPRITE_ORDER ?? ['pxsw/basic-theme', 'PxswBasicTheme', '**', 'pxsw/customer-theme', 'PxswCustomerTheme'],
+    ignoreIcons = process.env.IGNORE_ICONS ?? [],
     isProd = process.env.NODE_ENV === 'production',
     ChangeCase = require('change-case'),
     MiniCssExtractPlugin = require('mini-css-extract-plugin'),
     Consola = require('consola'),
     AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
     SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
-    HookPlugin = require('@pixolith/webpack-hook-plugin'),
     outputPath = Path.resolve(process.cwd(), publicPath),
     outputConfig = {
         path: outputPath,
@@ -96,9 +96,11 @@ module.exports = {
                     {
                         loader: SvgStorePlugin.loader,
                         options: {
-                            name: 'sprite/sprite_uses.svg',
+                            name: 'sprite/sprite.svg',
                             iconName: '[name]',
-                            onlySymbols: false,
+                            overrideOrder: spriteOrder,
+                            ignoreIconsByName: ignoreIcons,
+                            onlySymbols: true,
                         },
                     },
                     {
@@ -131,70 +133,13 @@ module.exports = {
     },
     output: outputConfig,
     plugins: [
-        new HookPlugin({
-            beforeCompile(compiler, callback) {
-                let path = Path.join(process.cwd(), publicPath, 'sprite'),
-                    filename = 'sprite_uses.svg',
-                    exists = Fs.existsSync(Path.join(path, filename));
-
-                if (!exists) {
-                    Fs.mkdirSync(path, {
-                        recursive: true,
-                    });
-                    Fs.appendFile(Path.join(path, filename), '#', (err) => {
-                        if (err) {
-                            throw err;
-                        }
-                    });
-                }
-
-                callback();
-            },
-
-            afterEmit(compiler, callback) {
-                let spriteInputPath = Path.join(
-                    process.cwd(),
-                    publicPath,
-                    'sprite/sprite_uses.svg',
-                );
-                let spriteOutputPath = Path.join(
-                        process.cwd(),
-                        spritePath,
-                    ),
-                    spritOutputFilename = '_sprite_uses.svg';
-
-                let exists = Fs.existsSync(spriteOutputPath);
-
-                if (!exists) {
-                    Fs.mkdirSync(spriteOutputPath, {
-                        recursive: true,
-                    });
-                }
-
-                Fs.copyFileSync(
-                    spriteInputPath,
-                    Path.join(spriteOutputPath, spritOutputFilename),
-                );
-                callback();
-            },
-        }),
-
-        new SvgStorePlugin({
-            sprite: {
-                startX: 10,
-                startY: 10,
-                deltaX: 20,
-                deltaY: 20,
-                iconHeight: 48,
-            },
-        }),
-
+        new SvgStorePlugin(),
         new MiniCssExtractPlugin(miniCssChunksConfig),
     ].concat(
         isProd ?
             new AssetsCopyPlugin({
                 includes: ['js', 'css'],
-                ignoreFiles: [/[-\w.]*.hot-update.js/, /sprite\/sprite_uses.svg/],
+                ignoreFiles: [/[-\w.]*.hot-update.js/],
                 files: [
                     {
                         from: publicPath,
