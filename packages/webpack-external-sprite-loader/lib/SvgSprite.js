@@ -238,15 +238,13 @@ class SvgSprite {
     filterDuplicates(icons) {
         const uniqueMap = new Map();
 
-        // Iterate through the icons in reverse order to ensure "last one wins"
-        for (let i = icons.length - 1; i >= 0; i--) {
+        for (let i = 0; i < icons.length; i++) {
             const icon = icons[i];
-            const iconName = icon.substring(icon.lastIndexOf('/') + 1);  // Extract the SVG file name
+            const iconName = icon.substring(icon.lastIndexOf('/') + 1);
             uniqueMap.set(iconName, icon);  // Map the file name to its full path
         }
 
-        // Convert the map back to an array (values only)
-        return Array.from(uniqueMap.values()).reverse();
+        return Array.from(uniqueMap.values());
     }
 }
 
