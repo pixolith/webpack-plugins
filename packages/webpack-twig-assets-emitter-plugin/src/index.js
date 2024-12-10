@@ -1,12 +1,11 @@
-const fs = require('fs');
+const Fs = require('fs');
 const Path = require('path');
-const mkdirp = require('mkdirp');
+const Mkdirp = require('mkdirp');
 const { promisify } = require('util');
-const consola = require('consola');
-const changeCase = require('change-case');
-const readFileAsync = promisify(fs.readFile);
-const writeFileAsync = promisify(fs.writeFile);
-const existsAsync = promisify(fs.exists);
+const Consola = require('consola');
+const ChangeCase = require('change-case');
+const readFileAsync = promisify(Fs.readFile);
+const writeFileAsync = promisify(Fs.writeFile);
 
 const TwigAssetEmitterPlugin = function TwigAssetEmitterPlugin(options) {
     this.pluginName = 'TwigAssetEmitterPlugin';
@@ -81,136 +80,56 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
 
             const tasks = Object.keys(options.template).map(
                 (templateKey) => async () => {
-                    if (!options.template[templateKey].path) {
-                        options.template[templateKey].path = '';
-                    }
-
-                    if (!options.template[templateKey].namespace) {
-                        options.template[templateKey].namespace = '';
+                    if (templateKey !== 'admin') {
+                        Consola.error('Only "admin" template is supported');
+                        process.exit(1);
                     }
 
                     await Promise.all(
                         Object.keys(files).map(async (key) => {
-                            let output = '';
                             let template = await readFileAsync(
                                 `${__dirname}/${options.template[templateKey].filename}`,
                                 'utf8',
                             ).catch((err) => {
-                                consola.error(err);
+                                Consola.error(err);
                                 process.exit(1);
                             });
 
-                            if (templateKey === 'hints') {
-                                if (files[key].css.length) {
-                                    output = `${files[key].css
+                            if (files[key].css.length) {
+                                template = template.replace(
+                                    '{# STYLES #}',
+                                    `${files[key].css
                                         .map((file) => {
-                                            return `<link rel="preload" href="{{ asset_url }}${file}" as="style">`;
+                                            return `<link rel="stylesheet" href="${options.template[templateKey].assetUrl}${file}">`;
                                         })
-                                        .join('\n')}`;
-                                }
-
-                                if (files[key].js.length) {
-                                    output += `${files[key].js
-                                        .map((file) => {
-                                            return `<link rel="modulepreload" href="{{ asset_url }}${file}">\n`;
-                                        })
-                                        .join('\n')}`;
-                                }
-
-                                if (!output) {
-                                    return;
-                                }
+                                        .join('\n')}`,
+                                );
                             }
 
-                            if (templateKey === 'styles') {
-                                if (files[key].css.length) {
-                                    output += `${files[key].css
+                            if (files[key].js.length) {
+                                template = template.replace(
+                                    '{# SCRIPTS #}',
+                                    `${files[key].js
                                         .map((file) => {
-                                            return `<link rel="stylesheet" href="{{ asset_url }}${file}">`;
+                                            return `<script defer type="module" src="${options.template[templateKey].assetUrl}${file}"></script>`;
                                         })
-                                        .join('\n')}`;
-                                }
-                            }
-
-                            if (templateKey === 'scripts') {
-                                if (files[key].js.length) {
-                                    output = `${files[key].js
-                                        .map((file) => {
-                                            return `<script defer type="module" src="{{ asset_url }}${file}"></script>`;
-                                        })
-                                        .join('\n')}`;
-                                }
+                                        .join('\n')}`,
+                                );
                             }
 
                             // check if our plugin is in "vendor" or in "custom"
-                            let pluginPath = `custom/plugins/${changeCase.pascalCase(
-                                key,
-                            )}`;
+                            let pluginPath = key.includes('vendor') ?
+                                `vendor/pxsw/${key.substr(12)}/src/Resources/views/administration` :
+                                `custom/plugins/${ChangeCase.pascalCase(key)}/src/Resources/views/administration`;
 
-                            let bundleName = `${changeCase.pascalCase(key)}`;
-
-                            if (key.includes('vendor')) {
-                                pluginPath = `vendor/pxsw/${key.substr(12)}`;
-                                bundleName = `Pxsw${changeCase.pascalCase(key.substr(12))}`;
-                            }
-
-                            pluginPath = Path.join(
-                                pluginPath,
-                                Path.join(
-                                    `src/Resources/views/storefront/${options.template[templateKey].path}`,
-                                ),
-                            );
-
-                            /* mark the PxswProject plugin as the start of all generated templates */
-                            if (key.includes('pxsw-project')) {
-                                template = template.replace(
-                                    `{% sw_extends '${Path.join(
-                                        options.template[templateKey].namespace,
-                                        options.template[templateKey].path,
-                                        options.template[templateKey].filename,
-                                    )}' %}`,
-                                    '',
-                                ).replace(
-                                    '{{ parent() }}',
-                                    '',
-                                );
-                            }
-
-                            await mkdirp(pluginPath);
-
-                            let exists = await existsAsync(
-                                Path.join(
-                                    pluginPath,
-                                    options.template[templateKey].filename,
-                                ),
-                            ).catch((err) => consola.error(err));
-
-                            if (exists) {
-                                template = await readFileAsync(
-                                    Path.join(
-                                        pluginPath,
-                                        options.template[templateKey].filename,
-                                    ),
-                                    'utf-8',
-                                );
-                            }
+                            await Mkdirp(pluginPath);
 
                             let outputPath = Path.join(
                                 pluginPath,
                                 options.template[templateKey].filename,
                             );
 
-                            await writeFileAsync(
-                                outputPath,
-                                template.replace(
-                                    '{# BUNDLE #}',
-                                    bundleName
-                                ).replace(
-                                    `{# ${templateKey.toUpperCase()} #}`,
-                                    output.trim(),
-                                ),
-                                'utf-8',
-                            );
+                            await writeFileAsync(outputPath, template, 'utf-8');
                         }),
                     );
                 },

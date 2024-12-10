@@ -1,43 +1,40 @@
-import config from './config.js';
-import Path from 'path';
-import Fs from 'fs';
-import Entry from 'webpack-glob-entry';
-import * as ChangeCase from 'change-case';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import Consola from 'consola';
-import AssetsCopyPlugin from '@pixolith/webpack-assets-copy-plugin';
-import SvgStorePlugin from '@pixolith/external-svg-sprite-loader';
+const config = require('./config');
 
-const __dirname = import.meta.dirname;
-
-const outputConfig = {
+const Path = require('path'),
+    Fs = require('fs'),
+    Entry = require('webpack-glob-entry'),
+    ChangeCase = require('change-case'),
+    MiniCssExtractPlugin = require('mini-css-extract-plugin'),
+    Consola = require('consola'),
+    AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
+    SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
+    TwigAssetEmitterPlugin = require('@pixolith/webpack-twig-assets-emitter-plugin'),
+    outputConfig = {
         path: config.outputPath,
         publicPath: '/',
         filename: (chunkData) => {
-            let pluginName = chunkData.chunk.name
-                .toLowerCase()
-                .replace('vendor-', '')
-                .replace('pxsw-pxsw-', 'pxsw-');
-            return `${pluginName.replace(
-                /-/g,
-                '',
-            )}/administration/js/${pluginName}.js`;
+            let pluginName = chunkData.chunk.name.toLowerCase().replace('pxsw-pxsw-', 'pxsw-');
+            pluginName = config.shopwareVersion === '6.6' ? pluginName.replace('vendor-', '') : pluginName;
+            return config.shopwareVersion === '6.6' ?
+                `${pluginName.replace(/-/g, '',)}/administration/js/${pluginName}.js` :
+                `js/${pluginName}${
+                    config.isProd ? '.admin.[contenthash]' : ''
+                }.js`;
         }
     },
     miniCssChunksConfig = {
         filename: (chunkData) => {
-            let pluginName = chunkData.chunk.name
-                .toLowerCase()
-                .replace('vendor-', '')
-                .replace('pxsw-pxsw-', 'pxsw-');
-            return `${pluginName.replace(
-                /-/g,
-                '',
-            )}/administration/css/${pluginName}.css`;
+            let pluginName = chunkData.chunk.name.toLowerCase().replace('pxsw-pxsw-', 'pxsw-');
+            pluginName = config.shopwareVersion === '6.6' ? pluginName.replace('vendor-', '') : pluginName;
+            return config.shopwareVersion === '6.6' ?
+                `${pluginName.replace(/-/g, '',)}/administration/css/${pluginName}.css` :
+                `css/${pluginName}${
+                    config.isProd ? '.admin.[contenthash]' : ''
+                }.css`;
         }
     }
 
-export default {
+module.exports = {
     entry: () => {
         let entriesPlugins = Entry(
             (filePath) =>
@@ -60,12 +57,9 @@ export default {
             console.table({...entriesPlugins, ...entriesVendor });
         }
 
-        console.table({...entriesPlugins, ...entriesVendor });
-
         return {...entriesPlugins, ...entriesVendor };
     },
     module: {
-        // loader order is from right to left or from bottom to top depending on the notation but basicly always reverse
         rules: [
             {
                 test: /\.js$/,
@@ -135,7 +129,7 @@ export default {
         new SvgStorePlugin(),
         new MiniCssExtractPlugin(miniCssChunksConfig),
     ].concat(
-        config.isProd ?
+        config.isProd && config.shopwareVersion === '6.6' ?
             new AssetsCopyPlugin({
                 includes: ['js', 'css'],
                 ignoreFiles: [/[-\w.]*.hot-update.js/],
@@ -168,6 +162,17 @@ export default {
                     },
                 ],
             }) : [],
+    ).concat(
+        config.isProd && config.shopwareVersion !== '6.6' ?
+        new TwigAssetEmitterPlugin({
+            includes: ['js', 'css'],
+            ignoreFiles: [/.*icons.*\.js/],
+            template: {
+                admin: {
+                    filename: 'index.html.twig',
+                },
+            },
+        }) : [],
     ),
 
     optimization: {
