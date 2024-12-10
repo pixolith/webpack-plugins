@@ -1,13 +1,11 @@
+const config = require('./config');
+
 const webpack = require('webpack'),
     Path = require('path'),
     Consola = require('consola'),
     Fs = require('fs'),
-    ASSET_URL = process.env.ASSET_URL || '/',
-    isProd = process.env.NODE_ENV === 'production',
-    privatePath = process.env.PLUGIN_PATH,
     MiniCssExtractPlugin = require('mini-css-extract-plugin'),
-    //MediaQueryPlugin = require('media-query-plugin'),
-    FilenameLinterPlugin = require('@pixolith/webpack-filename-linter-plugin'),
+    MediaQueryPlugin = require('media-query-plugin'),
     ESLintPlugin = require('eslint-webpack-plugin'),
     watcher = require('@pixolith/webpack-watcher'),
     Glob = require('glob'),
@@ -21,16 +19,10 @@ module.exports = {
     resolve: {
         modules: [
             'node_modules',
-            Path.resolve(privatePath, 'js'),
-            Path.resolve(
-                './vendor/shopware/storefront/Resources/app/storefront/vendor',
-            ),
+            Path.resolve(config.shopwareVendorPath),
         ],
         alias: {
-            src: Path.join(
-                process.cwd(),
-                '/vendor/shopware/storefront/Resources/app/storefront/src',
-            ),
+            src: Path.resolve(config.shopwarePluginPath),
         },
     },
     devtool: 'inline-cheap-module-source-map',
@@ -40,21 +32,19 @@ module.exports = {
             {
                 test: /(\.scss|\.css)$/,
                 use: [
-                    isProd ? MiniCssExtractPlugin.loader : 'style-loader',
+                    config.isProd ? MiniCssExtractPlugin.loader : 'style-loader',
                     {
                         loader: 'css-loader',
                         options: {
                             importLoaders: 1,
-                            sourceMap: !isProd,
+                            sourceMap: !config.isProd,
                         },
                     },
-                    //{
-                    //    loader: MediaQueryPlugin.loader
-                    //},
+                    config.isProd && config.mediaQueries ? MediaQueryPlugin.loader : '',
                     {
                         loader: 'postcss-loader',
                         options: {
-                            sourceMap: !isProd,
+                            sourceMap: !config.isProd,
                             postcssOptions: {
                                 config: Path.resolve(__dirname, 'postcss.config.js'),
                             },
@@ -63,8 +53,8 @@ module.exports = {
                     {
                         loader: 'sass-loader',
                         options: {
-                            sourceMap: !isProd,
-                            additionalData: `$asset_url: '${ASSET_URL}';`,
+                            sourceMap: !config.isProd,
+                            additionalData: `$asset_url: '${config.assetUrl}';`,
                             sassOptions: {
                                 quietDeps: true,
                                 logger: Sass.Logger.silent,
@@ -116,7 +106,7 @@ module.exports = {
                 'X-Requested-With, content-type, Authorization',
         },
         port: process.env.SHOPWARE_MODE === 'administration' ? 8080 : 8081,
-        server: !isProd
+        server: !config.isProd
             ? {
                 type: 'https',
                 options: {
@@ -152,7 +142,8 @@ module.exports = {
             Consola.success(
                 `Starting webpack in [${process.env.NODE_ENV}] with [${process.env.SHOPWARE_MODE}]`,
             );
-            watcher.watch();
+
+            watcher.watch(config);
 
             return middlewares;
         },
@@ -166,7 +157,7 @@ module.exports = {
         }),
         new HookPlugin({
             beforeCompile(compiler, callback) {
-                let path = Path.join(process.cwd(), 'public/sprite'),
+                let path = Path.join(config.outputPath, 'sprite'),
                     filename = 'sprite.svg',
                     exists = Fs.existsSync(path);
 
@@ -184,19 +175,7 @@ module.exports = {
                 callback();
             },
             failed() {
-                watcher.run();
-            },
-        }),
-
-        new FilenameLinterPlugin({
-            ignoreFiles: [/node_modules/, /custom\/apps/, /vendor/],
-            rules: {
-                // check cases here https://github.com/blakeembrey/change-case
-                scss: 'paramCase',
-                js: 'paramCase',
-                woff: 'paramCase',
-                woff2: 'paramCase',
-                svg: 'paramCase',
+                watcher.run(null, config);
             },
         }),
 
@@ -206,19 +185,15 @@ module.exports = {
             'process.env.NODE_ENV': JSON.stringify(
                 process.env.NODE_ENV || 'development',
             ),
-            'process.env.ASSET_URL': JSON.stringify(ASSET_URL),
+            'process.env.ASSET_URL': JSON.stringify(config.assetUrl),
         }),
-
-        //new MediaQueryPlugin({
-        //    include: [
-        //        'example'
-        //    ],
-        //    queries: {
-        //        '@media(min-width:768px)': 'desktop',
-        //        '@media(min-width:1024px)': 'desktop',
-        //        '@media(min-width:1280px)': 'desktop',
-        //    }
-        //}),
-    ],
+    ].concat(
+        config.isProd && config.mediaQueries
+            ? new MediaQueryPlugin({
+                include: true,
+                queries: JSON.parse(config.mediaQueries)
+            })
+            : []
+    ),
     watch: false,
 };

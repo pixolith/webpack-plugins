@@ -72,28 +72,7 @@ function loader(content) {
             setImmediate(() => {
                 callback(
                     null,
-                    `var publicPath = ${publicPath ? `'${publicPath}'` : '__webpack_public_path__'};
-                    var symbolUrl = '${icon.getUrlToSymbol()}';
-                    var viewUrl = '${icon.getUrlToView()}';
-
-                    ${process.env.NODE_ENV !== 'production' && hasSamePath ? `
-                        var addCacheBust = typeof document !== 'undefined' && document.readyState === 'complete';
-
-                        if (addCacheBust) {
-                            symbolUrl = '${icon.getUrlToSymbol(true)}';
-                            viewUrl = '${icon.getUrlToView(true)}';
-                        }
-                    ` : '' }
-
-                    module.exports = {
-                        symbol: publicPath + symbolUrl,
-                        view: publicPath + viewUrl,
-                        viewBox: '${icon.getDocument().getViewBox()}',
-                        title: '${icon.getDocument().getTitle()}',
-                        toString: function () {
-                            return JSON.stringify(this.view);
-                        }
-                    };`
+                    ``
                 );
             });
         })

@@ -1,40 +1,32 @@
+const config = require('./config');
+
 const Path = require('path'),
-    Fs = require('fs'),
     MiniCssExtractPlugin = require('mini-css-extract-plugin'),
-    privatePath = process.env.PLUGIN_PATH,
-    vendorPath = process.env.VENDOR_PATH,
-    spriteOrder = process.env.SPRITE_ORDER ?? ['pxsw/basic-theme', 'PxswBasicTheme', '**', 'pxsw/customer-theme', 'PxswCustomerTheme'],
-    ignoreIcons = process.env.IGNORE_ICONS ?? [],
-    swNodePath = process.env.SW_NODE_PATH ?? './vendor/shopware/storefront/Resources/app/storefront/vendor',
-    swAliasPath = process.env.SW_ALIAS_PATH ?? '/vendor/shopware/storefront/Resources/app/storefront/src',
-    isProd = process.env.NODE_ENV === 'production',
     ChangeCase = require('change-case'),
     Consola = require('consola'),
     Sw6PluginMapEmitterPlugin = require('@pixolith/webpack-sw6-plugin-map-emitter'),
     Entry = require('webpack-glob-entry'),
     SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
-    publicPath = process.env.PUBLIC_PATH,
-    ASSET_URL = process.env.ASSET_URL || '/',
     outputConfig = {
-        path: Path.join(process.cwd(), publicPath),
-        publicPath: ASSET_URL,
+        path: config.outputPath,
+        publicPath: config.assetUrl,
         chunkFilename: (chunkData) => {
             return `js/chunk[name]${
-                isProd ? '.[contenthash:6]' : ''
+                config.isProd ? '.[contenthash]' : ''
             }.js`;
         },
         filename: (chunkData) => {
             return `js/${chunkData.chunk.name.toLowerCase()}${
-                isProd ? `.[contenthash:6]` : ''
+                config.isProd ? `.[contenthash]` : ''
             }.js`;
         },
     },
     miniCssChunksConfig = {
         filename: `css/[name]${
-            isProd ? '.[contenthash:6]' : ''
+            config.isProd ? '.[contenthash]' : ''
         }.css`,
         chunkFilename: `css/[name].vendor${
-            isProd ? '.[contenthash:6]' : ''
+            config.isProd ? '.[contenthash]' : ''
         }.css`
     };
 
@@ -42,39 +34,38 @@ module.exports = {
     entry: () => {
         let entriesPlugins = Entry(
             (filePath) =>
-                ChangeCase.paramCase(
-                    filePath.match(/plugins\/(Pxsw[\w]*)\//)[1],
+                ChangeCase.kebabCase(
+                    filePath.match(config.pluginMatch)[1],
                 ),
-            Path.resolve(privatePath, 'index.js'),
+            Path.resolve(config.pluginSrcPath, 'index.js'),
         );
 
         let entriesVendor = Entry(
             (filePath) =>
-                ChangeCase.paramCase(
-                    filePath.match(/(vendor\/pxsw\/[\w-]*)\//)[1],
+                ChangeCase.kebabCase(
+                    filePath.match(config.vendorMatch)[1],
                 ),
-            Path.resolve(vendorPath, 'index.js'),
+            Path.resolve(config.vendorSrcPath, 'index.js'),
         );
 
-        if (process.env.DEBUG) {
+        let routeSplitEntriesPlugins = Entry(
+            (filePath) => filePath.split('/').pop().replace('.index.scss', '').replace('.', '_'),
+            Path.resolve(config.pluginRouteSplitPath, '*index.scss'),
+        );
+        let routeSplitEntriesVendor = Entry(
+            (filePath) =>
+                ChangeCase.paramCase(
+                    filePath.match(config.vendorMatch)[1],
+                ),
+            Path.resolve(config.vendorRouteSplitPath, 'route-splitting/*/*index.scss'),
+        );
+
+        if (config.isDebug) {
             Consola.info('[DEBUG]: Webpack entry points:');
-            Consola.info({ ...entriesPlugins, ...entriesVendor });
+            console.table({ ...entriesPlugins, ...entriesVendor, ...routeSplitEntriesPlugins, ...routeSplitEntriesVendor });
         }
 
-        return { ...entriesPlugins, ...entriesVendor };
-    },
-    resolve: {
-        modules: [
-            'node_modules',
-            Path.resolve(privatePath, 'js'),
-            Path.resolve(swNodePath),
-        ],
-        alias: {
-            src: Path.join(
-                process.cwd(),
-                swAliasPath,
-            ),
-        },
+        return { ...entriesPlugins, ...entriesVendor, ...routeSplitEntriesPlugins, ...routeSplitEntriesVendor };
     },
     module: {
         // loader order is from right to left or from bottom to top depending on the notation but basicly always reverse
@@ -132,8 +123,8 @@ module.exports = {
                         options: {
                             name: 'sprite/sprite.svg',
                             iconName: '[name]',
-                            overrideOrder: spriteOrder,
-                            ignoreIconsByName: ignoreIcons,
+                            overrideOrder: config.spriteOrder,
+                            ignoreIconsByName: config.ignoreIcons,
                             onlySymbols: true,
                         },
                     },

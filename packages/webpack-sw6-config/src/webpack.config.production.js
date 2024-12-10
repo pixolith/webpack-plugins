@@ -1,11 +1,12 @@
-const webpack = require('webpack'),
+const config = require('./config'),
+    webpack = require('webpack'),
     TerserPlugin = require('terser-webpack-plugin'),
     CssMinimizerPlugin = require('css-minimizer-webpack-plugin'),
     StyleLintPlugin = require('stylelint-webpack-plugin'),
     Glob = require('glob'),
+    RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts'),
     Path = require('path'),
-    privatePath = process.env.PLUGIN_PATH,
-    config = {
+    productionConfig = {
         devtool: 'nosources-source-map',
         performance: {
             maxEntrypointSize: 300000,
@@ -49,17 +50,19 @@ const webpack = require('webpack'),
                     NODE_ENV: '"production"',
                 },
             }),
+            new RemoveEmptyScriptsPlugin(),
         ].concat(
-            Glob.sync(Path.join(privatePath, '/**/*.s?(a|c)ss')).length
-                ? new StyleLintPlugin({
-                    files: '**/Pxsw*/**/*.s?(a|c)ss',
-                    failOnError: false,
-                    fix: false,
-                    configFile: Path.join(__dirname, 'stylelint.config.js'),
-                })
-                : [],
+            //Glob.sync(Path.join(config.pluginSrcPath, '/**/*.s?(a|c)ss')).length
+            //    ? new StyleLintPlugin({
+            //        files: '**/Pxsw*/**/*.s?(a|c)ss',
+            //        failOnError: false,
+            //        fix: false,
+            //        configFile: Path.join(__dirname, 'stylelint.config.js'),
+            //    })
+            //    : [],
+            []
         ),
         stats: 'normal',
     };
 
-module.exports = config;
+module.exports = productionConfig;

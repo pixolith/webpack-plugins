@@ -34,10 +34,11 @@ npm login && lerna publish
 1. set pixolith dependencies of webpack-sw6-config to local file
 ```json
 {
+    "@pixolith/external-svg-sprite-loader": "file:../webpack-external-sprite-loader",
     "@pixolith/webpack-assets-copy-plugin": "file:../webpack-assets-copy-plugin",
     "@pixolith/webpack-filename-linter-plugin": "file:../webpack-filename-linter-plugin",
     "@pixolith/webpack-hook-plugin": "file:../webpack-hook-plugin",
-    "@pixolith/webpack-twig-assets-emitter-plugin": "file:../webpack-twig-assets-emitter-plugin",
+    "@pixolith/webpack-sw6-plugin-map-emitter": "file:../webpack-sw6-plugin-map-emitter",
     "@pixolith/webpack-watcher": "file:../webpack-watcher"
 }
 ```

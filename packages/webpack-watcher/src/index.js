@@ -3,30 +3,16 @@ const Fs = require('fs'),
     rimraf = require('rimraf'),
     Chokidar = require('chokidar'),
     Consola = require('consola'),
-    pluginPath = process.env.PLUGIN_PATH,
-    vendorPath = process.env.VENDOR_PATH,
-    publicPath = process.env.PUBLIC_PATH,
-    sharedPath =
-        pluginPath && process.env.SHARED_SCSS_PATH
-            ? Path.resolve(pluginPath, process.env.SHARED_SCSS_PATH)
-            : null,
-    sharedVendorPath =
-        vendorPath && process.env.SHARED_SCSS_PATH
-            ? Path.resolve(vendorPath, process.env.SHARED_SCSS_PATH)
-            : null,
     Glob = require('glob'),
-    SCSS_FOLDER = process.env.SCSS_FOLDER || 'scss',
-    JS_FOLDER = process.env.JS_FOLDER || 'js',
-    ICONS_FOLDER = process.env.ICONS_FOLDER || 'icons',
-    allowedExtensions = ['.ts', '.js', '.scss', '.css', '.svg'];
+    ChangeCase = require('change-case');
 
 const watcher = {
-    watch() {
+    watch(config) {
         const fileList = [].concat(
-            Glob.sync(pluginPath),
-            sharedPath ? Glob.sync(sharedPath) : [],
-            Glob.sync(vendorPath),
-            sharedVendorPath ? Glob.sync(sharedVendorPath) : [],
+            Glob.sync(config.pluginSrcPath),
+            Glob.sync(config.sharedScssPluginPath),
+            Glob.sync(config.vendorSrcPath),
+            Glob.sync(config.sharedScssVendorPath),
         );
 
         const watcherInstance = Chokidar.watch(fileList, {
@@ -34,76 +20,77 @@ const watcher = {
         });
 
         watcherInstance
-            .on('add', (path) => watcher.run(path))
-            .on('unlink', (path) => watcher.run(path))
+            .on('add', (path) => watcher.run(path, config))
+            .on('unlink', (path) => watcher.run(path, config))
             .on('error', (error) => Consola.error(`Watcher error: ${error}`));
 
         return watcher;
     },
 
-    run(path) {
+    run(path, config) {
         if (!path) {
             Consola.info('Rebuilding Index Files');
         }
 
-        if (process.env.DEBUG) {
+        if (config.isDebug) {
             if (path) {
                 Consola.info(`Adding ${path} to watchlist`);
             }
 
-            Consola.info('Shared plugin scss paths');
-            Consola.info(
-                sharedPath ? Glob.sync(`${sharedPath}/${SCSS_FOLDER}`) : [],
-            );
+            Consola.info('=== SCSS FILES ===');
+            Consola.info('found paths for sharedScssPluginPath');
+            console.table(config.sharedScssPluginPath ? Glob.sync(config.sharedScssPluginPath) : []);
 
-            Consola.info('Plugin scss paths');
-            Consola.info(
-                pluginPath ? Glob.sync(`${pluginPath}/${SCSS_FOLDER}`) : [],
-            );
+            Consola.info('found paths for pluginScssPath');
+            console.table(config.pluginScssPath ? Glob.sync(config.pluginScssPath) : []);
 
-            Consola.info('Shared vendor scss paths');
-            Consola.info(
-                sharedVendorPath
-                    ? Glob.sync(`${sharedVendorPath}/${SCSS_FOLDER}`)
-                    : [],
-            );
+            Consola.info('found paths for pluginRouteSplitPath');
+            console.table(config.pluginRouteSplitPath ? Glob.sync(config.pluginRouteSplitPath) : []);
 
-            Consola.info('Vendor scss paths');
-            Consola.info(
-                vendorPath ? Glob.sync(`${vendorPath}/${SCSS_FOLDER}`) : [],
-            );
+            Consola.info('found paths for sharedScssVendorPath');
+            console.table(config.sharedScssVendorPath ? Glob.sync(config.sharedScssVendorPath) : []);
 
-            Consola.info('Plugin js paths');
-            Consola.info(
-                pluginPath ? Glob.sync(`${pluginPath}/${JS_FOLDER}`) : [],
-            );
+            Consola.info('found paths for vendorScssPath');
+            console.table(config.vendorScssPath ? Glob.sync(config.vendorScssPath) : []);
 
-            Consola.info('Vendor js paths');
-            Consola.info(
-                vendorPath ? Glob.sync(`${vendorPath}/${JS_FOLDER}`) : [],
-            );
+            Consola.info('found paths for vendorRouteSplitPath');
+            console.table(config.vendorRouteSplitPath ? Glob.sync(config.vendorRouteSplitPath) : []);
+
+            Consola.info('=== JS FILES ===');
+            Consola.info('found paths for pluginJsPath');
+            console.table(config.pluginJsPath ? Glob.sync(config.pluginJsPath) : []);
+
+            Consola.info('found paths for vendorJsPath');
+            console.table(config.vendorJsPath ? Glob.sync(config.vendorJsPath) : []);
         }
 
         watcher.compile(
             [].concat(
-                sharedPath ? Glob.sync(`${sharedPath}/${SCSS_FOLDER}`) : [],
-                pluginPath ? Glob.sync(`${pluginPath}/${SCSS_FOLDER}`) : [],
-                sharedVendorPath
-                    ? Glob.sync(`${sharedVendorPath}/${SCSS_FOLDER}`)
-                    : [],
-                vendorPath ? Glob.sync(`${vendorPath}/${SCSS_FOLDER}`) : [],
+                config.sharedScssPluginPath ? Glob.sync(config.sharedScssPluginPath) : [],
+                config.pluginScssPath ? Glob.sync(config.pluginScssPath) : [],
+                config.shopwareMode === 'storefront' && config.pluginRouteSplitPath ? Glob.sync(config.pluginRouteSplitPath) : [],
+
+                config.sharedScssVendorPath ? Glob.sync(config.sharedScssVendorPath) : [],
+                config.vendorScssPath ? Glob.sync(config.vendorScssPath) : [],
+                config.shopwareMode === 'storefront' && config.vendorRouteSplitPath ? Glob.sync(config.vendorRouteSplitPath) : [],
             ),
+            'scss',
+            config
         );
+
         watcher.compile(
             [].concat(
-                pluginPath ? Glob.sync(`${pluginPath}/${JS_FOLDER}`) : [],
-                vendorPath ? Glob.sync(`${vendorPath}/${JS_FOLDER}`) : [],
+                config.pluginJsPath ? Glob.sync(config.pluginJsPath) : [],
+                config.vendorJsPath ? Glob.sync(config.vendorJsPath) : [],
             ),
+            'js',
+            config
         );
     },
 
-    clean() {
-        rimraf.sync(`${publicPath}/**/*.hot-update.*`, { glob: true });
+    clean(config) {
+        Consola.info('Cleaning output folder');
+        rimraf.sync(`${config.outputPath}/**/*.hot-update.*`, { glob: true });
     },
 
     compare(a, b) {
@@ -127,8 +114,20 @@ const watcher = {
         return [].concat.apply([], files);
     },
 
-    compile(filePaths = []) {
+    compile(filePaths = [], type, config) {
+        console.log('COMPILE', filePaths);
         filePaths.forEach((filePath) => {
+            let buffer = '';
+            let name = '../index.js';
+            let prefix = "import '";
+            let affix = "';\n";
+
+            if (type === 'scss') {
+                name = `${watcher.generateName(filePath, config)}index.scss`;
+                prefix = "@import '";
+                affix = "';\n";
+            }
+
             let files = watcher.walkTheLine(filePath).sort((a, b) => {
                 // sort index.js files by path length
                 if (
@@ -144,128 +143,102 @@ const watcher = {
 
                 // index.js at the end
                 if (a.indexOf('index.js') !== -1) {
-                    return true;
+                    return 1;
                 }
 
                 // index.js at the end
                 if (b.indexOf('index.js') !== -1) {
-                    return false;
+                    return -1;
                 }
 
                 // rest alphabetically
                 return a.localeCompare(b);
+            }).filter((file) => {
+                return (
+                    file &&
+                    !file.includes(name) &&
+                    config.allowedExtensions.includes(Path.extname(file))
+                );
             });
-
-            let buffer = '';
-            let name;
-            let prefix;
-            let affix;
 
             if (!files.length) {
                 return;
             }
 
-            let isJS = files[files.length - 1]
-                .split('/')
-                .filter((path) => path.toLowerCase() === 'js').length;
-            let isSCSS = files[files.length - 1]
-                .split('/')
-                .filter((path) => path.toLowerCase() === 'scss').length;
-
-            if (isJS) {
-                name = '../index.js';
-
-                let cssFiles = Glob.sync(
-                    `${filePath.replace(JS_FOLDER, SCSS_FOLDER)}/**/*.scss`,
+            if (type === 'js') {
+                // start: compatibility for shared and scss folders
+                let scssEntry = Glob.sync(
+                    `${filePath.replace(config.jsFolder, config.scssFolder)}/*index.scss`,
                 );
 
-                files = cssFiles.length
-                    ? [`./${SCSS_FOLDER}/index.scss`].concat(files)
+                files = scssEntry.length
+                    ? [`./${config.scssFolder}/${scssEntry[0].split('/').pop()}`].concat(files)
                     : files;
 
-                if (!filePath.includes('/shared/')) {
-                    if (
-                        Fs.existsSync(
-                            Path.resolve(
-                                filePath,
-                                `../../../shared/${SCSS_FOLDER}`,
-                            ),
-                        )
-                    ) {
-                        files = [
-                            `./../../shared/${SCSS_FOLDER}/index.scss`,
-                        ].concat(files);
-                    }
+                let sharedScssEntry = Glob.sync(Path.resolve(
+                    filePath,
+                    `../../../shared/${config.scssFolder}/*index.scss`,
+                ));
 
-                    if (
-                        Fs.existsSync(
+                files = sharedScssEntry.length
+                    ? [`./../../shared/${config.scssFolder}/${sharedScssEntry[0].split('/').pop()}`].concat(files)
+                    : files;
+                // end: compatibility for shared and scss folders
+
+                // include icons only in storefront
+                if (config.shopwareMode === 'storefront' &&
+                    Fs.existsSync(
+                        Path.resolve(
+                            filePath,
+                            `../../../shared/${config.iconsFolder}`,
+                        ),
+                    )
+                ) {
+                    files = files.concat(
+                        Glob.sync(
                             Path.resolve(
                                 filePath,
-                                `../../../shared/${ICONS_FOLDER}`,
+                                `../../../shared/${config.iconsFolder}/*.svg`,
                             ),
-                        )
-                    ) {
-                        files = files.concat(
-                            Glob.sync(
-                                Path.resolve(
-                                    filePath,
-                                    `../../../shared/${ICONS_FOLDER}/*.svg`,
-                                ),
-                            ).map(
-                                (path) =>
-                                    `./../../shared/${ICONS_FOLDER}/${Path.basename(
-                                        path,
-                                    )}`,
-                            ),
-                        );
-                    }
+                        ).map(
+                            (path) =>
+                                `./../../shared/${config.iconsFolder}/${Path.basename(
+                                    path,
+                                )}`,
+                        ),
+                    );
                 }
-
-                prefix = "import '";
-                affix = "';\n";
             }
 
-            if (isSCSS) {
-                name = 'index.scss';
-                prefix = "@import '";
-                affix = "';\n";
+            // start: compatibility for old scss folders with auto include to index.js
+            if (type === 'scss' && !filePath.includes('shared') && !filePath.includes('scss-route-split')) {
+                let includeContent = `import './scss/${name}';\n`;
+                includeContent +=
+                    'if (module.hot) {\n' +
+                    '    module.hot.accept();\n' +
+                    '}\n';
+
+                Fs.writeFileSync(`${filePath}/../index.js`, includeContent);
             }
+            // end: compatibility for old scss folders with auto include to index.js
 
-            files
-                .filter((file) => {
-                    return (
-                        file &&
-                        !file.includes(name) &&
-                        !file.includes('placeholder.js') &&
-                        allowedExtensions.includes(Path.extname(file))
-                    );
-                })
-                .forEach((file) => {
-                    buffer +=
-                        prefix +
-                        file.replace(filePath, isJS ? `./${JS_FOLDER}` : '.') +
-                        affix;
-                });
+            files.forEach((file) => {
+                buffer +=
+                    prefix +
+                    file.replace(filePath, type === 'js' ? `./${config.jsFolder}` : '.') +
+                    affix;
+            });
 
-            if (
-                files.filter((file) => {
-                    return (
-                        file &&
-                        !file.includes(name) &&
-                        !file.includes('placeholder.js') &&
-                        ['.js'].includes(Path.extname(file))
-                    );
-                }).length
-            ) {
+            if (type === 'js') {
                 buffer +=
                     'if (module.hot) {\n' +
                     '    module.hot.accept();\n' +
                     '}\n';
             }
 
-            if (!isJS && !isSCSS) {
+            if (type !== 'js' && type !== 'scss') {
                 Consola.error(
-                    'This basically means there are a bunch of ressources but no direct include so we wont do anything',
+                    'This basically means there are a bunch of resources but no direct include so we wont do anything',
                 );
                 Consola.error(
                     'For instance shared should not be directly included',
@@ -277,6 +250,26 @@ const watcher = {
             Fs.writeFileSync(`${filePath}/${name}`, buffer);
         });
     },
+
+    generateName(filePath, config) {
+        let name = '';
+        let match = filePath.match(config.routeSplitMatch);
+        if (match) {
+            name = `_${match[1]}`;
+        }
+
+        match = filePath.match(config.pluginMatch);
+        if (match) {
+            return ChangeCase.kebabCase(match[1]) + name + '.';
+        }
+
+        match = filePath.match(config.vendorMatch);
+        if (match) {
+            return ChangeCase.kebabCase(match[1]) + name + '.';
+        }
+
+        return name;
+    }
 };
 
 module.exports = watcher;

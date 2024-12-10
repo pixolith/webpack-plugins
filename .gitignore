@@ -6,19 +6,14 @@ node_modules
 #######################################
 # webpack generated files
 **/*.hot-update.js
-custom/plugins/Pxsw*/src/Resources/app/storefront/dist/storefront/js/
-custom/plugins/Pxsw*/src/Resources/app/administration/src/scss/index.scss
-custom/plugins/Pxsw*/src/Resources/app/administration/src/index.js
-custom/plugins/Pxsw*/src/Resources/app/shared/scss/index.scss
-custom/plugins/Pxsw*/src/Resources/app/storefront/private/scss/index.scss
-custom/plugins/Pxsw*/src/Resources/app/storefront/private/index.js
-custom/plugins/Pxsw*/src/Resources/public
-custom/plugins/Pxsw*/src/Resources/views/**/_px_base.html.twig
-custom/plugins/Pxsw*/src/Resources/views/**/_px_meta.html.twig
-custom/plugins/Pxsw*/src/Resources/views/**/_px_base_modern.html.twig
-custom/plugins/Pxsw*/src/Resources/views/**/_px_meta_modern.html.twig
-custom/plugins/Pxsw*/src/Resources/views/**/_sprite.svg
-custom/plugins/Pxsw*/src/Resources/views/**/_sprite_uses.svg
+**/*.hot-update.json
+custom/*plugins/Pxsw*/src/Resources/app/storefront/dist/storefront/js/
+custom/*plugins/Pxsw*/src/Resources/app/administration/src/scss/index.scss
+custom/*plugins/Pxsw*/src/Resources/app/administration/src/index.js
+custom/*plugins/Pxsw*/src/Resources/app/shared/scss/index.scss
+custom/*plugins/Pxsw*/src/Resources/app/storefront/private/scss/index.scss
+custom/*plugins/Pxsw*/src/Resources/app/storefront/private/index.js
+custom/*plugins/Pxsw*/src/Resources/public
 public/bundles/*
 public/css/*
 public/fonts/*
@@ -36,3 +31,4 @@ public/sprite/*
 custom
 vendor
 public
+var

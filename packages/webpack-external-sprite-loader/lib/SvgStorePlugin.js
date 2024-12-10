@@ -239,18 +239,13 @@ class SvgStorePlugin {
         const { sprites } = this;
 
         for (const sprite of sprites) {
-            const { changed, content, name, resourcePath } = sprite;
+            const { changed, content, resourcePath } = sprite;
 
             // If the sprite wasn't changed since the last compilation
             // then skip this step because the assets were already generated before
             if (!changed) {
                 continue;
             }
-
-            // Create a chunk for the sprite
-            const chunk = new Chunk(name);
-            chunk.ids = [];
-            chunk.files.push(resourcePath);
 
             // Add the sprite to the compilation assets
             compilation.assets[resourcePath] = {
@@ -261,10 +256,6 @@ class SvgStorePlugin {
                     return content.length;
                 },
             };
-
-            // Add chunk to the compilation
-            // NOTE: This step is only to allow other plugins to detect the existence of this asset
-            compilation.chunks.push(chunk);
         }
 
         callback();

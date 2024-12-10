@@ -2,33 +2,22 @@
     "name": "root",
     "private": true,
     "devDependencies": {
-        "@pixolith/webpack-sw6-config": "^7.3.0",
+        "@pixolith/webpack-sw6-config": "^8.2.1",
         "eslint": "^8.36.0",
         "lerna": "^6.5.1",
         "prettier": "^2.8.4"
     },
     "scripts": {
-        "clean": "rimraf 'custom/plugins/*/src/Resources/views/storefront/**/_px*.twig' 'vendor/pxsw/*/src/Resources/views/storefront/**/_px*.twig'",
-        "build": "npm run clean && concurrently \"npm run sf:build\" \"npm run sf:build:modern\" \"npm run admin:build\"",
+        "clean": "rimraf -g 'public/js/*.*' 'public/css/*.*' 'var/px_plugins.json'",
+        "build": "npm run clean && concurrently \"npm run sf:build\" \"npm run admin:build\"",
         "sf:build": "cross-env SHOPWARE_MODE=storefront NODE_ENV=production webpack",
-        "sf:build:modern": "cross-env MODE=modern SHOPWARE_MODE=storefront NODE_ENV=production webpack",
         "admin:build": "cross-env MODE=modern SHOPWARE_MODE=administration NODE_ENV=production webpack"
     },
     "browserslist": {
         "storefront": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ],
-        "storefront:modern": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ],
-        "administration:modern": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
+            ">= 0.5%",
+            "last 2 major versions",
+            "not dead"
         ],
         "administration": [
             "last 1 chrome version",
@@ -41,5 +30,8 @@
         "extends": [
             "./packages/eslint-config-sw6/src/index.js"
         ]
+    },
+    "dependencies": {
+        "autoprefixer": "^10.4.20"
     }
 }

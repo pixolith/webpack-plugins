@@ -1,20 +1,15 @@
+const config = require('./config');
+
 const Path = require('path'),
     Fs = require('fs'),
     Entry = require('webpack-glob-entry'),
-    privatePath = process.env.PLUGIN_PATH,
-    vendorPath = process.env.VENDOR_PATH,
-    publicPath = process.env.PUBLIC_PATH,
-    spriteOrder = process.env.SPRITE_ORDER ?? ['pxsw/basic-theme', 'PxswBasicTheme', '**', 'pxsw/customer-theme', 'PxswCustomerTheme'],
-    ignoreIcons = process.env.IGNORE_ICONS ?? [],
-    isProd = process.env.NODE_ENV === 'production',
     ChangeCase = require('change-case'),
     MiniCssExtractPlugin = require('mini-css-extract-plugin'),
     Consola = require('consola'),
     AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
     SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
-    outputPath = Path.resolve(process.cwd(), publicPath),
     outputConfig = {
-        path: outputPath,
+        path: config.outputPath,
         publicPath: '/',
         filename: (chunkData) => {
             let pluginName = chunkData.chunk.name
@@ -44,26 +39,28 @@ module.exports = {
     entry: () => {
         let entriesPlugins = Entry(
             (filePath) =>
-                ChangeCase.paramCase(
-                    filePath.match(/plugins\/(Pxsw[\w]*)\//)[1],
+                ChangeCase.kebabCase(
+                    filePath.match(config.pluginMatch)[1],
                 ),
-            Path.resolve(privatePath, 'index.js'),
+            Path.join(config.pluginSrcPath, 'index.js'),
         );
 
         let entriesVendor = Entry(
             (filePath) =>
-                ChangeCase.paramCase(
-                    filePath.match(/(vendor\/pxsw\/[\w-]*)\//)[1],
+                ChangeCase.kebabCase(
+                    filePath.match(config.vendorMatch)[1],
                 ),
-            Path.resolve(vendorPath, 'index.js'),
+            Path.resolve(config.vendorSrcPath, 'index.js'),
         );
 
         if (process.env.DEBUG) {
             Consola.info('[DEBUG]: Webpack entry points:');
-            Consola.info({...entriesPlugins, ...entriesVendor});
+            console.table({...entriesPlugins, ...entriesVendor });
         }
 
-        return {...entriesPlugins, ...entriesVendor};
+        console.table({...entriesPlugins, ...entriesVendor });
+
+        return {...entriesPlugins, ...entriesVendor };
     },
     module: {
         // loader order is from right to left or from bottom to top depending on the notation but basicly always reverse
@@ -98,8 +95,8 @@ module.exports = {
                         options: {
                             name: 'sprite/sprite.svg',
                             iconName: '[name]',
-                            overrideOrder: spriteOrder,
-                            ignoreIconsByName: ignoreIcons,
+                            overrideOrder: config.spriteOrder,
+                            ignoreIconsByName: config.ignoreIcons,
                             onlySymbols: true,
                         },
                     },
@@ -136,13 +133,13 @@ module.exports = {
         new SvgStorePlugin(),
         new MiniCssExtractPlugin(miniCssChunksConfig),
     ].concat(
-        isProd ?
+        config.isProd ?
             new AssetsCopyPlugin({
                 includes: ['js', 'css'],
                 ignoreFiles: [/[-\w.]*.hot-update.js/],
                 files: [
                     {
-                        from: publicPath,
+                        from: config.outputPath,
                         to: '$pluginPath/$plugin/src/Resources/public',
                         replace: async (fromPath, toPath) => {
                             let composerPluginName = Path.basename(fromPath).replace(
