@@ -1,10 +1,10 @@
-const Fs = require('fs'),
-    Path = require('path'),
-    rimraf = require('rimraf'),
-    Chokidar = require('chokidar'),
-    Consola = require('consola'),
-    Glob = require('glob'),
-    ChangeCase = require('change-case');
+import Fs from 'fs';
+import Path from 'path';
+import rimraf from 'rimraf';
+import Chokidar from 'chokidar';
+import Consola from 'consola';
+import * as Glob from 'glob';
+import * as ChangeCase from 'change-case';
 
 const watcher = {
     watch(config) {
@@ -272,4 +272,4 @@ const watcher = {
     }
 };
 
-module.exports = watcher;
+export default watcher;

@@ -3,6 +3,7 @@
   "public": true,
   "version": "8.1.6",
   "description": "",
+  "type": "module",
   "main": "src/index.js",
   "scripts": {},
   "files": [

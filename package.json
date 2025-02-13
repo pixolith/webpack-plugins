@@ -1,6 +1,7 @@
 {
     "name": "root",
     "private": true,
+    "type": "module",
     "devDependencies": {
         "@pixolith/webpack-sw6-config": "^8.2.1",
         "eslint": "^8.36.0",

@@ -1,11 +1,11 @@
-const config = require('./config');
-const production = require('./webpack.config.production');
-const storefront = require('./webpack.config.storefront');
-const dev = require('./webpack.config.dev');
-const administration = require('./webpack.config.administration');
-const pkg = require('./../package.json');
-const watcher = require('@pixolith/webpack-watcher');
-const { merge } = require('webpack-merge');
+import config from './config.js';
+import production from './webpack.config.production.js';
+import storefront from './webpack.config.storefront.js';
+import dev from './webpack.config.dev.js';
+import administration from './webpack.config.administration.js';
+import pkg from './../package.json' assert { type: 'json' };
+import watcher from '@pixolith/webpack-watcher';
+import {merge} from 'webpack-merge';
 
 const setup = () => {
     watcher.clean(config);
@@ -36,7 +36,5 @@ const setup = () => {
 
 setup();
 
-module.exports = {
-    storefront: merge(dev, storefront, config.isProd ? production : {}),
-    administration: merge(dev, administration, config.isProd ? production : {}),
-};
+export const storefrontConfig = merge(dev, storefront, config.isProd ? production : {});
+export const administrationConfig = merge(dev, administration, config.isProd ? production : {});

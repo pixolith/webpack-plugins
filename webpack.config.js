@@ -1,4 +1,5 @@
-let Fs = require('fs');
+import Fs from 'fs';
+import WebpackConfig from '@pixolith/webpack-sw6-config';
 
 if (process.env.SHOPWARE_MODE === 'storefront') {
     process.env.PUBLIC_PATH = './public';
@@ -54,6 +55,4 @@ if (
     process.exit(1);
 }
 
-module.exports = require('@pixolith/webpack-sw6-config')[
-    process.env.SHOPWARE_MODE
-];
+export default WebpackConfig[process.env.SHOPWARE_MODE];

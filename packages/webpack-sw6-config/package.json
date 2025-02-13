@@ -2,6 +2,7 @@
   "name": "@pixolith/webpack-sw6-config",
   "public": true,
   "version": "8.2.1",
+  "type": "module",
   "description": "",
   "main": "src/index.js",
   "scripts": {},

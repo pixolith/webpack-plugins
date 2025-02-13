@@ -1,19 +1,20 @@
-const config = require('./config');
+import config from './config.js';
+import webpack from 'webpack';
+import Path from 'path';
+import Consola from 'consola';
+import Fs from 'fs';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import MediaQueryPlugin from 'media-query-plugin';
+import ESLintPlugin from 'eslint-webpack-plugin';
+import watcher from '@pixolith/webpack-watcher';
+import * as Glob from 'glob';
+import HookPlugin from '@pixolith/webpack-hook-plugin';
+import * as Sass from 'sass';
+import TimeFixPlugin from 'time-fix-plugin';
 
-const webpack = require('webpack'),
-    Path = require('path'),
-    Consola = require('consola'),
-    Fs = require('fs'),
-    MiniCssExtractPlugin = require('mini-css-extract-plugin'),
-    MediaQueryPlugin = require('media-query-plugin'),
-    ESLintPlugin = require('eslint-webpack-plugin'),
-    watcher = require('@pixolith/webpack-watcher'),
-    Glob = require('glob'),
-    HookPlugin = require('@pixolith/webpack-hook-plugin'),
-    Sass = require('sass'),
-    TimeFixPlugin = require('time-fix-plugin');
+const __dirname = import.meta.dirname;
 
-module.exports = {
+export default {
     target: 'web',
     mode: 'development',
     resolve: {
@@ -23,11 +24,11 @@ module.exports = {
         ],
         alias: {
             src: Path.resolve(config.shopwarePluginPath),
+            vendor: Path.resolve(config.shopwareVendorPath),
         },
     },
     devtool: 'inline-cheap-module-source-map',
     module: {
-        // loader order is from right to left or from bottom to top depending on the notation but basicly always reverse
         rules: [
             {
                 test: /(\.scss|\.css)$/,
@@ -186,6 +187,7 @@ module.exports = {
                 process.env.NODE_ENV || 'development',
             ),
             'process.env.ASSET_URL': JSON.stringify(config.assetUrl),
+            'process.env.RESOURCES_PATHS': JSON.stringify(process.env.RESOURCES_PATHS || '[]'),
         }),
     ].concat(
         config.isProd && config.mediaQueries

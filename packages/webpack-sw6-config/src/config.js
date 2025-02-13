@@ -1,6 +1,6 @@
 'use strict';
 
-const Path = require('path');
+import Path from 'path';
 
 const config = {
     isProd: process.env.NODE_ENV === 'production',
@@ -20,7 +20,7 @@ const config = {
 
     mediaQueries: process.env.MEDIA_QUERIES || false,
 
-    outputPath: Path.join(process.cwd(), process.env.PUBLIC_PATH),
+    outputPath: Path.join(process.cwd(), process.env.PUBLIC_PATH ?? ''),
 
     vendorBasePath: Path.join(process.cwd(), 'vendor'),
     pluginsBasePath: Path.join(process.cwd(), 'custom/plugins'),
@@ -48,7 +48,7 @@ const pluginMatch = new RegExp(`/plugins\/((${config.pluginPrefixes.replace(',',
 const vendorMatch = new RegExp(`/(vendor\/(${config.pluginPrefixes.replace(',', '|').toLowerCase()})\/[\\w-]*)\/`);
 const routeSplitMatch = new RegExp(`/scss-route-split\/([\\w-]*)`);
 
-module.exports = {
+export default {
     ...config,
     pluginSrcPath: Path.join(pluginSrcPath, pxEntryPath),
     pluginScssPath: Path.join(pluginSrcPath, pxEntryPath, config.scssFolder),

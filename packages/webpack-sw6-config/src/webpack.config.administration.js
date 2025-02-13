@@ -1,14 +1,16 @@
-const config = require('./config');
+import config from './config.js';
+import Path from 'path';
+import Fs from 'fs';
+import Entry from 'webpack-glob-entry';
+import * as ChangeCase from 'change-case';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import Consola from 'consola';
+import AssetsCopyPlugin from '@pixolith/webpack-assets-copy-plugin';
+import SvgStorePlugin from '@pixolith/external-svg-sprite-loader';
 
-const Path = require('path'),
-    Fs = require('fs'),
-    Entry = require('webpack-glob-entry'),
-    ChangeCase = require('change-case'),
-    MiniCssExtractPlugin = require('mini-css-extract-plugin'),
-    Consola = require('consola'),
-    AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
-    SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
-    outputConfig = {
+const __dirname = import.meta.dirname;
+
+const outputConfig = {
         path: config.outputPath,
         publicPath: '/',
         filename: (chunkData) => {
@@ -35,7 +37,7 @@ const Path = require('path'),
         }
     }
 
-module.exports = {
+export default {
     entry: () => {
         let entriesPlugins = Entry(
             (filePath) =>
