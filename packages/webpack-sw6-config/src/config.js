@@ -4,7 +4,7 @@ import Path from 'path';
 
 const config = {
     isProd: process.env.NODE_ENV === 'production',
-    isDebug: !!process.env.DEBUG || true,
+    isDebug: !!process.env.DEBUG || false,
     shopwareMode: process.env.SHOPWARE_MODE,
 
     assetUrl: process.env.ASSET_URL || '/',
