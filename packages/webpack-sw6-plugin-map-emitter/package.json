@@ -1,7 +1,7 @@
 {
   "name": "@pixolith/webpack-sw6-plugin-map-emitter",
   "public": true,
-  "version": "9.0.0",
+  "version": "8.1.6",
   "description": "",
   "main": "src/index.js",
   "scripts": {},
