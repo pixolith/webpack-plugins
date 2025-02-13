@@ -1,7 +1,7 @@
 {
   "name": "@pixolith/webpack-typo3-config",
   "public": true,
-  "version": "9.0.0",
+  "version": "10.0.0",
   "description": "",
   "main": "src/index.js",
   "scripts": {},
@@ -29,7 +29,7 @@
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
-    "@pixolith/stylelint-config-standard": "^9.0.0",
+    "@pixolith/stylelint-config-standard": "^10.0.0",
     "@pixolith/webpack-filename-linter-plugin": "^6.0.1",
     "@pixolith/webpack-hook-plugin": "^6.0.1",
     "@pixolith/webpack-watcher": "^6.0.1",

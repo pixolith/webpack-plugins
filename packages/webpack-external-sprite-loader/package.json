@@ -42,6 +42,6 @@
   "scripts": {
     "lint": "eslint '**/*.{js,jsx}'"
   },
-  "version": "9.0.0",
+  "version": "10.0.0",
   "gitHead": "7c23694f054ecadd0ac3f6cd2563de74142e6f3e"
 }
