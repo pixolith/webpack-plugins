@@ -1,11 +1,12 @@
 'use strict';
 
-import Path from 'path';
+const Path = require('path');
 
 const config = {
     isProd: process.env.NODE_ENV === 'production',
     isDebug: !!process.env.DEBUG || false,
     shopwareMode: process.env.SHOPWARE_MODE,
+    shopwareVersion: process.env.SHOPWARE_VERSION || '6.6',
 
     assetUrl: process.env.ASSET_URL || '/',
     pluginPrefixes: process.env.PLUGIN_PREFIXES || 'Pxsw',
@@ -20,7 +21,7 @@ const config = {
 
     mediaQueries: process.env.MEDIA_QUERIES || false,
 
-    outputPath: Path.join(process.cwd(), process.env.PUBLIC_PATH ?? ''),
+    outputPath: Path.join(process.cwd(), process.env.PUBLIC_PATH),
 
     vendorBasePath: Path.join(process.cwd(), 'vendor'),
     pluginsBasePath: Path.join(process.cwd(), 'custom/plugins'),
@@ -31,13 +32,11 @@ const config = {
     shopwareVendorPath: Path.join(process.cwd(), 'vendor/shopware/storefront/Resources/app/storefront/vendor'),
     shopwarePluginPath: Path.join(process.cwd(), 'vendor/shopware/storefront/Resources/app/storefront/src'),
 
-    spriteOutputPath: Path.join(process.cwd(), 'custom/plugins/PxswTheme/src/Resources/views'),
-
     allowedExtensions: ['.ts', '.js', '.scss', '.css', '.svg']
 }
 
-const pxEntryPath = process.env.PX_ENTRY_PATH || process.env.SHOPWARE_MODE === 'storefront' ? 'src/Resources/app/storefront/private' : 'src/Resources/app/administration/src';
-const pxRouteSplitPath = process.env.PX_ROUTE_SPLIT_PATH || process.env.SHOPWARE_MODE === 'storefront' ? 'src/Resources/app/storefront/private/scss-route-split/*' : '';
+const pxEntryPath = process.env.PX_ENTRY_PATH || (process.env.SHOPWARE_MODE === 'storefront' ? 'src/Resources/app/storefront/private' : 'src/Resources/app/administration/src');
+const pxRouteSplitPath = process.env.PX_ROUTE_SPLIT_PATH || (process.env.SHOPWARE_MODE === 'storefront' ? 'src/Resources/app/storefront/private/scss-route-split/*' : '');
 
 // Create a glob regex to match the plugin prefixes
 let prefixes = config.pluginPrefixes.split(',').map(p => `${p}*`).join('|');
@@ -48,7 +47,7 @@ const pluginMatch = new RegExp(`/plugins\/((${config.pluginPrefixes.replace(',',
 const vendorMatch = new RegExp(`/(vendor\/(${config.pluginPrefixes.replace(',', '|').toLowerCase()})\/[\\w-]*)\/`);
 const routeSplitMatch = new RegExp(`/scss-route-split\/([\\w-]*)`);
 
-export default {
+module.exports = {
     ...config,
     pluginSrcPath: Path.join(pluginSrcPath, pxEntryPath),
     pluginScssPath: Path.join(pluginSrcPath, pxEntryPath, config.scssFolder),

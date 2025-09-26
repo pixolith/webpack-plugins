@@ -1,10 +1,12 @@
-import Fs from 'fs';
-import Path from 'path';
-import rimraf from 'rimraf';
-import Chokidar from 'chokidar';
-import Consola from 'consola';
-import * as Glob from 'glob';
-import * as ChangeCase from 'change-case';
+const Fs = require('fs'),
+    Path = require('path'),
+    rimraf = require('rimraf'),
+    Chokidar = require('chokidar'),
+    Consola = require('consola'),
+    Glob = require('glob'),
+    ChangeCase = require('change-case');
+
+let rampUpDone = false
 
 const watcher = {
     watch(config) {
@@ -20,23 +22,31 @@ const watcher = {
         });
 
         watcherInstance
-            .on('add', (path) => watcher.run(path, config))
-            .on('unlink', (path) => watcher.run(path, config))
-            .on('error', (error) => Consola.error(`Watcher error: ${error}`));
+            .on('add', (path) => watcher.run(path, config, 'add'))
+            .on('unlink', (path) => watcher.run(path, config, 'unlink'))
+            .on('error', (error) => Consola.error(`Watcher error: ${error}`))
+            .on('ready', () => watcher.run(null, config, 'ready'));
+
+        console.table(watcherInstance.getWatched());
 
         return watcher;
     },
 
-    run(path, config) {
+    run(path, config, event) {
         if (!path) {
             Consola.info('Rebuilding Index Files');
         }
+        if (event === 'ready') {
+            rampUpDone = true;
+        }
+        if (!rampUpDone && path) {
+            return;
+        }
+        if (path) {
+            Consola.info(`Adding ${path} to watchlist`);
+        }
 
         if (config.isDebug) {
-            if (path) {
-                Consola.info(`Adding ${path} to watchlist`);
-            }
-
             Consola.info('=== SCSS FILES ===');
             Consola.info('found paths for sharedScssPluginPath');
             console.table(config.sharedScssPluginPath ? Glob.sync(config.sharedScssPluginPath) : []);
@@ -115,7 +125,6 @@ const watcher = {
     },
 
     compile(filePaths = [], type, config) {
-        console.log('COMPILE', filePaths);
         filePaths.forEach((filePath) => {
             let buffer = '';
             let name = '../index.js';
@@ -177,11 +186,11 @@ const watcher = {
 
                 let sharedScssEntry = Glob.sync(Path.resolve(
                     filePath,
-                    `../../../shared/${config.scssFolder}/*index.scss`,
+                    `../${config.pxSharedPath}/${config.scssFolder}/*index.scss`,
                 ));
 
                 files = sharedScssEntry.length
-                    ? [`./../../shared/${config.scssFolder}/${sharedScssEntry[0].split('/').pop()}`].concat(files)
+                    ? [`./${config.pxSharedPath}/${config.scssFolder}/${sharedScssEntry[0].split('/').pop()}`].concat(files)
                     : files;
                 // end: compatibility for shared and scss folders
 
@@ -190,7 +199,7 @@ const watcher = {
                     Fs.existsSync(
                         Path.resolve(
                             filePath,
-                            `../../../shared/${config.iconsFolder}`,
+                            `../${config.pxSharedPath}/${config.iconsFolder}`,
                         ),
                     )
                 ) {
@@ -198,11 +207,11 @@ const watcher = {
                         Glob.sync(
                             Path.resolve(
                                 filePath,
-                                `../../../shared/${config.iconsFolder}/*.svg`,
+                                `../${config.pxSharedPath}/${config.iconsFolder}/*.svg`,
                             ),
                         ).map(
                             (path) =>
-                                `./../../shared/${config.iconsFolder}/${Path.basename(
+                                `./${config.pxSharedPath}/${config.iconsFolder}/${Path.basename(
                                     path,
                                 )}`,
                         ),
@@ -272,4 +281,4 @@ const watcher = {
     }
 };
 
-export default watcher;
+module.exports = watcher;
