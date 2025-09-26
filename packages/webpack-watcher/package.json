@@ -3,7 +3,6 @@
   "public": true,
   "version": "11.0.0",
   "description": "",
-  "type": "module",
   "main": "src/index.js",
   "scripts": {},
   "files": [
