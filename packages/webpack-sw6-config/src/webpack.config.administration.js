@@ -169,6 +169,7 @@ module.exports = {
             ignoreFiles: [/.*icons.*\.js/],
             template: {
                 admin: {
+                    assetUrl: config.assetUrl,
                     filename: 'index.html.twig',
                 },
             },
