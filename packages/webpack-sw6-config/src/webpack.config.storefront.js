@@ -53,11 +53,8 @@ module.exports = {
             Path.resolve(config.pluginRouteSplitPath, '*index.scss'),
         );
         let routeSplitEntriesVendor = Entry(
-            (filePath) =>
-                ChangeCase.paramCase(
-                    filePath.match(config.vendorMatch)[1],
-                ),
-            Path.resolve(config.vendorRouteSplitPath, 'route-splitting/*/*index.scss'),
+            (filePath) => filePath.split('/').pop().replace('.index.scss', '').replace('.', '_'),
+            Path.resolve(config.vendorRouteSplitPath, '*index.scss'),
         );
 
         if (config.isDebug) {
