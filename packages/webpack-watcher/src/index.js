@@ -221,7 +221,17 @@ const watcher = {
 
             // start: compatibility for old scss folders with auto include to index.js
             if (type === 'scss' && !filePath.includes('shared') && !filePath.includes('scss-route-split')) {
-                let includeContent = `import './scss/${name}';\n`;
+                let includeContent = `import './${config.scssFolder}/${name}';\n`;
+
+                let sharedScssEntry = Glob.sync(Path.resolve(
+                    filePath,
+                    `../${config.pxSharedPath}/${config.scssFolder}/*index.scss`,
+                ));
+
+                if (sharedScssEntry) {
+                    includeContent += `import './${config.pxSharedPath}/${config.scssFolder}/${name}';\n`;
+                }
+
                 includeContent +=
                     'if (module.hot) {\n' +
                     '    module.hot.accept();\n' +
