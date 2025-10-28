@@ -228,7 +228,7 @@ const watcher = {
                     `../${config.pxSharedPath}/${config.scssFolder}/*index.scss`,
                 ));
 
-                if (sharedScssEntry) {
+                if (sharedScssEntry.length) {
                     includeContent += `import './${config.pxSharedPath}/${config.scssFolder}/${name}';\n`;
                 }
 
