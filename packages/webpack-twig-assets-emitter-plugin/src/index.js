@@ -119,10 +119,16 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
 
                             // check if our plugin is in "vendor" or in "custom"
                             let pluginPath = key.includes('vendor') ?
-                                `vendor/pxsw/${key.substr(12)}/src/Resources/views/administration` :
-                                `custom/plugins/${ChangeCase.pascalCase(key)}/src/Resources/views/administration`;
+                                `vendor/pxsw/${key.substr(12)}` :
+                                `custom/plugins/${ChangeCase.pascalCase(key)}`;
 
-                            await Mkdirp(pluginPath);
+                            if (!Fs.existsSync(pluginPath) && pluginPath.includes('vendor')) {
+                                pluginPath = `vendor/pxsw/pxsw-${key.substr(12)}`
+                            }
+
+                            let adminPath = `${pluginPath}/src/Resources/views/administration`
+
+                            await Mkdirp(adminPath);
 
                             let outputPath = Path.join(
                                 pluginPath,
