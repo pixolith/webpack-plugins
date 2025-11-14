@@ -11,13 +11,13 @@ const Path = require('path'),
     TwigAssetEmitterPlugin = require('@pixolith/webpack-twig-assets-emitter-plugin'),
     outputConfig = {
         path: config.outputPath,
-        publicPath: '/',
+        publicPath: config.shopwareVersion === '6.6' ? '/' : config.assetUrl,
         filename: (chunkData) => {
             let pluginName = chunkData.chunk.name.toLowerCase().replace('pxsw-pxsw-', 'pxsw-');
             pluginName = config.shopwareVersion === '6.6' ? pluginName.replace('vendor-', '') : pluginName;
             return config.shopwareVersion === '6.6' ?
                 `${pluginName.replace(/-/g, '',)}/administration/js/${pluginName}.js` :
-                `js/${pluginName}${
+                `js/${chunkData.chunk.name.toLowerCase()}${
                     config.isProd ? '.admin.[contenthash]' : ''
                 }.js`;
         }
@@ -28,7 +28,7 @@ const Path = require('path'),
             pluginName = config.shopwareVersion === '6.6' ? pluginName.replace('vendor-', '') : pluginName;
             return config.shopwareVersion === '6.6' ?
                 `${pluginName.replace(/-/g, '',)}/administration/css/${pluginName}.css` :
-                `css/${pluginName}${
+                `css/[name]${
                     config.isProd ? '.admin.[contenthash]' : ''
                 }.css`;
         }
@@ -73,14 +73,14 @@ module.exports = {
                 test: /\.(jpe?g|png|gif|ico)(\?v=\d+\.\d+\.\d+)?$/,
                 type: 'asset/resource',
                 generator: {
-                    filename: '../img/[name][ext]'
+                    filename: config.shopwareVersion === '6.6' ? '../img/[name][ext]' : 'img/[name][ext]'
                 }
             },
             {
                 test: /\.(eot|ttf|woff2?)(\?v=\d+\.\d+\.\d+)?$/,
                 type: 'asset/resource',
                 generator: {
-                    filename: '../fonts/[name][ext]'
+                    filename: config.shopwareVersion === '6.6' ? '../fonts/[name][ext]' : 'fonts/[name][ext]'
                 }
             },
             {
@@ -164,16 +164,16 @@ module.exports = {
             }) : [],
     ).concat(
         config.isProd && config.shopwareVersion !== '6.6' ?
-        new TwigAssetEmitterPlugin({
-            includes: ['js', 'css'],
-            ignoreFiles: [/.*icons.*\.js/],
-            template: {
-                admin: {
-                    assetUrl: config.assetUrl,
-                    filename: 'index.html.twig',
+            new TwigAssetEmitterPlugin({
+                includes: ['js', 'css'],
+                ignoreFiles: [/.*icons.*\.js/],
+                template: {
+                    admin: {
+                        assetUrl: config.assetUrl,
+                        filename: 'index.html.twig',
+                    },
                 },
-            },
-        }) : [],
+            }) : [],
     ),
 
     optimization: {
