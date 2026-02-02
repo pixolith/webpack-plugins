@@ -40,6 +40,14 @@ TwigAssetEmitterPlugin.prototype.apply = function(compiler) {
                         return false;
                     }
 
+                    // remove all js files that are empty after asset removal (about 300 Byte large)
+                    if (
+                        assetKey.includes('js/') &&
+                        _compilationAssets[assetKey]._size <= 350
+                    ) {
+                        return false;
+                    }
+
                     ignoreFiles.forEach((ignoreFile) => {
                         if (ignoreFile.test(assetKey)) {
                             isIgnored = true;
