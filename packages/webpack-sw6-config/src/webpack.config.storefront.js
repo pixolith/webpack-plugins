@@ -64,8 +64,34 @@ module.exports = {
 
         return { ...entriesPlugins, ...entriesVendor, ...routeSplitEntriesPlugins, ...routeSplitEntriesVendor };
     },
+    // -.- hardcoded fix for zbar-wasm and issue https://github.com/webpack/webpack/issues/16878
+    resolve: {
+        conditionNames: [
+            'zbar-inlined',
+            'browser',
+            'import',
+            'require',
+            'default',
+        ],
+    },
+
     module: {
         rules: [
+            {
+                // -.- hardcoded fix for zbar-wasm and issue https://github.com/webpack/webpack/issues/16878
+                test: /\.m?js$/,
+                include: /node_modules[\\/]@undecaf[\\/]zbar-wasm/,
+                enforce: 'pre',
+                use: [
+                    {
+                        loader: 'string-replace-loader',
+                        options: {
+                            search: 'new URL("./",import.meta.url)',
+                            replace: '"/"',
+                        },
+                    },
+                ],
+            },
             {
                 test: /\.js$/,
                 exclude: (file) => {
