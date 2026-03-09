@@ -3,16 +3,22 @@
     "private": true,
     "type": "module",
     "devDependencies": {
-        "@pixolith/webpack-sw6-config": "^8.2.1",
+        "@pixolith/webpack-sw6-config": "11.0.8",
         "eslint": "^8.36.0",
         "lerna": "^6.5.1",
         "prettier": "^2.8.4"
     },
     "scripts": {
-        "clean": "rimraf -g 'public/js/*.*' 'public/css/*.*' 'var/px_plugins.json'",
-        "build": "npm run clean && concurrently \"npm run sf:build\" \"npm run admin:build\"",
+        "clean": "rimraf -g 'custom/plugins/*/src/Resources/views/administration/**/*.twig' 'vendor/pxsw/*/src/Resources/views/administration/**/*.twig' 'public/js/*.*' 'public/css/*.*' 'var/px_plugins.json'",
+        "dev": "npm run sf:dev",
+        "sf:dev": "npm run clean && cross-env SHOPWARE_MODE=storefront NODE_ENV=development webpack-dev-server --hot",
         "sf:build": "cross-env SHOPWARE_MODE=storefront NODE_ENV=production webpack",
-        "admin:build": "cross-env MODE=modern SHOPWARE_MODE=administration NODE_ENV=production webpack"
+        "build": "npm run clean && concurrently \"npm run sf:build\" \"npm run admin:build\" \"npm run admin:build:sw\"",
+        "admin": "npm run admin:dev",
+        "admin:dev": "ddev exec bash bin/watch-administration.sh",
+        "admin:build": "cross-env SHOPWARE_MODE=administration NODE_ENV=production webpack",
+        "admin:build:sw": "command -v ddev >/dev/null 2>&1 && ddev exec bash bin/build-administration.sh || npm run admin:cibuild",
+        "admin:cibuild": "CI=1 SHOPWARE_SKIP_ENTITY_SCHEMA_DUMP=1 SHOPWARE_SKIP_ASSET_COPY=1 bash bin/build-administration.sh"
     },
     "browserslist": {
         "storefront": [

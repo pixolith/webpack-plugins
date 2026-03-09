@@ -92,10 +92,12 @@ Sw6PluginMapEmitter.prototype.apply = function(compiler) {
                 }),
             );
 
-            await mkdirp('var');
+            let outputFile = (options.filename || 'var/px_plugins.json');
+
+            await mkdirp(Path.dirname(outputFile));
 
             await writeFileAsync(
-                'var/px_plugins.json',
+                outputFile,
                 JSON.stringify(pluginMap),
                 'utf-8'
             )

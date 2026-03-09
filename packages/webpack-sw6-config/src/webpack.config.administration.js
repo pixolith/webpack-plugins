@@ -5,178 +5,110 @@ const Path = require('path'),
     Entry = require('webpack-glob-entry'),
     ChangeCase = require('change-case'),
     MiniCssExtractPlugin = require('mini-css-extract-plugin'),
-    Consola = require('consola'),
-    AssetsCopyPlugin = require('@pixolith/webpack-assets-copy-plugin'),
-    SvgStorePlugin = require('@pixolith/external-svg-sprite-loader'),
-    TwigAssetEmitterPlugin = require('@pixolith/webpack-twig-assets-emitter-plugin'),
-    outputConfig = {
+    Consola = require('consola');
+
+module.exports = function createAdministrationConfig(themeOptions) {
+    let themeName = themeOptions && themeOptions.themeName;
+    let themeSlug = themeName
+        ? ChangeCase.kebabCase(themeName)
+        : 'administration';
+
+    let outputConfig = {
         path: config.outputPath,
-        publicPath: config.shopwareVersion === '6.6' ? '/' : config.assetUrl,
+        publicPath: config.assetUrl,
         filename: (chunkData) => {
-            let pluginName = chunkData.chunk.name.toLowerCase().replace('pxsw-pxsw-', 'pxsw-');
-            pluginName = config.shopwareVersion === '6.6' ? pluginName.replace('vendor-', '') : pluginName;
-            return config.shopwareVersion === '6.6' ?
-                `${pluginName.replace(/-/g, '',)}/administration/js/${pluginName}.js` :
-                `js/${chunkData.chunk.name.toLowerCase()}${
-                    config.isProd ? '.admin.[contenthash]' : ''
-                }.js`;
-        }
-    },
-    miniCssChunksConfig = {
+            return `js/${chunkData.chunk.name.toLowerCase()}${
+                config.isProd ? '.admin.[contenthash]' : ''
+            }.js`;
+        },
+        uniqueName: themeSlug + '-admin',
+    };
+
+    let miniCssChunksConfig = {
         filename: (chunkData) => {
-            let pluginName = chunkData.chunk.name.toLowerCase().replace('pxsw-pxsw-', 'pxsw-');
-            pluginName = config.shopwareVersion === '6.6' ? pluginName.replace('vendor-', '') : pluginName;
-            return config.shopwareVersion === '6.6' ?
-                `${pluginName.replace(/-/g, '',)}/administration/css/${pluginName}.css` :
-                `css/[name]${
-                    config.isProd ? '.admin.[contenthash]' : ''
-                }.css`;
-        }
-    }
+            return `css/[name]${
+                config.isProd ? '.admin.[contenthash]' : ''
+            }.css`;
+        },
+    };
 
-module.exports = {
-    entry: () => {
-        let entriesPlugins = Entry(
-            (filePath) =>
-                ChangeCase.kebabCase(
-                    filePath.match(config.pluginMatch)[1],
-                ),
-            Path.join(config.pluginSrcPath, 'index.js'),
-        );
+    return {
+        name: themeSlug + '-admin',
+        entry: () => {
+            let entriesPlugins = Entry(
+                (filePath) =>
+                    ChangeCase.kebabCase(filePath.match(config.pluginMatch)[2]),
+                Path.join(config.pluginSrcPath, 'index.js'),
+            );
 
-        let entriesVendor = Entry(
-            (filePath) =>
-                ChangeCase.kebabCase(
-                    filePath.match(config.vendorMatch)[1],
-                ),
-            Path.resolve(config.vendorSrcPath, 'index.js'),
-        );
+            let entriesVendor = Entry(
+                (filePath) =>
+                    ChangeCase.kebabCase(filePath.match(config.vendorMatch)[1]),
+                Path.resolve(config.vendorSrcPath, 'index.js'),
+            );
 
-        if (process.env.DEBUG) {
-            Consola.info('[DEBUG]: Webpack entry points:');
-            console.table({...entriesPlugins, ...entriesVendor });
-        }
+            // Discover the consolidated admin SCSS entry from .theme-entries/{theme-slug}/
+            let scssEntries = {};
+            let scssEntryDir = Path.join(
+                config.outputPath,
+                '.theme-entries',
+                themeSlug,
+            );
+            let scssEntryFile = Path.join(
+                scssEntryDir,
+                themeSlug + '-admin.scss',
+            );
 
-        return {...entriesPlugins, ...entriesVendor };
-    },
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                exclude: (file) => /node_modules/.test(file),
-                loader: 'babel-loader',
-                options: {
-                    configFile: Path.resolve(__dirname, 'babel.config.js'),
-                },
-            },
-            {
-                test: /\.(jpe?g|png|gif|ico)(\?v=\d+\.\d+\.\d+)?$/,
-                type: 'asset/resource',
-                generator: {
-                    filename: config.shopwareVersion === '6.6' ? '../img/[name][ext]' : 'img/[name][ext]'
-                }
-            },
-            {
-                test: /\.(eot|ttf|woff2?)(\?v=\d+\.\d+\.\d+)?$/,
-                type: 'asset/resource',
-                generator: {
-                    filename: config.shopwareVersion === '6.6' ? '../fonts/[name][ext]' : 'fonts/[name][ext]'
-                }
-            },
-            {
-                test: /\.svg$/,
-                use: [
-                    {
-                        loader: SvgStorePlugin.loader,
-                        options: {
-                            name: 'sprite/sprite.svg',
-                            iconName: '[name]',
-                            overrideOrder: config.spriteOrder,
-                            ignoreIconsByName: config.ignoreIcons,
-                            onlySymbols: true,
-                        },
-                    },
-                    {
-                        loader: 'svgo-loader',
-                        options: {
-                            plugins: [
-                                'cleanupAttrs',
-                                'removeDoctype',
-                                'removeXMLProcInst',
-                                'cleanupEnableBackground',
-                                'convertStyleToAttrs',
-                                'convertPathData',
-                                'cleanupIds',
-                                'minifyStyles',
-                                'removeUselessDefs',
-                                'convertShapeToPath',
-                                'removeUnusedNS',
-                                'removeDimensions',
-                                'convertTransform',
-                                'collapseGroups',
-                                'removeComments',
-                                'removeEditorsNSData',
-                                'removeUnknownsAndDefaults',
-                            ],
-                        },
-                    },
-                ],
-            },
-        ],
-    },
-    output: outputConfig,
-    plugins: [
-        new SvgStorePlugin(),
-        new MiniCssExtractPlugin(miniCssChunksConfig),
-    ].concat(
-        config.isProd && config.shopwareVersion === '6.6' ?
-            new AssetsCopyPlugin({
-                includes: ['js', 'css'],
-                ignoreFiles: [/[-\w.]*.hot-update.js/],
-                files: [
-                    {
-                        from: config.outputPath,
-                        to: '$pluginPath/$plugin/src/Resources/public',
-                        replace: async (fromPath, toPath) => {
-                            let composerPluginName = Path.basename(fromPath).replace(
-                                    Path.extname(fromPath),
-                                    '',
-                                ).replace('pxsw-', ''),
-                                pluginName = 'Pxsw' + ChangeCase.pascalCase(composerPluginName);
+            if (Fs.existsSync(scssEntryFile)) {
+                scssEntries[themeSlug + '-admin-scss'] = scssEntryFile;
+            }
 
-                            let isPlugin = await Fs.existsSync(`custom/plugins/${pluginName}/src`),
-                                isStaticPlugin = await Fs.existsSync(`custom/static-plugins/${pluginName}/src`);
+            let allEntries = {
+                ...entriesPlugins,
+                ...entriesVendor,
+                ...scssEntries,
+            };
 
-                            let pluginFolder = isPlugin ? 'custom/plugins' : (isStaticPlugin ? 'custom/static-plugins' : 'vendor/pxsw');
+            if (config.isDebug) {
+                Consola.info(
+                    `[${themeName || themeSlug}] Administration webpack entry points:`,
+                );
+                console.table(allEntries);
+            }
 
-                            toPath = toPath.replace('$pluginPath', pluginFolder);
-                            if (!isPlugin && !isStaticPlugin) {
-                                let isDoublePxswPlugin = await Fs.existsSync(`vendor/pxsw/pxsw-${composerPluginName}/src`);
-                                toPath = toPath.replace('$plugin', isDoublePxswPlugin ? `pxsw-${composerPluginName}` : composerPluginName);
-                            } else {
-                                toPath = toPath.replace('$plugin', pluginName);
-                            }
-
-                            return toPath;
-                        },
-                    },
-                ],
-            }) : [],
-    ).concat(
-        config.isProd && config.shopwareVersion !== '6.6' ?
-            new TwigAssetEmitterPlugin({
-                includes: ['js', 'css'],
-                ignoreFiles: [/.*icons.*\.js/],
-                template: {
-                    admin: {
-                        assetUrl: config.assetUrl,
-                        filename: 'index.html.twig',
+            return allEntries;
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.js$/,
+                    exclude: (file) => /node_modules/.test(file),
+                    loader: 'babel-loader',
+                    options: {
+                        configFile: Path.resolve(__dirname, 'babel.config.js'),
                     },
                 },
-            }) : [],
-    ),
+                {
+                    test: /\.(jpe?g|png|gif|ico)(\?v=\d+\.\d+\.\d+)?$/,
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'img/[name][ext]',
+                    },
+                },
+                {
+                    test: /\.(eot|ttf|woff2?)(\?v=\d+\.\d+\.\d+)?$/,
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'fonts/[name][ext]',
+                    },
+                },
+            ],
+        },
+        output: outputConfig,
+        plugins: [new MiniCssExtractPlugin(miniCssChunksConfig)],
 
-    optimization: {
-        splitChunks: false,
-    },
+        optimization: {
+            splitChunks: false,
+        },
+    };
 };

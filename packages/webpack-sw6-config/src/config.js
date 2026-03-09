@@ -6,10 +6,21 @@ const config = {
     isProd: process.env.NODE_ENV === 'production',
     isDebug: !!process.env.DEBUG || false,
     shopwareMode: process.env.SHOPWARE_MODE,
-    shopwareVersion: process.env.SHOPWARE_VERSION || '6.6',
 
     assetUrl: process.env.ASSET_URL || '/',
     pluginPrefixes: process.env.PLUGIN_PREFIXES || 'Pxsw',
+
+    // Multi-theme build configuration (mandatory in v12+)
+    themeNames: process.env.THEME_NAMES
+        ? process.env.THEME_NAMES.split(',')
+              .map((s) => s.trim())
+              .filter(Boolean)
+        : [],
+    skipPlugins: process.env.SKIP_PLUGINS
+        ? process.env.SKIP_PLUGINS.split(',')
+              .map((s) => s.trim())
+              .filter(Boolean)
+        : [],
 
     pxSharedPath: process.env.SHARED_SCSS_PATH || '../../shared',
     scssFolder: process.env.SCSS_FOLDER || 'scss',
@@ -32,11 +43,35 @@ const config = {
     shopwareVendorPath: Path.join(process.cwd(), 'vendor/shopware/storefront/Resources/app/storefront/vendor'),
     shopwarePluginPath: Path.join(process.cwd(), 'vendor/shopware/storefront/Resources/app/storefront/src'),
 
-    allowedExtensions: ['.ts', '.js', '.scss', '.css', '.svg']
+    allowedExtensions: ['.ts', '.js', '.scss', '.css', '.svg'],
+};
+
+// PICKED_THEME: optional filter to build/watch a single theme from THEME_NAMES
+let pickedTheme = process.env.PICKED_THEME
+    ? process.env.PICKED_THEME.trim()
+    : '';
+
+if (pickedTheme && config.themeNames.indexOf(pickedTheme) === -1) {
+    process.stderr.write(
+        `PICKED_THEME "${pickedTheme}" is not in THEME_NAMES [${config.themeNames.join(', ')}].\n`,
+    );
+    process.exit(1);
 }
 
-const pxEntryPath = process.env.PX_ENTRY_PATH || (process.env.SHOPWARE_MODE === 'storefront' ? 'src/Resources/app/storefront/private' : 'src/Resources/app/administration/src');
-const pxRouteSplitPath = process.env.PX_ROUTE_SPLIT_PATH || (process.env.SHOPWARE_MODE === 'storefront' ? 'src/Resources/app/storefront/private/scss-route-split/*' : '');
+// buildThemes: the subset of themeNames that actually get compiled
+// themeNames stays as the full list (used for _global_resources exclusion)
+config.buildThemes = pickedTheme ? [pickedTheme] : config.themeNames;
+
+const pxEntryPath =
+    process.env.PX_ENTRY_PATH ||
+    (process.env.SHOPWARE_MODE === 'storefront'
+        ? 'src/Resources/app/storefront/private'
+        : 'src/Resources/app/administration/src');
+const pxRouteSplitPath =
+    process.env.PX_ROUTE_SPLIT_PATH ||
+    (process.env.SHOPWARE_MODE === 'storefront'
+        ? 'src/Resources/app/storefront/private/scss-route-split/*'
+        : '');
 
 // Create a glob regex to match the plugin prefixes
 let prefixes = config.pluginPrefixes.split(',').map(p => `${p}*`).join('|');
@@ -49,6 +84,7 @@ const routeSplitMatch = new RegExp(`/scss-route-split\/([\\w-]*)`);
 
 module.exports = {
     ...config,
+
     pluginSrcPath: Path.join(pluginSrcPath, pxEntryPath),
     pluginScssPath: Path.join(pluginSrcPath, pxEntryPath, config.scssFolder),
     pluginJsPath: Path.join(pluginSrcPath, pxEntryPath, config.jsFolder),
@@ -70,5 +106,9 @@ module.exports = {
     pluginRouteSplitPath: Path.join(pluginSrcPath, pxRouteSplitPath),
     vendorRouteSplitPath: Path.join(vendorSrcPath, pxRouteSplitPath),
 
-    resourcesPath: process.env.RESOURCES_PATHS
-}
+    // Raw glob base paths for multi-theme resource resolution
+    pluginGlobBase: pluginSrcPath,
+    vendorGlobBase: vendorSrcPath,
+    pxEntryPath: pxEntryPath,
+    resourcesPath: process.env.RESOURCES_PATHS,
+};
