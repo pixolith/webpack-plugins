@@ -65,9 +65,15 @@ module.exports = function createDevConfig(themeOptions) {
                             },
                         },
                         {
-                            loader: 'sass-loader',
+                            loader: 'resolve-url-loader',
                             options: {
                                 sourceMap: !config.isProd,
+                            },
+                        },
+                        {
+                            loader: 'sass-loader',
+                            options: {
+                                sourceMap: true,
                                 additionalData: `$asset_url: '${config.assetUrl}';`,
                                 sassOptions: {
                                     quietDeps: true,

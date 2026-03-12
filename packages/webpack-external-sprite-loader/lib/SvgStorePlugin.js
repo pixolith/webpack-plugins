@@ -241,6 +241,12 @@ class SvgStorePlugin {
         for (const sprite of sprites) {
             const { changed, content, resourcePath } = sprite;
 
+            // If the sprite wasn't changed since the last compilation
+            // then skip this step because the assets were already generated before
+            if (!changed) {
+                continue;
+            }
+
             // Add the sprite to the compilation assets
             compilation.assets[resourcePath] = {
                 source() {

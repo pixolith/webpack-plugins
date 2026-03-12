@@ -36,6 +36,11 @@ const DEFAULT_LOADER_OPTIONS = Object.freeze({
 function loader(content) {
     const { addDependency, resource, resourcePath } = this;
 
+    // Disable caching for SVG modules so that the loader always runs.
+    // The loader's side-effect (sprite.addIcon) must execute every compilation
+    // to populate the in-memory sprite — filesystem cache would skip it otherwise.
+    this.cacheable(false);
+
     // Get callback because the SVG is going to be optimized and that is an async operation
     const callback = this.async();
 
