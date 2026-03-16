@@ -30,7 +30,7 @@
     "@babel/preset-env": "7.26.0",
     "@babel/preset-typescript": "7.26.0",
     "@pixolith/eslint-config-sw6": "^12.0.0",
-    "@pixolith/external-svg-sprite-loader": "^12.0.2",
+    "@pixolith/external-svg-sprite-loader": "^12.0.1",
     "@pixolith/stylelint-config-standard": "^12.0.0",
     "@pixolith/webpack-assets-copy-plugin": "^12.0.0",
     "@pixolith/webpack-filename-linter-plugin": "^12.0.0",
