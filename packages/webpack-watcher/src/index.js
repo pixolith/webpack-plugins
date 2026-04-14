@@ -90,7 +90,11 @@ const watcher = {
             .map((p) => {
                 let match = p.match(config.pluginMatch);
                 return match
-                    ? { name: match[2], path: p, source: 'plugin' }
+                    ? {
+                          name: match[2],
+                          path: Fs.realpathSync(p),
+                          source: 'plugin',
+                      }
                     : null;
             })
             .filter(Boolean);
@@ -102,7 +106,11 @@ const watcher = {
                     return null;
                 }
                 let vendorName = match[1].split('/').pop();
-                return { name: vendorName, path: p, source: 'vendor' };
+                return {
+                    name: vendorName,
+                    path: Fs.realpathSync(p),
+                    source: 'vendor',
+                };
             })
             .filter(Boolean);
 
@@ -127,19 +135,26 @@ const watcher = {
                 let pluginName = pluginMatch
                     ? pluginMatch[2]
                     : vendorMatch
-                      ? vendorMatch[1].split('/').pop()
-                      : null;
+                    ? vendorMatch[1].split('/').pop()
+                    : null;
                 let source = pluginMatch
-                    ? (p.indexOf('static-plugins') !== -1
-                          ? 'static-plugin'
-                          : 'plugin')
+                    ? p.indexOf('static-plugins') !== -1
+                        ? 'static-plugin'
+                        : 'plugin'
                     : 'vendor';
+
+                let realPath;
+                try {
+                    realPath = Fs.realpathSync(p);
+                } catch (e) {
+                    realPath = p;
+                }
 
                 return rsMatch && pluginName
                     ? {
                           routeName: rsMatch[1],
                           pluginName: pluginName,
-                          path: p,
+                          path: realPath,
                           source: source,
                       }
                     : null;
@@ -151,16 +166,9 @@ const watcher = {
         let deduplicated = [];
 
         mapped.forEach((entry) => {
-            let realPath;
-            try {
-                realPath = Fs.realpathSync(entry.path);
-            } catch (e) {
-                realPath = entry.path;
-            }
-
-            let existing = seenRealPaths.get(realPath);
+            let existing = seenRealPaths.get(entry.path);
             if (!existing) {
-                seenRealPaths.set(realPath, entry);
+                seenRealPaths.set(entry.path, entry);
                 deduplicated.push(entry);
             } else if (
                 entry.source !== 'vendor' &&
@@ -168,7 +176,7 @@ const watcher = {
             ) {
                 let idx = deduplicated.indexOf(existing);
                 deduplicated[idx] = entry;
-                seenRealPaths.set(realPath, entry);
+                seenRealPaths.set(entry.path, entry);
             }
         });
 
@@ -187,8 +195,7 @@ const watcher = {
         // like pxsw/pxsw-blog) to get a canonical slug for comparison.
         // Vendor names lack the prefix (enterprise-cms) while PascalCase
         // plugin names include it (PxswEnterpriseCms -> pxsw-enterprise-cms).
-        let stripPrefix = (slug) =>
-            slug.replace(/^(pxsw-)+/, '');
+        let stripPrefix = (slug) => slug.replace(/^(pxsw-)+/, '');
 
         let pluginSlug = stripPrefix(ChangeCase.kebabCase(pluginName));
 
@@ -485,7 +492,6 @@ const watcher = {
                 });
             }
         });
-
 
         // Prepend base SCSS files (shared + non-route-split) to the 'base' route group
         if (baseScssFiles && baseScssFiles.length) {

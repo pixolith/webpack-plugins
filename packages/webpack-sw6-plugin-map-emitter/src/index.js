@@ -10,7 +10,7 @@ const Sw6PluginMapEmitter = function Sw6PluginMapEmitter(options) {
     this.options = options;
 };
 
-Sw6PluginMapEmitter.prototype.apply = function(compiler) {
+Sw6PluginMapEmitter.prototype.apply = function (compiler) {
     const options = this.options;
 
     compiler.hooks.afterEmit.tapAsync(
@@ -76,34 +76,53 @@ Sw6PluginMapEmitter.prototype.apply = function(compiler) {
                 }
             });
 
+            if (files['runtime']) {
+                let firstThemeKey = Object.keys(files).find(
+                    (k) => k !== 'runtime',
+                );
+                if (firstThemeKey) {
+                    includes.forEach((include) => {
+                        let runtimeFiles = files['runtime'][include] || [];
+                        if (runtimeFiles.length) {
+                            files[firstThemeKey][include] = runtimeFiles.concat(
+                                files[firstThemeKey][include] || [],
+                            );
+                        }
+                    });
+                }
+                delete files['runtime'];
+            }
+
             let pluginMap = {};
             await Promise.all(
-                Object.keys(files).map(async (key) =>  {
+                Object.keys(files).map(async (key) => {
                     let bundleName = `${ChangeCase.pascalCase(key)}`;
 
                     if (key.includes('vendor')) {
                         pluginPath = `vendor/pxsw/${key.substr(12)}`;
-                        bundleName = `Pxsw${ChangeCase.pascalCase(key.substr(12))}`;
+                        bundleName = `Pxsw${ChangeCase.pascalCase(
+                            key.substr(12),
+                        )}`;
                     }
-                    bundleName = bundleName.replace('PxswPxsw', 'Pxsw')
-
+                    bundleName = bundleName.replace('PxswPxsw', 'Pxsw');
 
                     pluginMap[bundleName] = files[key];
                 }),
             );
 
-            let outputFile = (options.filename || 'var/px_plugins.json');
+            let outputFile = options.filename || 'var/px_plugins.json';
 
             await mkdirp(Path.dirname(outputFile));
 
             await writeFileAsync(
                 outputFile,
                 JSON.stringify(pluginMap),
-                'utf-8'
-            )
+                'utf-8',
+            );
 
             next();
-        });
+        },
+    );
 };
 
 module.exports = Sw6PluginMapEmitter;

@@ -14,7 +14,8 @@ module.exports = function createStorefrontConfig(themeOptions) {
 
     let outputConfig = {
         path: config.outputPath,
-        publicPath: config.assetUrl,
+        publicPath: config.isProd ? config.assetUrl : config.devServerPublicUrl,
+        crossOriginLoading: config.isProd ? false : 'anonymous',
         chunkFilename: (chunkData) => {
             return `js/chunk[name]${config.isProd ? '.[contenthash]' : ''}.js`;
         },

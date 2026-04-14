@@ -105,16 +105,14 @@ module.exports = function createDevConfig(themeOptions) {
             allowedHosts: 'all',
             client: {
                 webSocketURL: {
-                    hostname: 'node.px-staging.de',
+                    hostname: config.devServerHostname,
                     protocol: 'wss',
-                    port:
-                        process.env.SHOPWARE_MODE === 'administration'
-                            ? 8080
-                            : 8081,
+                    port: config.devServerPort,
                 },
                 overlay: {
                     warnings: false,
                     errors: true,
+                    runtimeErrors: false,
                 },
             },
             headers: {
@@ -124,7 +122,7 @@ module.exports = function createDevConfig(themeOptions) {
                 'Access-Control-Allow-Headers':
                     'X-Requested-With, content-type, Authorization',
             },
-            port: process.env.SHOPWARE_MODE === 'administration' ? 8080 : 8081,
+            port: config.devServerPort,
             server: !config.isProd
                 ? {
                       type: 'https',
@@ -150,8 +148,9 @@ module.exports = function createDevConfig(themeOptions) {
                       },
                   }
                 : 'http',
+            liveReload: false,
             devMiddleware: {
-                writeToDisk: true,
+                writeToDisk: (filePath) => !filePath.includes('.hot-update.'),
             },
             setupMiddlewares: (middlewares, devServer) => {
                 if (!devServer) {
@@ -197,5 +196,8 @@ module.exports = function createDevConfig(themeOptions) {
                 : [],
         ),
         watch: false,
+        optimization: {
+            runtimeChunk: 'single',
+        },
     };
 };

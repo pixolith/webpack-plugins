@@ -27,7 +27,13 @@ const config = {
     jsFolder: process.env.JS_FOLDER || 'js',
     iconsFolder: process.env.ICONS_FOLDER || 'icons',
 
-    spriteOrder: process.env.SPRITE_ORDER ?? ['pxsw/basic-theme', 'PxswBasicTheme', '**', 'pxsw/customer-theme', 'PxswCustomerTheme'],
+    spriteOrder: process.env.SPRITE_ORDER ?? [
+        'pxsw/basic-theme',
+        'PxswBasicTheme',
+        '**',
+        'pxsw/customer-theme',
+        'PxswCustomerTheme',
+    ],
     ignoreIcons: process.env.IGNORE_ICONS ?? [],
 
     mediaQueries: process.env.MEDIA_QUERIES || false,
@@ -40,11 +46,24 @@ const config = {
     pluginsPublicPath: Path.join(process.cwd(), 'public'),
     vendorPublicPath: Path.join(process.cwd(), 'public/bundles'),
 
-    shopwareVendorPath: Path.join(process.cwd(), 'vendor/shopware/storefront/Resources/app/storefront/vendor'),
-    shopwarePluginPath: Path.join(process.cwd(), 'vendor/shopware/storefront/Resources/app/storefront/src'),
+    shopwareVendorPath: Path.join(
+        process.cwd(),
+        'vendor/shopware/storefront/Resources/app/storefront/vendor',
+    ),
+    shopwarePluginPath: Path.join(
+        process.cwd(),
+        'vendor/shopware/storefront/Resources/app/storefront/src',
+    ),
 
     allowedExtensions: ['.ts', '.js', '.scss', '.css', '.svg'],
+
+    // Dev server connection settings (used for devServer config + output.publicPath in dev)
+    devServerHostname: process.env.DEV_SERVER_HOSTNAME || 'node.px-staging.de',
+    devServerPort: process.env.SHOPWARE_MODE === 'administration' ? 8080 : 8081,
+    devServerProtocol: process.env.DEV_SERVER_PROTOCOL || 'https',
 };
+
+config.devServerPublicUrl = `${config.devServerProtocol}://${config.devServerHostname}:${config.devServerPort}/`;
 
 // PICKED_THEME: optional filter to build/watch a single theme from THEME_NAMES
 let pickedTheme = process.env.PICKED_THEME
@@ -53,7 +72,9 @@ let pickedTheme = process.env.PICKED_THEME
 
 if (pickedTheme && config.themeNames.indexOf(pickedTheme) === -1) {
     process.stderr.write(
-        `PICKED_THEME "${pickedTheme}" is not in THEME_NAMES [${config.themeNames.join(', ')}].\n`,
+        `PICKED_THEME "${pickedTheme}" is not in THEME_NAMES [${config.themeNames.join(
+            ', ',
+        )}].\n`,
     );
     process.exit(1);
 }
@@ -74,12 +95,25 @@ const pxRouteSplitPath =
         : '');
 
 // Create a glob regex to match the plugin prefixes
-let prefixes = config.pluginPrefixes.split(',').map(p => `${p}*`).join('|');
+let prefixes = config.pluginPrefixes
+    .split(',')
+    .map((p) => `${p}*`)
+    .join('|');
 const pluginSrcPath = Path.join(config.pluginsBasePath, `+(${prefixes})`);
-const vendorSrcPath = Path.join(config.vendorBasePath, `+(${config.pluginPrefixes.replace(',', '|').toLowerCase()})`, '*');
+const vendorSrcPath = Path.join(
+    config.vendorBasePath,
+    `+(${config.pluginPrefixes.replace(',', '|').toLowerCase()})`,
+    '*',
+);
 
-const pluginMatch = new RegExp(`/plugins\/((${config.pluginPrefixes.replace(',', '|')})\\w*)\/`);
-const vendorMatch = new RegExp(`/(vendor\/(${config.pluginPrefixes.replace(',', '|').toLowerCase()})\/[\\w-]*)\/`);
+const pluginMatch = new RegExp(
+    `/plugins\/((${config.pluginPrefixes.replace(',', '|')})\\w*)\/`,
+);
+const vendorMatch = new RegExp(
+    `/(vendor\/(${config.pluginPrefixes
+        .replace(',', '|')
+        .toLowerCase()})\/[\\w-]*)\/`,
+);
 const routeSplitMatch = new RegExp(`/scss-route-split\/([\\w-]*)`);
 
 module.exports = {
@@ -96,11 +130,31 @@ module.exports = {
     pluginMatch: pluginMatch,
     vendorMatch: vendorMatch,
 
-    sharedScssPluginPath: Path.join(pluginSrcPath, pxEntryPath, config.pxSharedPath, config.scssFolder),
-    sharedScssVendorPath: Path.join(vendorSrcPath, pxEntryPath, config.pxSharedPath, config.scssFolder),
+    sharedScssPluginPath: Path.join(
+        pluginSrcPath,
+        pxEntryPath,
+        config.pxSharedPath,
+        config.scssFolder,
+    ),
+    sharedScssVendorPath: Path.join(
+        vendorSrcPath,
+        pxEntryPath,
+        config.pxSharedPath,
+        config.scssFolder,
+    ),
 
-    sharedIconPluginPath: Path.join(pluginSrcPath, pxEntryPath, config.pxSharedPath, config.iconsFolder),
-    sharedIconVendorPath: Path.join(vendorSrcPath, pxEntryPath, config.pxSharedPath, config.iconsFolder),
+    sharedIconPluginPath: Path.join(
+        pluginSrcPath,
+        pxEntryPath,
+        config.pxSharedPath,
+        config.iconsFolder,
+    ),
+    sharedIconVendorPath: Path.join(
+        vendorSrcPath,
+        pxEntryPath,
+        config.pxSharedPath,
+        config.iconsFolder,
+    ),
 
     routeSplitMatch: routeSplitMatch,
     pluginRouteSplitPath: Path.join(pluginSrcPath, pxRouteSplitPath),
