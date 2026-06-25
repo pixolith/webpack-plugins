@@ -1,6 +1,7 @@
 'use strict';
 
 const Path = require('path');
+const Os = require('os');
 
 const config = {
     isProd: process.env.NODE_ENV === 'production',
@@ -82,6 +83,21 @@ if (pickedTheme && config.themeNames.indexOf(pickedTheme) === -1) {
 // buildThemes: the subset of themeNames that actually get compiled
 // themeNames stays as the full list (used for _global_resources exclusion)
 config.buildThemes = pickedTheme ? [pickedTheme] : config.themeNames;
+
+// buildParallelism: how many per-theme compilers webpack's MultiCompiler runs
+// concurrently. Default is webpack's `Infinity` (all themes at once) which is
+// extremely memory-hungry with many themes. We cap it to a conservative,
+// CPU-aware value. Override with BUILD_PARALLELISM=<n> (e.g. on big CI boxes).
+// Peak memory ≈ buildParallelism × (memory of one theme compiler).
+config.buildParallelism = (() => {
+    let raw = parseInt(process.env.BUILD_PARALLELISM, 10);
+    let value =
+        Number.isInteger(raw) && raw > 0
+            ? raw
+            : Math.max(2, Math.floor(Os.cpus().length / 4));
+    // Never exceed the number of themes actually being built.
+    return Math.max(1, Math.min(value, config.buildThemes.length || 1));
+})();
 
 const pxEntryPath =
     process.env.PX_ENTRY_PATH ||

@@ -35,6 +35,7 @@ const setup = () => {
             shopwareMode: config.shopwareMode,
             assetUrl: config.assetUrl,
             themeNames: config.themeNames.join(', ') + (config.buildThemes.length < config.themeNames.length ? ' (building: ' + config.buildThemes.join(', ') + ')' : ''),
+            parallelism: config.buildParallelism + ' / ' + config.buildThemes.length + ' themes',
             version: pkg.version,
         });
     }
@@ -125,7 +126,7 @@ const getResourcesPaths = (themeName, options) => {
 const createThemeConfigs = (options) => {
     setup();
 
-    return config.buildThemes.map((themeName, index) => {
+    let themeConfigs = config.buildThemes.map((themeName, index) => {
         let resourcesPaths = getResourcesPaths(themeName, options);
         let themeSlug = ChangeCase.kebabCase(themeName);
         let themeOptions = {
@@ -157,6 +158,12 @@ const createThemeConfigs = (options) => {
 
         return merged;
     });
+
+    // Limit how many theme compilers run concurrently (webpack MultiCompiler).
+    // Without this webpack runs all of them in parallel in a single process.
+    themeConfigs.parallelism = config.buildParallelism;
+
+    return themeConfigs;
 };
 
 const setupAdministration = () => {
@@ -181,6 +188,7 @@ const setupAdministration = () => {
             shopwareMode: config.shopwareMode,
             assetUrl: config.assetUrl,
             themeNames: config.themeNames.join(', ') + (config.buildThemes.length < config.themeNames.length ? ' (building: ' + config.buildThemes.join(', ') + ')' : ''),
+            parallelism: config.buildParallelism + ' / ' + config.buildThemes.length + ' themes',
             version: pkg.version,
         });
     }
@@ -200,7 +208,7 @@ const setupAdministration = () => {
 const createAdminConfigs = (options) => {
     setupAdministration();
 
-    return config.buildThemes.map((themeName, index) => {
+    let adminConfigs = config.buildThemes.map((themeName, index) => {
         let resourcesPaths = getResourcesPaths(themeName, options);
         let themeSlug = ChangeCase.kebabCase(themeName);
         let themeOptions = {
@@ -232,6 +240,11 @@ const createAdminConfigs = (options) => {
 
         return merged;
     });
+
+    // Limit how many theme compilers run concurrently (webpack MultiCompiler).
+    adminConfigs.parallelism = config.buildParallelism;
+
+    return adminConfigs;
 };
 
 module.exports = {
